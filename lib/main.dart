@@ -84,7 +84,7 @@ class MyApp extends StatelessWidget {
             return GestureDetector(
               onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
               child: MediaQuery(
-                  data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                  data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
                   child: ScrollConfiguration(
                     behavior: const ScrollBehavior(),
                     child: ResponsiveWrapper.builder(child,

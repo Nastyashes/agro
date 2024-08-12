@@ -1,8 +1,12 @@
+import 'package:agro/app/home/components/home_controller.dart';
+import 'package:agro/generated/assets.dart';
 import 'package:agro/model/model_order/model_contact.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/ui/utils/string_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../ui/buttons/b_transparent_scalable_button.dart';
@@ -10,11 +14,13 @@ import '../../../../ui/buttons/b_transparent_scalable_button.dart';
 class ContactScreen extends StatelessWidget {
   final ModelContact contact;
   final bool isVip;
-
   final Function() onLauchPhone;
+  final HomeController controller = Get.find<HomeController>();
 
-  const ContactScreen(
+   ContactScreen(
       {super.key, required this.contact, required this.onLauchPhone, this.isVip = false});
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +36,16 @@ class ContactScreen extends StatelessWidget {
           orderInfo(header: 'ПІБ', text: contact.userName.toString()),
           orderInfo(header: 'Регіон', text: contact.userRegion.toString()),
           orderInfo(header: 'Район', text: contact.userDistrict.toString()),
-          orderInfo(header: 'Місто', text: contact.userCity.orNotSet()),
+           orderInfo(
+            header: 'Місто',
+            text: contact.userCity.orNotSet(),
+            icon: IconButton(
+              icon: SvgPicture.asset(Assets.location, width: 24),
+              onPressed: () => controller.launchMap(context, contact),
+              alignment: Alignment.topCenter,
+              padding: EdgeInsets.zero,
+            ),
+          ),
           orderInfo(
               header: 'E-mail',
               text: contact.userEmail.orNotSet(),
@@ -48,7 +63,8 @@ class ContactScreen extends StatelessWidget {
   Widget orderInfo(
           {required String header,
           required String text,
-          Function()? onPressed}) =>
+          Function()? onPressed,
+          Widget? icon,}) =>
       Padding(
           padding: const EdgeInsets.only(bottom: 6),
           child: BTransparentScalableButton(
@@ -65,6 +81,7 @@ class ContactScreen extends StatelessWidget {
                         color: Colors.black,
                         size: 20,
                         fontWeight: FontWeight.w500,
-                        align: TextAlign.end))
+                        align: TextAlign.end)),
+                        if (icon != null) icon,
               ])));
 }

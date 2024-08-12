@@ -12,11 +12,13 @@ import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/repository/local_storage_repository.dart';
 import 'package:agro/ui/adds.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:agro/model/model_order/struct_order.dart';
 import 'package:agro/routes/app_pages.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:hive/hive.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -272,6 +274,19 @@ class HomeController extends BaseController {
       }
     } catch (e) {
       log(e.toString(), error: e);
+    }
+  }
+   void launchMap(BuildContext context, ModelContact contact) {
+    final region = contact.userRegion;
+    final district = contact.userDistrict;
+    final city = contact.userCity;
+
+    if (region == null || region.isEmpty || district == null || district.isEmpty || city == null || city.isEmpty) {
+      notification(text: 'Почекайте 5 хв, відкоригуємо адресу');
+      
+    } else {
+      final query = '$region, $district, $city';
+      MapsLauncher.launchQuery(query);
     }
   }
 }

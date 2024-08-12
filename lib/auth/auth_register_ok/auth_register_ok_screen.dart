@@ -1,4 +1,3 @@
-import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -39,7 +38,7 @@ class AuthRegisterOkScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(15),
                           child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
                             readText(
-                                text: context.l.thanksForRegistration, fontWeight: FontWeight.w600, color: Colors.black, size: 26, padding: const EdgeInsets.only(bottom: 20)),
+                                text: 'Дякуємо за реєстрацію', fontWeight: FontWeight.w600, color: Colors.black, size: 26, padding: const EdgeInsets.only(bottom: 20)),
                             readText(text: 'Наші менеджери скоро зв’яжуться із вами.', color: Colors.black, align: TextAlign.center, size: 20),
                           ]),
                         )),
