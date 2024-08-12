@@ -285,7 +285,7 @@ class HomeController extends BaseController {
       notification(text: 'Почекайте 5 хв, відкоригуємо адресу');
       
     } else {
-      final query = '$region, $district, $city';
+      final query = '$city $region $district';
       MapsLauncher.launchQuery(query);
     }
   }
