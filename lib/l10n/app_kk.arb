@@ -1,0 +1,20 @@
+{
+  "enterPhoneNumber": "Введіть номер телефону",
+  "phoneNumber": "Номер телефону",
+  "getCode": "Отримати код",
+  "needHelpSupport": "Потрібна допомога? Звертайтесь до\nнашої служби підтримки!",
+  "enterCode": "Введіть код",
+  "codeWasSent": "Код було відправлено на ваш номер",
+  "continue_": "Продовжити",
+  "changeNumber": "Змінити номер?",
+  "save": "Зберегти",
+  "profile": "Профіль",
+  
+  "ourSite": "Наш сайт",
+  "support": "Підтримка",
+  "privacyPolicy": "Політика конфеденційності",
+  "deleteProfile": "Видалити профіль",
+  "logOutOfProfile": "Вийти з профілю",
+  "@save": {},
+  "@@locale": "kk"
+}

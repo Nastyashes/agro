@@ -166,30 +166,37 @@ class OrderController extends BaseController {
             doAfter: () async {
               await onLoadInfoUser();
               homeController.onContactOpened(modelOrder!);
+              setState(() {
+                contactOpened = !contactOpened;
+              });
             },
             onFailed: () async {
               await Future.delayed(const Duration(milliseconds: 100));
               await onLoadInfoUser();
               homeController.onContactOpened(modelOrder!);
+              setState(() {
+                contactOpened = !contactOpened;
+              });
             },
           );
         } else {
           await onLoadInfoUser();
           homeController.onContactOpened(modelOrder!);
+          setState(() {
+              contactOpened = !contactOpened;
+          });
         }
       } catch (e) {
         log("contact doesn't opened");
-      }
-    }
-    setState(() {
-      if (contact.userName != null) {
-        contactOpened = !contactOpened;
-      } else {
         notification(
             text:
                 "Ви не можете відкрити ці контакти. Перевірте кількіть контактів в тарифі.");
       }
-    });
+      } else {
+        setState(() {
+              contactOpened = !contactOpened;
+          });
+      }
   }
 
   Future<void> getOrderInfo(int? orderId) async {

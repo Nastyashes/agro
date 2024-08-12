@@ -14,5 +14,7 @@
   "privacyPolicy": "Політика конфеденційності",
   "deleteProfile": "Видалити профіль",
   "logOutOfProfile": "Вийти з профілю",
-  "@save": {}
+  "thanksForRegistration": "Дякуємо за реєстрацію",
+  "@save": {},
+  "@@locale": "uk"
 }
