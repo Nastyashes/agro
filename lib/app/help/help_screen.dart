@@ -1,3 +1,4 @@
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,14 +18,11 @@ class HelpScreen extends StatelessWidget {
     HelpController controller = Get.find();
 
     return BlockPageScreen(
-        header: 'Служба підтримки',
+        header: context.l.supportService,
         theme: SystemUiOverlayStyle.dark,
         child: Column(children: [
           readText(
-              text: 'Дякуюємо за звернення до нашої служби підтримки! Ми готові допомогти вам у'
-                  ' вирішенні будь-яких питань чи проблем, з якими ви зіткнулися.\n\nЗверніться до нас через наші'
-                  ' канали зв\'язку у телеграмі або вайбері. Наші експерти швидко відповідатимуть на ваші повідомлення'
-                  ' та надаватимуть професійну допомогу у найкоротші терміни.',
+              text: context.l.supportTeamText,
               heightText: 1.4,
               size: 18,
               color: Colors.black,
@@ -36,7 +34,7 @@ class HelpScreen extends StatelessWidget {
           ]),
           readText(
               text:
-                  'Не соромтеся звертатися до нас з будь-якими запитаннями, коментарями або проблемами, які ви маєте. Наша команда завжди тут, щоб допомогти вам і забезпечити вас якісною підтримкою.\n\nДякуємо, що вибрали наш додаток!\n\nЗ повагою, \nКоманда служби підтримки.',
+                  context.l.supportTeamTextEnd,
               heightText: 1.4,
               size: 18,
               color: Colors.black,
