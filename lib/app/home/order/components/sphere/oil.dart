@@ -8,6 +8,7 @@ import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
 class OilOrder extends StatelessWidget {
@@ -20,26 +21,26 @@ class OilOrder extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const SizedBox(height: 20),
       orderInfo(
-          header: 'Регіон',
+          header: context.l.region,
           text: controller.modelOrder?.region.toString() ?? ""),
       orderInfo(
-          header: 'Назва', text: controller.modelOrder?.crop.toString() ?? ""),
+          header: context.l.name, text: controller.modelOrder?.crop.toString() ?? ""),
       orderInfo(
-          header: 'Обcяг',
+          header: context.l.volume,
           text: controller.modelOrder?.capacity.toString() ?? ""),
       orderInfo(
-          header: 'Форма розрахунку',
+          header: context.l.formOfPayment,
           text: controller.modelOrder?.payForm == 'beznal'
-              ? '1ф. (б/г)'
+              ? context.l.paymentNonCash
               : controller.modelOrder?.payForm == 'nal'
-                  ? '2ф. (гот.)'
+                  ? context.l.paymentCash
                   : controller.modelOrder?.payment.toString() ?? ""),
       orderInfo(
-          header: 'Тип доставки',
+          header: context.l.typeOfDelivery,
           text: controller.modelOrder?.deliveryForm.toString() ?? ""),
       if (controller.modelOrder?.comment != null &&
           controller.modelOrder?.comment != '') ...[
-        readText(text: 'Коментар', color: const Color(0xffA9A9A9), size: 20),
+        readText(text: context.l.comment, color: const Color(0xffA9A9A9), size: 20),
         readText(
             text: controller.modelOrder?.comment ?? '',
             color: Colors.black,
@@ -50,7 +51,7 @@ class OilOrder extends StatelessWidget {
       const SizedBox(height: 10),
       controller.modelUser!.isTraider
           ? CallResultInfo(
-              text: controller.result?.label ?? "Встановити",
+              text: controller.result?.label ?? context.l.establish,
               textColor: controller.result?.color,
               onPressed: () => controller.onSetAnswer(context),
             )
@@ -61,7 +62,7 @@ class OilOrder extends StatelessWidget {
         fermersButton(controller, context)
       ],
       controller.modelOrder?.quality != null
-          ? statisticWidget(controller.modelOrder!.quality!)
+          ? statisticWidget(controller.modelOrder!.quality!, context)
           : const SizedBox()
     ]);
   }
@@ -70,7 +71,7 @@ class OilOrder extends StatelessWidget {
     return Column(children: [
       bStyle(
           key: UniqueKey(),
-          text: 'Відправити пропозицію',
+          text: context.l.sendQuote,
           c: context,
           vertical: 15,
           colorButt: AppColors.yellow,

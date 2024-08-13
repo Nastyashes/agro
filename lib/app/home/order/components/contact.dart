@@ -2,6 +2,7 @@ import 'package:agro/model/model_order/model_contact.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/ui/utils/string_extensions.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -24,20 +25,20 @@ class ContactScreen extends StatelessWidget {
         children: [
          !isVip ?
           readText(
-              text: 'Контакти фермера',
+              text: context.l.farmerContacts,
               style: AppFonts.title2.black,
               padding: const EdgeInsets.only(top: 20, bottom: 10)) : const SizedBox(height: 6),
-          orderInfo(header: 'ПІБ', text: contact.userName.toString()),
-          orderInfo(header: 'Регіон', text: contact.userRegion.toString()),
-          orderInfo(header: 'Район', text: contact.userDistrict.toString()),
-          orderInfo(header: 'Місто', text: contact.userCity.orNotSet()),
+          orderInfo(header: context.l.fullName, text: contact.userName.toString()),
+          orderInfo(header: context.l.region, text: contact.userRegion.toString()),
+          orderInfo(header: context.l.district, text: contact.userDistrict.toString()),
+          orderInfo(header: context.l.town, text: contact.userCity.orNotSet()),
           orderInfo(
-              header: 'E-mail',
+              header: context.l.eMail,
               text: contact.userEmail.orNotSet(),
               onPressed: () => launchUrl(
                   Uri(scheme: 'mailto', path: contact.userEmail.toString()))),
           orderInfo(
-              header: 'Телефон',
+              header: context.l.phone,
               text: contact.userPhone.toString(),
               onPressed: onLauchPhone)
         ],

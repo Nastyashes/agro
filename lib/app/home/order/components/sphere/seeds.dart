@@ -10,6 +10,7 @@ import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
@@ -23,22 +24,22 @@ class SeedsOrder extends StatelessWidget {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const SizedBox(height: 20),
       orderInfo(
-          header: 'Регіон',
+          header: context.l.region,
           text: controller.modelOrder?.region?.toString() ?? ""),
       orderInfo(
-          header: 'Назва', text: controller.modelOrder?.crop?.toString() ?? ""),
+          header: context.l.name, text: controller.modelOrder?.crop?.toString() ?? ""),
       orderInfo(
-          header: 'Обсяг',
+          header: context.l.volume,
           text: controller.modelOrder?.capacity?.toString() ?? ''),
       orderInfo(
-          header: 'Форма оплати',
+          header: context.l.formOfPayment,
           text: controller.modelOrder?.payment?.toString() ?? ""),
       orderInfo(
-          header: 'Тип доставки',
+          header: context.l.typeOfDelivery,
           text: controller.modelOrder?.deliveryForm?.toString() ?? ''),
       if (controller.modelOrder?.comment != null &&
           controller.modelOrder?.comment != '') ...[
-        readText(text: 'Коментар', color: const Color(0xffA9A9A9), size: 20),
+        readText(text: context.l.comment, color: const Color(0xffA9A9A9), size: 20),
         readText(
             text: controller.modelOrder?.comment ?? '',
             color: Colors.black,
@@ -49,7 +50,7 @@ class SeedsOrder extends StatelessWidget {
       const SizedBox(height: 10),
       controller.modelUser!.isTraider
           ? CallResultInfo(
-              text: controller.result?.label ?? "Встановити",
+              text: controller.result?.label ?? context.l.establish,
               textColor: controller.result?.color,
               onPressed: () => controller.onSetAnswer(context),
             )
@@ -60,7 +61,7 @@ class SeedsOrder extends StatelessWidget {
         fermersButton(controller, context)
       ],
       controller.modelOrder?.quality != null
-          ? statisticWidget(controller.modelOrder!.quality!)
+          ? statisticWidget(controller.modelOrder!.quality!, context)
           : const SizedBox()
     ]);
   }
@@ -69,7 +70,7 @@ class SeedsOrder extends StatelessWidget {
     return Column(children: [
       bStyle(
           key: UniqueKey(),
-          text: 'Відправити пропозицію',
+          text: context.l.sendQuote,
           c: context,
           vertical: 15,
           colorButt: AppColors.yellow,
@@ -81,7 +82,7 @@ class SeedsOrder extends StatelessWidget {
     return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       const SizedBox(height: 20),
       if ((controller.modelOrder?.bids ?? []).isNotEmpty)
-        bids(controller.modelOrder?.bids ?? []),
+        bids(context, controller.modelOrder?.bids ?? []),
       if ((controller.modelOrder?.traiderContacts ?? []).isNotEmpty)
         traiderContacts(
             controller.modelOrder?.traiderContacts ?? [],
@@ -91,14 +92,14 @@ class SeedsOrder extends StatelessWidget {
   }
 }
 
-Widget statisticWidget(Quality quality) {
+Widget statisticWidget(Quality quality, BuildContext context) {
   final sent = quality.sent ?? 0;
   final open = quality.open ?? 0;
 
-  return Column(
+  return  Column(
     children: [
       const SizedBox(height: 20),
-      readText(text: "Попит на заявку", style: AppFonts.title2),
+      readText(text: context.l.applicationDemand, style: AppFonts.title2),
       const SizedBox(height: 10),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -122,12 +123,12 @@ Widget statisticWidget(Quality quality) {
             children: [
               Row(children: [
                 readText(
-                    text: "Зацікавлені купити: ", style: AppFonts.body1medium),
+                    text:  context.l.interestedInBuying, style: AppFonts.body1medium),
                 readText(text: sent.toString(), style: AppFonts.title2),
               ]),
               Row(children: [
                 readText(
-                    text: "Переглянули контакт: ", style: AppFonts.body1medium),
+                    text:  context.l.viewedContact, style: AppFonts.body1medium),
                 readText(text: open.toString(), style: AppFonts.title2),
               ])
             ],

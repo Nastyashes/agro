@@ -2,6 +2,7 @@ import 'package:agro/generated/assets.dart';
 import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/ui/text/read_text.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -57,7 +58,7 @@ class LaunchPhone extends StatelessWidget {
           ]),
           bStyle(
               padding: const EdgeInsets.only(left: 15, right: 15, top: 20),
-              text: 'Закрити',
+              text: context.l.close,
               size: 23,
               c: context,
               colorText: Colors.black,
@@ -92,7 +93,7 @@ class LaunchPhone extends StatelessWidget {
     } else {
       notification(
         text:
-            'Ми не знайшли «Telegram» на Вашому телефоні. Будь ласка, встановіть додаток та стробуйте знову.',
+            context.l.errorTelegram,
       );
     }
   }
@@ -112,7 +113,7 @@ class LaunchPhone extends StatelessWidget {
     } else {
       notification(
         text:
-            'Ми не знайшли «Viber» на Вашому телефоні. Будь ласка, встановіть додаток та стробуйте знову.',
+            context.l.errorViber,
       );
     }
   }

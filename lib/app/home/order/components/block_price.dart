@@ -1,5 +1,6 @@
 import 'package:agro/model/model_order_price/model_order_price.dart';
 import 'package:agro/ui/text/read_text.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -22,14 +23,14 @@ class _BlockPriceOrderState extends State<BlockPriceOrder> {
   OrderController controller = Get.find();
 
   @override
-  Widget build(BuildContext c) {
+  Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.only(top: 20),
         child: BTransparentScalableButton(
             onPressed: controller.modelUser?.role == 'distrib' ? () {} : () => setState(() => isOpenBlock = !isOpenBlock),
             scale: ScaleFormat.small,
             child: Container(
-                width: MediaQuery.of(c).size.width,
+                width: MediaQuery.of(context).size.width,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
@@ -39,18 +40,18 @@ class _BlockPriceOrderState extends State<BlockPriceOrder> {
                   padding: const EdgeInsets.all(15.0),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     Row(children: [
-                      readText(text: '${widget.modelOrderPrice.cost} грн/т. ${widget.modelOrderPrice.createdAt}', color: Colors.black, size: 20),
+                      readText(text: '${widget.modelOrderPrice.cost} ${context.l.uaht} ${widget.modelOrderPrice.createdAt}', color: Colors.black, size: 20),
                       const Spacer(),
                       if (controller.modelUser?.role == 'distrib') ...[
-                        if (widget.modelOrderPrice.isMy!) ...[readText(text: 'Ваша ціна', color: const Color(0xff01CA20), size: 18)]
+                        if (widget.modelOrderPrice.isMy!) ...[readText(text: context.l.yourPrice, color: const Color(0xff01CA20), size: 18)]
                       ] else ...[
                         SvgPicture.asset(!isOpenBlock ? Assets.componentsArrowRight : Assets.componentsArrowBot, width: !isOpenBlock ? 15 : 24)
                       ]
                     ]),
                     if (isOpenBlock) ...[
                       const SizedBox(height: 20),
-                      priceInfo(header: 'ПІБ', text: widget.modelOrderPrice.traiderName.toString()),
-                      priceInfo(header: 'Телефон', text: widget.modelOrderPrice.traiderPhone.toString())
+                      priceInfo(header: context.l.fullName, text: widget.modelOrderPrice.traiderName.toString()),
+                      priceInfo(header: context.l.phone, text: widget.modelOrderPrice.traiderPhone.toString())
                     ]
                   ]),
                 ))));

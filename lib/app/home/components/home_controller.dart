@@ -11,6 +11,7 @@ import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/repository/local_storage_repository.dart';
 import 'package:agro/ui/adds.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:agro/model/model_order/struct_order.dart';
@@ -26,7 +27,7 @@ import '../../../ui/local_notification/local_notification.dart';
 
 class HomeController extends BaseController {
   late Function(VoidCallback fn) setState;
-  late BuildContext c;
+  late BuildContext context;
   late TextEditingController searchController;
   late ModelUser modelUser;
   late final RefreshController controllerLoading;
@@ -54,7 +55,7 @@ class HomeController extends BaseController {
   void initPage(
       {required BuildContext context,
       required Function(VoidCallback fn) set}) async {
-    c = context;
+    this.context = context;
     setState = set;
     modelUser = Hive.box('data').get('modelUser');
 
@@ -68,10 +69,10 @@ class HomeController extends BaseController {
   void fermerCreateOrder() => loadIfValid(() async {
         ApiAnswer apiAnswer = await Api().fermer.createOrder();
 
-        if (c.mounted) {
+        if (context.mounted) {
           if (apiAnswer.data['status']) {
             notification(
-              text: 'Заявка відправлена. Скоро з вами зв’яжеться оператор.',
+              text: context.l.applicationSent,
             );
           } else {
             notification(text: apiAnswer.data['message']);
@@ -106,7 +107,7 @@ class HomeController extends BaseController {
         log(apiAnswer.data.toString());
         callResults = await _localStorageRepository.getAll();
         setState(() {
-          if (c.mounted) {
+          if (context.mounted) {
             if (apiAnswer.data['status']) {
               total =
                   int.tryParse(apiAnswer.data['payload']['total'].toString()) ??
@@ -176,7 +177,7 @@ class HomeController extends BaseController {
       } catch (e) {
         notification(
             text:
-                "Ви не можете відкрити ці контакти. Перевірте кількіть контактів в тарифі.");
+                context.l.errorTariffMail);
         log("contact doesn't opened");
       }
     }
@@ -189,7 +190,7 @@ class HomeController extends BaseController {
         if (apiAnswer.data['status'].toString() == 'true') {
           Get.back();
         } else {
-          notification(text: 'Трапилась помилка при угоді');
+          notification(text: context.l.errorAgreement);
         }
       });
 

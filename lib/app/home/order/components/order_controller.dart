@@ -14,6 +14,7 @@ import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/repository/local_storage_repository.dart';
 import 'package:agro/ui/adds.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:agro/model/model_order/model_order.dart';
 import 'package:agro/server/api/api.dart';
@@ -28,6 +29,7 @@ import '../../../../vars/model_notifier/user_notifier/user_notifier.dart';
 
 class OrderController extends BaseController {
   late Function(VoidCallback fn) setState;
+  late BuildContext context;
   ModelOrder? modelOrder;
   ModelContact contact = ModelContact();
   Tariff? tariff;
@@ -154,7 +156,7 @@ class OrderController extends BaseController {
         } else {
           notification(
               text:
-                  'Трапилась помилка при додаванні ціни, перевірте ваші дані');
+                  context.l.errorAddPrice);
         }
       });
 
@@ -190,7 +192,7 @@ class OrderController extends BaseController {
         log("contact doesn't opened");
         notification(
             text:
-                "Ви не можете відкрити ці контакти. Перевірте кількіть контактів в тарифі.");
+                context.l.errorTariffMail);
       }
       } else {
         setState(() {
@@ -231,7 +233,7 @@ class OrderController extends BaseController {
           modelOrderPrice = [];
           onLoadPrice();
         } else {
-          notification(text: 'Трапилась помилка при угоді');
+          notification(text: context.l.errorAgreement);
         }
       });
 
@@ -242,7 +244,7 @@ class OrderController extends BaseController {
         if (apiAnswer.data['status'] == '-') {
           notification(
               text:
-                  "Встановіть налаштування заявок у вашому кабінеті та завантажте прайс");
+                  context.l.setTicketSettings);
           return;
         }
         asId = apiAnswer.data['as_id'];
@@ -253,30 +255,30 @@ class OrderController extends BaseController {
             int.tryParse(apiAnswer.data['abonents'].toString()) ?? 0;
         if (smsCount >= abonents) {
           showConfirmDialog(
-              title: 'Чи впевнені ви?',
+              title: context.l.areYouSure,
               text:
-                  "Вашу пропозицію буде відправлено $abonents абонентам. Якщо впевнені в цій дії натисніть ОК.",
+                  context.l.yourProposalSent,
               onConfirm: () {
-                onSendOffer();
+                onSendOffer(context);
               });
         } else {
           showConfirmDialog(
-              title: 'Чи впевнені ви?',
+              title: context.l.areYouSure,
               text:
-                  "Через те що кількість доступних Вам sms менша за кількість абонентів, Вашу пропозицію буде відправлено $smsCount з $abonents абонентам. Якщо впевнені в цій дії натисніть ОК.",
+                  context.l.notEnoughMessages,
               onConfirm: () {
-                onSendOffer();
+                onSendOffer(context);
               });
         }
       });
 
-  void onSendOffer() => loadIfValid(() async {
+  void onSendOffer(BuildContext context) => loadIfValid(() async {
         ApiAnswer apiAnswer = await Api().traider.sendOffer(asId, sms);
         log(apiAnswer.data.toString());
         if (apiAnswer.data['status'] == '+') {
           final recepients = apiAnswer.data['recepients'];
           notification(
-              text: "Ваша пропозиція була надіслана $recepients-м абонентам.");
+              text: context.l.offerSent);
           return;
         }
       });

@@ -2,6 +2,7 @@ import 'package:agro/controllers/app_input_controller.dart';
 import 'package:agro/model/model_order/model_order.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/views/bottom_drawer_header.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../ui/buttons/b_style.dart';
@@ -44,16 +45,16 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
       .toList();
 
   @override
-  Widget build(BuildContext c) {
+  Widget build(BuildContext context) {
     return Material(
       child: Container(
-        height: 500 + MediaQuery.of(c).viewInsets.bottom,
+        height: 500 + MediaQuery.of(context).viewInsets.bottom,
         color: Colors.white,
         child: Column(
           children: [
             const BottomDrawerHeader(),
             readText(
-                text: 'Додати ціну',
+                text: context.l.addPrice,
                 color: Colors.black,
                 fontWeight: FontWeight.w600,
                 size: 22,
@@ -62,7 +63,7 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
                 padding: const EdgeInsets.all(15),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.transparent),
-                text: 'Ціна',
+                text: context.l.price,
                 suffixText: currency.label,
                 openKeyboardAuto: true,
                 colorBg: const Color(0xffF8F8F8),
@@ -128,9 +129,9 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
                 ))),
             bStyle(
                 padding: const EdgeInsets.only(left: 15, right: 15, top: 20),
-                text: 'Додати ціну',
+                text: context.l.addPrice,
                 size: 23,
-                c: c,
+                c: context,
                 colorText: Colors.white,
                 vertical: 15,
                 colorButt: const Color(0xffFCD300),
@@ -164,7 +165,6 @@ enum Currency {
   final String label;
   final String description;
   final String json;
-
   String get text => "$description ($label)";
 
   const Currency(this.label, this.description, this.json);
