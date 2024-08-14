@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart'; // Імпортуйте згенерований файл
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 part 'call_result.g.dart';
 
