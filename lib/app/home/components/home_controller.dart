@@ -32,7 +32,7 @@ class HomeController extends BaseController {
   late ModelUser modelUser;
   late final RefreshController controllerLoading;
   late final ScrollController controllerScroll;
-  String messHeader = 'Заявки';
+  String messHeader = '';
   int total = 0;
   final _localStorageRepository = LocalStorageRepository();
   final _interstitial = Interstitial();
@@ -256,15 +256,17 @@ class HomeController extends BaseController {
     controllerLoading.refreshCompleted();
   }
 
-  void onTariffInfo() async {
-    try {
-      ApiAnswer apiAnswer = await Api().traider.getTariff();
-      messHeader = apiAnswer.data['message'];
+ void onTariffInfo() async {
+  try {
+    ApiAnswer apiAnswer = await Api().traider.getTariff();
+    setState(() {
+      messHeader = context.l.applications;
       tariff = Tariff.fromJson(apiAnswer.data['payload']);
-    } catch (e) {
-      log(e.toString(), error: e);
-    }
+    });
+  } catch (e) {
+    log(e.toString(), error: e);
   }
+}
 
   Future<void> onMessages() async {
     try {

@@ -49,8 +49,8 @@ class _OrderScreenState extends State<OrderScreen> {
             onPressed: () {
               Clipboard.setData(ClipboardData(
                   text: (controller.contactOpened
-                      ? controller.modelOrder?.toTextFull(controller.contact)
-                      : controller.modelOrder?.toTextShort()) ?? ''));
+                      ? controller.modelOrder?.toTextFull(controller.contact, context)
+                      : controller.modelOrder?.toTextShort(context)) ?? ''));
               inAppNotification(
                   text: context.l.copiedToClipboard,
                   c: context);

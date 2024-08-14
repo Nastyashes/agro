@@ -92,7 +92,7 @@ class _BlockOrderZernoState extends State<BlockOrderZerno> {
                                 child: BTransparentScalableButton(
                                     onPressed: () {
                                       Clipboard.setData(ClipboardData(
-                                          text: (widget.modelOrder.toText())));
+                                          text: (widget.modelOrder.toText(context))));
                                       inAppNotification(
                                           text:
                                               context.l.copiedToClipboard,

@@ -24,28 +24,31 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
   Currency currency = Currency.uah;
   PaymentForm paymentForm = PaymentForm.f1;
 
-  final List<DropdownMenuItem<Currency>> currencies = Currency.values
-      .map((e) => DropdownMenuItem(
-          value: e,
-          child: readText(
-            text: e.text,
-            size: 30,
-            fontWeight: FontWeight.w500,
-          )))
-      .toList();
-
-  final List<DropdownMenuItem<PaymentForm>> paymentForms = PaymentForm.values
-      .map((e) => DropdownMenuItem(
-          value: e,
-          child: readText(
-            text: e.label,
-            size: 30,
-            fontWeight: FontWeight.w500,
-          )))
-      .toList();
+  // Прибираємо ініціалізацію списків тут
 
   @override
   Widget build(BuildContext context) {
+    // Ініціалізуємо списки в методі build, де context доступний
+    final List<DropdownMenuItem<Currency>> currencies = Currency.values
+        .map((e) => DropdownMenuItem(
+            value: e,
+            child: readText(
+              text: e.text(context),
+              size: 30,
+              fontWeight: FontWeight.w500,
+            )))
+        .toList();
+
+    final List<DropdownMenuItem<PaymentForm>> paymentForms = PaymentForm.values
+        .map((e) => DropdownMenuItem(
+            value: e,
+            child: readText(
+              text: e.labelLocalized(context),
+              size: 30,
+              fontWeight: FontWeight.w500,
+            )))
+        .toList();
+
     return Material(
       child: Container(
         height: 500 + MediaQuery.of(context).viewInsets.bottom,
@@ -81,7 +84,7 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
                     child: DropdownButton<Currency>(
                   hint: readText(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
-                      text: currency.text,
+                      text: currency.text(context),
                       fontWeight: FontWeight.w500,
                       size: 30,
                       color: Colors.black),
@@ -110,7 +113,7 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
                     child: DropdownButton<PaymentForm>(
                   hint: readText(
                       padding: const EdgeInsets.symmetric(horizontal: 15),
-                      text: paymentForm.label,
+                      text: paymentForm.labelLocalized(context),
                       fontWeight: FontWeight.w500,
                       size: 30,
                       color: Colors.black),
@@ -142,6 +145,7 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
       ),
     );
   }
+}
 
   Widget orderInfo({required String header, required String text}) => Padding(
       padding: const EdgeInsets.only(bottom: 10, left: 15, right: 15),
@@ -155,27 +159,60 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
                 fontWeight: FontWeight.w500,
                 align: TextAlign.end))
       ]));
-}
+
 
 enum Currency {
-  uah("₴", "Гривня", "UAH"),
-  usd("\$", "Долар", "USD"),
-  euro("€", "Євро", "EUR");
+  uah("₴", "currencyUah", "UAH"),
+  usd("\$", "currencyUsd", "USD"),
+  euro("€", "currencyEuro", "EUR");
 
   final String label;
-  final String description;
+  final String descriptionKey;
   final String json;
-  String get text => "$description ($label)";
 
-  const Currency(this.label, this.description, this.json);
+  // Використання map або switch для зіставлення ключів локалізації з властивостями AppLocalizations
+  String text(BuildContext context) {
+    String description = '';
+    switch (this) {
+      case Currency.uah:
+        description = context.l.currencyUah;
+        break;
+      case Currency.usd:
+        description = context.l.currencyUsd;
+        break;
+      case Currency.euro:
+        description = context.l.currencyEuro;
+        break;
+    }
+    return "$description ($label)";
+  }
+
+  const Currency(this.label, this.descriptionKey, this.json);
 }
 
 enum PaymentForm {
-  f1("1ф. (по перерахунку)", '1f'),
-  f2("2ф. (готівка)", '2f');
+   f1("paymentFormF1", '1f'),
+   f2("paymentFormF2", '2f');
 
   final String label;
   final String json;
 
+  // Використання map або switch для зіставлення ключів локалізації з властивостями AppLocalizations
+  String labelLocalized(BuildContext context) {
+    String description = '';
+    switch (this) {
+      case PaymentForm.f1:
+        description = context.l.paymentFormF1;
+        break;
+      case PaymentForm.f2:
+        description = context.l.paymentFormF2;
+        break;
+    }
+    return description;
+  }
+
   const PaymentForm(this.label, this.json);
 }
+
+
+

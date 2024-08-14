@@ -3,95 +3,6 @@ import 'package:agro/model/model_order/bids.dart';
 import 'package:agro/model/model_order/model_contact.dart';
 import 'package:agro/model/model_order/quality.dart';
 import 'package:agro/model/model_order/traider_contact.dart';
-import 'package:intl/intl.dart';
-
-class ModelOrder extends Created {
-  int? id, harvestYear, sphere;
-  String? title,
-      crop,
-      comment,
-      region,
-      capacity,
-      count,
-      payForm,
-      payment,
-      deliveryForm,
-      sort,
-      vidRabot;
-  DateTime? startDate, endDate;
-  bool? request, priceAdded;
-  ModelContact? contact;
-  List<Bid> bids;
-  Quality? quality;
-  List<TraiderContact> traiderContacts;
-
-  ModelOrder(
-      {this.id,
-      this.title,
-      this.comment,
-      this.capacity,
-      this.count,
-      this.crop,
-      this.deliveryForm,
-      this.endDate,
-      this.harvestYear,
-      this.priceAdded,
-      this.payForm,
-      this.payment,
-      this.region,
-      this.request,
-      this.sort,
-      this.startDate,
-      this.vidRabot,
-      this.contact,
-      this.bids = const [],
-      this.traiderContacts = const []});
-}
-
-extension OrderX on ModelOrder {
-  String toText() {
-    if (contact == null) {
-      return toTextShort();
-    } else {
-      return toTextFull(contact);
-    }
-  }
-
-  String toTextShort() {
-    return "Заявка №$id від ${DateFormat('dd.MM.yyyy').format(startDate!)}\n"
-        "Область: $region\n"
-        "Культура: $crop\n"
-        "Об’єм: $capacity\n"
-        "Рік врожаю: $harvestYear\n"
-        "Форма оплати: $payForm\n"
-        "Тип доставки: $deliveryForm\n"
-        "Коментар: $comment\n";
-  }
-
-  String toTextFull(ModelContact? contact) {
-    return "Заявка №$id від ${DateFormat('dd.MM.yyyy').format(startDate!)}\n"
-        "Область: $region\n"
-        "Культура: $crop\n"
-        "Об’єм: $capacity\n"
-        "Рік врожаю: $harvestYear\n"
-        "Форма оплати: $payForm\n"
-        "Тип доставки: $deliveryForm\n"
-        "Коментар: $comment\n"
-        "${contact?.userName}\n"
-        "Адреса: ${contact?.userRegion}\n"
-        "${contact?.userDistrict}\n"
-        "${contact?.userCity}\n"
-        "E-mail: ${contact?.userEmail}\n"
-        "Телефон: ${contact?.userPhone}\n";
-  }
-}
-
-
-/*import 'package:agro/model/message/created.dart';
-import 'package:agro/model/model_order/bids.dart';
-import 'package:agro/model/model_order/model_contact.dart';
-import 'package:agro/model/model_order/quality.dart';
-import 'package:agro/model/model_order/traider_contact.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
@@ -140,11 +51,11 @@ class ModelOrder extends Created {
 }
 
 extension OrderX on ModelOrder {
-  String toText() {
+  String toText(BuildContext context) {
     if (contact == null) {
-      return toTextShort();
+      return toTextShort(context);
     } else {
-      return toTextFull(contact);
+      return toTextFull(contact, context);
     }
   }
 
@@ -169,11 +80,10 @@ extension OrderX on ModelOrder {
         "${context.l.typeOfDelivery}: $deliveryForm\n"
         "${context.l.comment}: $comment\n"
         "${contact?.userName}\n"
-        "${context.l.adress}: ${contact?.userRegion}\n"
+        "${context.l.address}: ${contact?.userRegion}\n"
         "${contact?.userDistrict}\n"
         "${contact?.userCity}\n"
         "${context.l.eMail}: ${contact?.userEmail}\n"
         "${context.l.phone}: ${contact?.userPhone}\n";
   }
 }
-*/
