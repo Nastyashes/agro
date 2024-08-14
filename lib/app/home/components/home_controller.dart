@@ -144,7 +144,8 @@ class HomeController extends BaseController {
     controllerLoading.loadComplete();
   }
 
-  Future<void> onContactClick(ModelOrder order) async {
+  Future<void> onContactClick(ModelOrder order, BuildContext context) async {
+     final String errorTariffMail = context.l.errorTariffMail;
     if (order.contact == null) {
       try {
         if (tariff?.isPremium == false || tariff?.isVip == false) {
@@ -177,20 +178,21 @@ class HomeController extends BaseController {
       } catch (e) {
         notification(
             text:
-                context.l.errorTariffMail);
+                errorTariffMail);
         log("contact doesn't opened");
       }
     }
   }
 
   void onDeal(ModelOrder order) => loadIfValid(() async {
+        final String errorAgreement= context.l.errorAgreement;
         ApiAnswer apiAnswer = await Api().traider.deal(tenderId: order.id!);
 
         log(apiAnswer.data.toString());
         if (apiAnswer.data['status'].toString() == 'true') {
           Get.back();
         } else {
-          notification(text: context.l.errorAgreement);
+          notification(text: errorAgreement);
         }
       });
 

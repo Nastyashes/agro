@@ -84,6 +84,7 @@ class LaunchPhone extends StatelessWidget {
     LaunchMode mode = LaunchMode.externalApplication,
   }) async {
     const String url = 'tg://msg';
+    final String errorTelegram= context.l.errorTelegram;
 
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(
@@ -93,7 +94,7 @@ class LaunchPhone extends StatelessWidget {
     } else {
       notification(
         text:
-            context.l.errorTelegram,
+           errorTelegram,
       );
     }
   }
@@ -104,6 +105,7 @@ class LaunchPhone extends StatelessWidget {
     LaunchMode mode = LaunchMode.externalApplication,
   }) async {
     final String url = 'viber://chat?number=$phone';
+    final String errorViber= context.l.errorViber;
 
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(
@@ -113,7 +115,7 @@ class LaunchPhone extends StatelessWidget {
     } else {
       notification(
         text:
-            context.l.errorViber,
+            errorViber,
       );
     }
   }

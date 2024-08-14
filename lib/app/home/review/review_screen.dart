@@ -1,6 +1,7 @@
 import 'package:agro/app/home/review/components/block_review.dart';
 import 'package:agro/app/home/review/components/review_controller.dart';
 import 'package:agro/ui/buttons/b_transparent_scalable_button.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -27,7 +28,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
   @override
   Widget build(BuildContext context) {
     return BlockPageScreen(
-        header: 'Відгуки',
+        header: context.l.reviews,
         isBack: true,
         endWidget: BTransparentScalableButton(onPressed: controller.onAddReviewPage, scale: ScaleFormat.big, child: const Icon(Icons.add, color: Color(0xffFCD300), size: 40)),
         theme: SystemUiOverlayStyle.dark,

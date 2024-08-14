@@ -1,5 +1,5 @@
 import 'package:agro/app/home/order/components/call_result_info.dart';
-import 'package:agro/app/home/order/components/orderInfo.dart';
+import 'package:agro/app/home/order/components/order_info.dart';
 import 'package:agro/app/home/order/components/order_controller.dart';
 import 'package:agro/app/home/order/components/sphere/seeds.dart';
 import 'package:agro/app/home/order/components/traiders_contacts.dart';
@@ -51,7 +51,7 @@ class OilOrder extends StatelessWidget {
       const SizedBox(height: 10),
       controller.modelUser!.isTraider
           ? CallResultInfo(
-              text: controller.result?.label ?? context.l.establish,
+              text: controller.result?.getLabel(context) ?? context.l.establish,
               textColor: controller.result?.color,
               onPressed: () => controller.onSetAnswer(context),
             )
@@ -85,7 +85,7 @@ class OilOrder extends StatelessWidget {
         traiderContacts(
             controller.modelOrder?.traiderContacts ?? [],
             controller.tariff!.isVip || controller.tariff!.isPremium,
-            (phone) => {controller.onLaunchPhone(context, phone)})
+            (phone) => {controller.onLaunchPhone(context, phone)}, context)
     ]);
   }
 }

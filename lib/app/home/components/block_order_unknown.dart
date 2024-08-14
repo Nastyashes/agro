@@ -149,7 +149,7 @@ class _BlockOrderUnknownState extends State<BlockOrderUnknown> {
                               padding: const EdgeInsets.only(top: 10),
                               child: CallResultInfo(
                                   text:
-                                      widget.answer?.result?.label ?? context.l.notInstalled,
+                                      widget.answer?.result?.getLabel(context) ?? context.l.notInstalled,
                                   horizontalPadding: 0,
                                   textColor: widget.answer?.result?.color,
                                   onPressed: () {}))
@@ -194,7 +194,7 @@ class _BlockOrderUnknownState extends State<BlockOrderUnknown> {
                                                         isProgressShow = true;
                                                       });
                                                   controller.onContactClick(
-                                                      widget.modelOrder,);
+                                                      widget.modelOrder, context);
                                                 })))
                                     : const SizedBox(),
 
@@ -213,7 +213,7 @@ class _BlockOrderUnknownState extends State<BlockOrderUnknown> {
                                             widget.onPressed(model: widget.modelOrder))),
 
                                 //додаткові кнопки
-                                //TODO
+                  
                               ],
                             )),
                       ]

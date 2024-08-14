@@ -149,7 +149,7 @@ class _BlockOrderOilState extends State<BlockOrderOil> {
                               padding: const EdgeInsets.only(top: 10),
                               child: CallResultInfo(
                                   text:
-                                      widget.answer?.result?.label ?? context.l.notInstalled,
+                                      widget.answer?.result?.getLabel(context) ?? context.l.notInstalled,
                                   horizontalPadding: 0,
                                   textColor: widget.answer?.result?.color,
                                   onPressed: () {}))
@@ -190,7 +190,7 @@ class _BlockOrderOilState extends State<BlockOrderOil> {
                                                         isProgressShow = true;
                                                       });
                                                   controller.onContactClick(
-                                                      widget.modelOrder,);
+                                                      widget.modelOrder, context);
                                                 })))
                                     : const SizedBox(),
 
@@ -209,7 +209,7 @@ class _BlockOrderOilState extends State<BlockOrderOil> {
                                             widget.onPressed(model: widget.modelOrder))),
 
                                 //додаткові кнопки
-                                //TODO
+                        
                               ],
                             )),
                       ]

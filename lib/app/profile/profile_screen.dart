@@ -76,7 +76,7 @@ class ProfileScreen extends GetView<ProfileController> {
                                   icon: Assets.accountPrivacy,
                                   onPressed: controller.onPrivacy),
                               BlockSetting(
-                                  header: "Тарифи",
+                                  header: context.l.tariffs,
                                   icon: Assets.accountTariffs,
                                   onPressed: controller.onTariffs),
                               BlockSetting(

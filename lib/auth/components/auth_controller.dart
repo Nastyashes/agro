@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:agro/ui/local_notification/local_notification.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -14,6 +15,7 @@ import '../../controllers/app_input_controller.dart';
 class AuthController extends FormController {
   late Function(VoidCallback fn) setState;
   late BuildContext c;
+  late BuildContext context;
   late TextEditingController numberController;
   List<MaskTextInputFormatter> maskFormatterNumber = [
     MaskTextInputFormatter(
@@ -43,6 +45,8 @@ class AuthController extends FormController {
       Uri.parse('viber://chat?number=${Uri.encodeComponent('+380990026222')}'));
 
   void onLogin() => loadIfValid(() async {
+    final String  numberNoRegistered = context.l.numberNoRegistered;
+
         ApiAnswer apiAnswer = await Api().auth.loginNumber(
             number: '+${numberController.text.replaceAll(RegExp('\\D'), '')}');
 
@@ -53,7 +57,7 @@ class AuthController extends FormController {
         } else {
           notification(
               text:
-                  "Цей номер не зареєстрований, перевірте дані та повторіть спробу");
+                  numberNoRegistered);
           //Get.offAllNamed(Routes.authRegisterOk);
         }
       }, c: c);

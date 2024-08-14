@@ -142,6 +142,7 @@ class OrderController extends BaseController {
   void onAddPriceSave(
           String currency, String paymentForm, String price, int orderId) =>
       loadIfValid(() async {
+        final String errorAddPrice= context.l.errorAddPrice;
         ApiAnswer apiAnswer = await Api().traider.addPrice(
             orderId: orderId,
             price: price,
@@ -156,11 +157,12 @@ class OrderController extends BaseController {
         } else {
           notification(
               text:
-                  context.l.errorAddPrice);
+                  errorAddPrice);
         }
       });
 
   Future<void> onContactClick() async {
+    final String errorTariffMail= context.l.errorTariffMail;
     if (contact.userName == null) {
       try {
         if (tariff?.isPremium == false || tariff?.isVip == false) {
@@ -192,7 +194,7 @@ class OrderController extends BaseController {
         log("contact doesn't opened");
         notification(
             text:
-                context.l.errorTariffMail);
+                errorTariffMail);
       }
       } else {
         setState(() {
@@ -224,6 +226,7 @@ class OrderController extends BaseController {
   }
 
   void onDeal() => loadIfValid(() async {
+    final String errorAgreement= context.l.errorAgreement;
         ApiAnswer apiAnswer =
             await Api().traider.deal(tenderId: modelOrder!.id!);
 
@@ -233,18 +236,26 @@ class OrderController extends BaseController {
           modelOrderPrice = [];
           onLoadPrice();
         } else {
-          notification(text: context.l.errorAgreement);
+          notification(text: errorAgreement);
         }
       });
 
   void checkSendOffer() => loadIfValid(() async {
+    final String setTicketSettings= context.l.setTicketSettings;
+    final String areYouSure = context.l.areYouSure;
+    final String yourProposalSent = context.l.yourProposalSent;
+    final String clickOk = context.l.clickOk;
+    final String wth = context.l.wth;
+    final String notEnoughMessages = context.l.notEnoughMessages;
+
+
         ApiAnswer apiAnswer =
             await Api().traider.checkSendOffer(sphere: modelOrder?.sphere);
         log(apiAnswer.data.toString());
         if (apiAnswer.data['status'] == '-') {
           notification(
               text:
-                  context.l.setTicketSettings);
+                  setTicketSettings);
           return;
         }
         asId = apiAnswer.data['as_id'];
@@ -255,17 +266,16 @@ class OrderController extends BaseController {
             int.tryParse(apiAnswer.data['abonents'].toString()) ?? 0;
         if (smsCount >= abonents) {
           showConfirmDialog(
-              title: context.l.areYouSure,
+              title: areYouSure,
               text:
-                  context.l.yourProposalSent,
+                  ' $yourProposalSent $abonents $clickOk',
               onConfirm: () {
                 onSendOffer(context);
               });
         } else {
           showConfirmDialog(
-              title: context.l.areYouSure,
-              text:
-                  context.l.notEnoughMessages,
+              title: areYouSure,
+              text:'$notEnoughMessages $abonents $wth $smsCount $clickOk',        
               onConfirm: () {
                 onSendOffer(context);
               });
@@ -273,12 +283,14 @@ class OrderController extends BaseController {
       });
 
   void onSendOffer(BuildContext context) => loadIfValid(() async {
+    final String offerSent = context.l.offerSent;
+    final String abonen = context.l.abonen;
         ApiAnswer apiAnswer = await Api().traider.sendOffer(asId, sms);
         log(apiAnswer.data.toString());
         if (apiAnswer.data['status'] == '+') {
           final recepients = apiAnswer.data['recepients'];
           notification(
-              text: context.l.offerSent);
+              text: '$offerSent $recepients $abonen' );
           return;
         }
       });

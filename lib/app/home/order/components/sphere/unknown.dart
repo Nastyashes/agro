@@ -1,5 +1,5 @@
 import 'package:agro/app/home/order/components/call_result_info.dart';
-import 'package:agro/app/home/order/components/orderInfo.dart';
+import 'package:agro/app/home/order/components/order_info.dart';
 import 'package:agro/app/home/order/components/order_controller.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/ui/text/read_text.dart';
@@ -39,7 +39,7 @@ class UnknownOrder extends StatelessWidget {
       const SizedBox(height: 10),
       controller.modelUser!.isTraider
           ? CallResultInfo(
-              text: controller.result?.label ?? context.l.establish,
+              text: controller.result?.getLabel(context) ?? context.l.establish,
               textColor: controller.result?.color,
               onPressed: () => controller.onSetAnswer(context),
             )

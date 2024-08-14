@@ -4,6 +4,7 @@ import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
 class PhoneNumberItem extends StatefulWidget {
@@ -42,7 +43,7 @@ class PhoneNumberItemState extends State<PhoneNumberItem> {
           widget.number.isNotEmpty
               ? BTransparentScalableButton(
                   onPressed: () {
-                    if (widget.number != "Не вказано") {
+                    if (widget.number != context.l.unspecified) {
                       widget.onPhoneClick();
                     }
                   },
@@ -51,15 +52,14 @@ class PhoneNumberItemState extends State<PhoneNumberItem> {
                       text: widget.number,
                       style: AppFonts.body1medium.additionalGreen))
               : AppOutlinedButton(
-                  text: phoneOpen ? widget.number : "Телефон",
+                  text: phoneOpen ? widget.number : context.l.phone,
                   onTap: () {
                     setState(() {
                       if (widget.canOpenPhone) {
                         phoneOpen = true;
                       } else {
                         notification(
-                            text:
-                                "Ця можливість для платних користувачів. Деталі в телеграм t.me/uagro_oper");
+                            text: context.l.thisCapabilityPaid);
                       }
                     });
                   },

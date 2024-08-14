@@ -2,13 +2,14 @@ import 'package:agro/app/home/order/components/phone_number_item.dart';
 import 'package:agro/model/model_order/traider_contact.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
-Widget traiderContacts(List<TraiderContact> contacts, bool canOpenPhone, Function(String) onLaunchPhone) {
+Widget traiderContacts(List<TraiderContact> contacts, bool canOpenPhone, Function(String) onLaunchPhone, BuildContext context) {
   return Column(
     children: [
       readText(
-        text: 'Відкривали номер 4 трейдери:',
+        text: context.l.openedByTraders,
         style: AppFonts.body1bold.black,
       ),
       const SizedBox(height: 10),

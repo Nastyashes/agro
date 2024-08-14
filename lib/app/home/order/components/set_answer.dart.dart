@@ -2,6 +2,7 @@ import 'package:agro/model/call_result/call_result.dart';
 import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/views/bottom_drawer_header.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
 class SetAnswer extends StatelessWidget {
@@ -32,14 +33,14 @@ class SetAnswer extends StatelessWidget {
                       vertical: 15,
                       colorText: AppColors.white,
                       colorButt: item.color,
-                      text: item.label,
+                      text: item.getLabel(context),
                       onPressed: () => onAnswered(item),
                     ));
               }),
           bStyle(
               padding: const EdgeInsets.only(
                   left: 20, right: 20, top: 0, bottom: 20),
-              text: 'Закрити',
+              text: context.l.close,
               c: context,
               colorText: AppColors.grey4,
               vertical: 15,

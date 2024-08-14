@@ -141,7 +141,7 @@ class _BlockOrderZernoState extends State<BlockOrderZerno> {
                           ? Padding(
                               padding: const EdgeInsets.only(top: 10),
                               child: CallResultInfo(
-                                  text: widget.answer?.result?.label ??
+                                  text: widget.answer?.result?.getLabel(context) ??
                                       context.l.notInstalled,
                                   horizontalPadding: 0,
                                   textColor: widget.answer?.result?.color,
@@ -186,7 +186,7 @@ class _BlockOrderZernoState extends State<BlockOrderZerno> {
                                                         isProgressShow = true;
                                                       });
                                                       controller.onContactClick(
-                                                          widget.modelOrder);
+                                                          widget.modelOrder, context);
                                                     })))
                                     : const SizedBox(),
 

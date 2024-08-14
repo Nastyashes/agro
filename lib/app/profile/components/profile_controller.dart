@@ -2,6 +2,7 @@ import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/repository/local_storage_repository.dart';
 import 'package:agro/routes/app_pages.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:agro/vars/model_notifier/user_notifier/user_notifier.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -42,13 +43,13 @@ class ProfileController extends BaseController {
           child: CupertinoAlertDialog(
               title: Center(
                   child: readText(
-                      text: 'Видалити профіль?',
+                      text: '${context.l.deleteProfile}?',
                       color: Colors.black,
                       fontWeight: FontWeight.w500,
                       size: 20)),
               content: Center(
                   child: readText(
-                      text: 'Всі ваші дані будуть видалені',
+                      text: context.l.dataWillBeDeleted,
                       color: Colors.black,
                       fontWeight: FontWeight.w400,
                       size: 18,
@@ -67,7 +68,7 @@ class ProfileController extends BaseController {
                             .setActiveButtMenu(val: 0, upd: false);
                         inAppNotification(
                             text:
-                                'Ваш профіль буде видалено через 90 днів, щоб скасувати дію, зайдіть в свій аккаунт',
+                                context.l.profileCancelActionLog,
                             c: c);
                         Get.delete<HomeController>();
                         Get.deleteAll();
@@ -81,7 +82,7 @@ class ProfileController extends BaseController {
                       }
                     },
                     child: readText(
-                        text: 'Так',
+                        text: context.l.yes,
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
                         size: 20)),
@@ -89,7 +90,7 @@ class ProfileController extends BaseController {
                     isDestructiveAction: true,
                     onPressed: () => Navigator.pop(c),
                     child: readText(
-                        text: 'Скасувати',
+                        text: context.l.cancel,
                         color: const Color(0xffFF1616),
                         fontWeight: FontWeight.w500,
                         size: 20))
@@ -102,13 +103,13 @@ class ProfileController extends BaseController {
           child: CupertinoAlertDialog(
               title: Center(
                   child: readText(
-                      text: 'Вийти з профілю?',
+                      text: '${context.l.logOutOfProfile}?',
                       color: Colors.black,
                       fontWeight: FontWeight.w500,
                       size: 20)),
               content: Center(
                   child: readText(
-                      text: 'Всі ваші дані на даному девайсі буде видалено',
+                      text: context.l.dataDeviceDeleted,
                       color: Colors.black,
                       fontWeight: FontWeight.w400,
                       size: 18,
@@ -135,7 +136,7 @@ class ProfileController extends BaseController {
                       }
                     },
                     child: readText(
-                        text: 'Так',
+                        text: context.l.yes,
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
                         size: 20)),
@@ -143,7 +144,7 @@ class ProfileController extends BaseController {
                     isDestructiveAction: true,
                     onPressed: () => Navigator.pop(c),
                     child: readText(
-                        text: 'Скасувати',
+                        text: context.l.cancel,
                         color: const Color(0xffFF1616),
                         fontWeight: FontWeight.w500,
                         size: 20))
