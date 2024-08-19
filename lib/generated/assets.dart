@@ -52,4 +52,5 @@ class Assets {
   static const String dobriva = 'picture/components/dobriva.svg';
   static const String seeds = 'picture/components/seeds.svg';
   static const String oil = 'picture/components/oil.svg';
+  static const String qrScan = 'picture/app/account/qr_code_scan.svg';
 }

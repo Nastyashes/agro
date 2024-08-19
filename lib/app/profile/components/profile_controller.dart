@@ -36,6 +36,8 @@ class ProfileController extends BaseController {
 
   void onTariffs() => Get.toNamed(Routes.tariffs);
 
+  void onQrScan() => Get.toNamed(Routes.scanQrCode);
+
   void onDeleteAccount(BuildContext context) => showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext c) => Theme(

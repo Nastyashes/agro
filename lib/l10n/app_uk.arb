@@ -114,5 +114,10 @@
   "notActualKey": "Заявка не актуальна",
   "paymentFormF1": "1ф. (по перерахунку)",
   "paymentFormF2": "2ф. (готівка)",
+  "scanQrCode": "Cканувати QR-код",
+  "failedScan": "Не вдалося відсканувати QR-код",
+  "codeFound": "QR-код знайдено!",
+  "codeDetected": "Виявлено QR-код",
+  "result": "Результат: ",
   "@save": {}
 }

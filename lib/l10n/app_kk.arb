@@ -114,6 +114,11 @@
   "notActualKey": "Өтiнiмнiң iс-арызы",
   "paymentFormF1": "1 e/a (қайта есептеу бойынша)",
   "paymentFormF2": "2 лб. (қолма-қол ақша)",
+  "scanQrCode": "QR кодын сканерлеу",
+  "failedScan": "QR кодын сканерлеу мүмкін емес",
+  "codeFound": "QR коды табылды!",
+  "codeDetected": "QR коды анықталды",
+  "result": "Нәтижесі: ",
   "@save": {},
   "@@locale": "kk"
 }

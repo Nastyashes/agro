@@ -64,6 +64,11 @@ class ProfileScreen extends GetView<ProfileController> {
                           child: Column(
                             children: [
                               BlockSetting(
+                                header: context.l.scanQrCode,
+                                icon: Assets.qrScan,
+                                onPressed: () => controller.onQrScan(),
+                              ),
+                              BlockSetting(
                                   header: context.l.ourSite,
                                   icon: Assets.accountSite,
                                   onPressed: controller.onSite),
