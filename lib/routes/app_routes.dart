@@ -10,4 +10,6 @@ abstract class Routes {
   static const splash = "/splash";
   static const tariffs = "/tariffs";
   static const scanQrCode = "/scanQrCode";
+  static const profile = "/profile";
+
 }

@@ -116,9 +116,10 @@
   "paymentFormF2": "2 лб. (қолма-қол ақша)",
   "scanQrCode": "QR кодын сканерлеу",
   "failedScan": "QR кодын сканерлеу мүмкін емес",
-  "codeFound": "QR коды табылды!",
-  "codeDetected": "QR коды анықталды",
-  "result": "Нәтижесі: ",
+  "loginSuccess": "Кіру сәттілік",
+  "loginFailed": "Кіру жаңылысы",
+  "qrNotValidForLogin": "QR коды кіру үшін жарамсыз.",
+  "error": "Қате",
   "@save": {},
   "@@locale": "kk"
 }

@@ -1,5 +1,6 @@
 import 'package:agro/app/home/review/review_screen.dart';
 import 'package:agro/app/profile/components/scan_qr_code.dart';
+import 'package:agro/app/profile/profile_screen.dart';
 import 'package:agro/app/profile/tariffs/tariffs_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
@@ -28,6 +29,8 @@ abstract class AppPages {
         GetPage(name: Routes.review, page: () => const ReviewScreen(), binding: ReviewBinding()),
         GetPage(name: Routes.tariffs, page: () => const TariffsScreen()),
         GetPage(name: Routes.scanQrCode, page: () => const QRScannerScreen()),
+        GetPage(name: Routes.profile, page: () => const ProfileScreen()),
+
         
       ];
 }

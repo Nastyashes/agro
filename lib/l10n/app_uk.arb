@@ -116,8 +116,9 @@
   "paymentFormF2": "2ф. (готівка)",
   "scanQrCode": "Cканувати QR-код",
   "failedScan": "Не вдалося відсканувати QR-код",
-  "codeFound": "QR-код знайдено!",
-  "codeDetected": "Виявлено QR-код",
-  "result": "Результат: ",
+  "loginSuccess": "Вхід yспішний",
+  "loginFailed": "Не вдалося увійти",
+  "qrNotValidForLogin": "QR код не дійсний для входу.",
+  "error": "Помилка",
   "@save": {}
 }
