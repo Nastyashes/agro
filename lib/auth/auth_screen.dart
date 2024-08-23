@@ -66,7 +66,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           c: c,
                           vertical: 18,
                           active: controller.numberController.text.length == 16,
-                          onPressed: controller.onLogin),
+                          onPressed: () => {controller.onLogin(context)}),
                       const Spacer(),
                       Row(
                           mainAxisAlignment: MainAxisAlignment.center,

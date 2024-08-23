@@ -74,7 +74,7 @@ class SeedsOrder extends StatelessWidget {
           c: context,
           vertical: 15,
           colorButt: AppColors.yellow,
-          onPressed: () => {controller.checkSendOffer()})
+          onPressed: () => {controller.checkSendOffer(context)})
     ]);
   }
 

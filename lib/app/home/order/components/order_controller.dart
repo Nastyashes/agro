@@ -29,7 +29,6 @@ import '../../../../vars/model_notifier/user_notifier/user_notifier.dart';
 
 class OrderController extends BaseController {
   late Function(VoidCallback fn) setState;
-  late BuildContext context;
   ModelOrder? modelOrder;
   ModelContact contact = ModelContact();
   Tariff? tariff;
@@ -139,10 +138,10 @@ class OrderController extends BaseController {
             Navigator.pop(c);
           }));
 
-  void onAddPriceSave(
+  void onAddPriceSave(BuildContext context,
           String currency, String paymentForm, String price, int orderId) =>
       loadIfValid(() async {
-        final String errorAddPrice= context.l.errorAddPrice;
+        final String errorAddPrice = context.l.errorAddPrice;
         ApiAnswer apiAnswer = await Api().traider.addPrice(
             orderId: orderId,
             price: price,
@@ -161,8 +160,8 @@ class OrderController extends BaseController {
         }
       });
 
-  Future<void> onContactClick() async {
-    final String errorTariffMail= context.l.errorTariffMail;
+  Future<void> onContactClick(BuildContext context) async {
+    final String errorTariffMail = context.l.errorTariffMail;
     if (contact.userName == null) {
       try {
         if (tariff?.isPremium == false || tariff?.isVip == false) {
@@ -225,8 +224,8 @@ class OrderController extends BaseController {
     }
   }
 
-  void onDeal() => loadIfValid(() async {
-    final String errorAgreement= context.l.errorAgreement;
+  void onDeal(BuildContext context) => loadIfValid(() async {
+    final String errorAgreement = context.l.errorAgreement;
         ApiAnswer apiAnswer =
             await Api().traider.deal(tenderId: modelOrder!.id!);
 
@@ -240,7 +239,7 @@ class OrderController extends BaseController {
         }
       });
 
-  void checkSendOffer() => loadIfValid(() async {
+  void checkSendOffer(BuildContext context) => loadIfValid(() async {
     final String setTicketSettings= context.l.setTicketSettings;
     final String areYouSure = context.l.areYouSure;
     final String yourProposalSent = context.l.yourProposalSent;

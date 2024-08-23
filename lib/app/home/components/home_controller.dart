@@ -32,11 +32,10 @@ class HomeController extends BaseController {
   late ModelUser modelUser;
   late final RefreshController controllerLoading;
   late final ScrollController controllerScroll;
-  String messHeader = '';
+  String? messHeader;
   int total = 0;
   final _localStorageRepository = LocalStorageRepository();
   final _interstitial = Interstitial();
-
   int page = 1;
   List<ModelOrder> modelOrder = [];
   List<Answer> callResults = [];
@@ -66,13 +65,13 @@ class HomeController extends BaseController {
     loadRequest();
   }
 
-  void fermerCreateOrder() => loadIfValid(() async {
+  void fermerCreateOrder(String message) => loadIfValid(() async {
         ApiAnswer apiAnswer = await Api().fermer.createOrder();
 
         if (context.mounted) {
           if (apiAnswer.data['status']) {
             notification(
-              text: context.l.applicationSent,
+              text: message,
             );
           } else {
             notification(text: apiAnswer.data['message']);
@@ -145,7 +144,6 @@ class HomeController extends BaseController {
   }
 
   Future<void> onContactClick(ModelOrder order, BuildContext context) async {
-     final String errorTariffMail = context.l.errorTariffMail;
     if (order.contact == null) {
       try {
         if (tariff?.isPremium == false || tariff?.isVip == false) {
@@ -176,16 +174,15 @@ class HomeController extends BaseController {
           });
         }
       } catch (e) {
-        notification(
-            text:
-                errorTariffMail);
+        if(context.mounted) {
+          notification(text: context.l.errorTariffMail);
+        }
         log("contact doesn't opened");
       }
     }
   }
 
-  void onDeal(ModelOrder order) => loadIfValid(() async {
-        final String errorAgreement= context.l.errorAgreement;
+  void onDeal(ModelOrder order, String errorAgreement) => loadIfValid(() async {
         ApiAnswer apiAnswer = await Api().traider.deal(tenderId: order.id!);
 
         log(apiAnswer.data.toString());
@@ -256,17 +253,16 @@ class HomeController extends BaseController {
     controllerLoading.refreshCompleted();
   }
 
- void onTariffInfo() async {
-  try {
-    ApiAnswer apiAnswer = await Api().traider.getTariff();
-    setState(() {
-      messHeader = context.l.applications;
-      tariff = Tariff.fromJson(apiAnswer.data['payload']);
-    });
-  } catch (e) {
-    log(e.toString(), error: e);
+  void onTariffInfo() async {
+    try {
+      ApiAnswer apiAnswer = await Api().traider.getTariff();
+      setState(() {
+        tariff = Tariff.fromJson(apiAnswer.data['payload']);
+      });
+    } catch (e) {
+      log(e.toString(), error: e);
+    }
   }
-}
 
   Future<void> onMessages() async {
     try {

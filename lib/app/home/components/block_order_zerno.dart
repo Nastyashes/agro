@@ -217,7 +217,7 @@ class _BlockOrderZernoState extends State<BlockOrderZerno> {
                                               vertical: 15,
                                               onPressed: () {
                                                 controller
-                                                    .onDeal(widget.modelOrder);
+                                                    .onDeal(widget.modelOrder, context.l.errorAgreement);
                                               }))),
                                 ]
                               ],

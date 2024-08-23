@@ -15,7 +15,6 @@ import '../../controllers/app_input_controller.dart';
 class AuthController extends FormController {
   late Function(VoidCallback fn) setState;
   late BuildContext c;
-  late BuildContext context;
   late TextEditingController numberController;
   List<MaskTextInputFormatter> maskFormatterNumber = [
     MaskTextInputFormatter(
@@ -44,9 +43,7 @@ class AuthController extends FormController {
   void onContactViber() => launchUrl(
       Uri.parse('viber://chat?number=${Uri.encodeComponent('+380990026222')}'));
 
-  void onLogin() => loadIfValid(() async {
-    final String  numberNoRegistered = context.l.numberNoRegistered;
-
+  void onLogin(BuildContext context) => loadIfValid(() async {
         ApiAnswer apiAnswer = await Api().auth.loginNumber(
             number: '+${numberController.text.replaceAll(RegExp('\\D'), '')}');
 
@@ -55,9 +52,7 @@ class AuthController extends FormController {
         if (apiAnswer.data['status']) {
           Get.offAllNamed(Routes.authConfirm);
         } else {
-          notification(
-              text:
-                  numberNoRegistered);
+          context.mounted ? notification(text: context.l.numberNoRegistered) : {};
           //Get.offAllNamed(Routes.authRegisterOk);
         }
       }, c: c);

@@ -61,7 +61,7 @@ class ReviewController extends FormController {
 
   void onAddReviewPage() => showCupertinoModalBottomSheet(topRadius: const Radius.circular(30), context: c, builder: (c) => const AddReviewScreen());
 
-  void onAddReview() => loadIfValid(() async {
+  void onAddReview(BuildContext context) => loadIfValid(() async {
     final String needWriteReview = context.l.needWriteReview;
     final String feedbackAdded = context.l.feedbackAdded;
     final String errorAddingReview = context.l.errorAddingReview;

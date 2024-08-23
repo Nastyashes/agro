@@ -103,7 +103,7 @@ class ZernoOrder extends StatelessWidget {
                             Border.all(color: AppColors.darkGreen, width: 1),
                         colorButt: Colors.transparent,
                         onPressed: () {
-                          controller.onContactClick();
+                          controller.onContactClick(context);
                         })),
             controller.tariff?.isVip == true
                 ? Expanded(
@@ -113,7 +113,7 @@ class ZernoOrder extends StatelessWidget {
                         colorText: AppColors.white,
                         vertical: 15,
                         onPressed: () {
-                          controller.onDeal();
+                          controller.onDeal(context);
                         }))
                 : const SizedBox(),
             SizedBox(

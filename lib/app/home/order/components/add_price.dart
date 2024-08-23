@@ -139,7 +139,7 @@ class _AddPriceScreenState extends State<AddPriceScreen> {
                 vertical: 15,
                 colorButt: const Color(0xffFCD300),
                 onPressed: () =>
-                    controller.onAddPriceSave(currency.json, paymentForm.json, priceController.text, widget.order.id!))
+                    controller.onAddPriceSave(context, currency.json, paymentForm.json, priceController.text, widget.order.id!))
           ],
         ),
       ),

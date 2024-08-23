@@ -48,20 +48,25 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: EdgeInsets.only(
             left: controller.modelUser.isTraider ? 30 : 40,
             right: controller.modelUser.isTraider ? 30 : 0),
-        header: controller.modelUser.isTraider ? null : context.l.yourApplications,
+        header:
+            controller.modelUser.isTraider ? null : context.l.yourApplications,
         headerWidget: controller.modelUser.isTraider
-            ? Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:  HomeHeader(
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: HomeHeader(
                     tariff: controller.tariff, total: controller.total))
             : null,
         endWidget: controller.modelUser.isTraider
             ? null
             : BTransparentScalableButton(
-                onPressed: controller.fermerCreateOrder,
+                onPressed: () => {controller.fermerCreateOrder(context.l.applicationSent)},
                 scale: ScaleFormat.big,
                 child: Row(
                   children: [
                     const Icon(Icons.add, color: Color(0xffFCD300), size: 45),
-                    readText(text: context.l.add, style: AppFonts.title2.withColor(AppColors.mainGreen)),
+                    readText(
+                        text: context.l.add,
+                        style: AppFonts.title2.withColor(AppColors.mainGreen)),
                   ],
                 )),
         theme:
