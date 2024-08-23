@@ -7,31 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:180463119032:android:8f98c7ac6ec5c79703624d",
-        "android_client_info": {
-          "package_name": "aom.uagro.app"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBv4vvU7rDHRwUdHtgvOokEDRWvVywUWwM"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:180463119032:android:0a0d155ee4cb3b1003624d",
         "android_client_info": {
           "package_name": "com.uagro.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "180463119032-4u0venb6no7l0hm89m7n3p351f73cr5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBv4vvU7rDHRwUdHtgvOokEDRWvVywUWwM"
@@ -39,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "180463119032-4u0venb6no7l0hm89m7n3p351f73cr5l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
