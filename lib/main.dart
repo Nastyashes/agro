@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:agro/app/country/country_screen.dart';
 import 'package:agro/firebase_options.dart';
 import 'package:agro/model/answer/answer.dart';
 import 'package:agro/model/call_result/call_result.dart';
@@ -137,6 +138,13 @@ class MyStart extends HookWidget {
     await Future.delayed(const Duration(milliseconds: 100));
 
     if (c.mounted) {
+      var box = Hive.box('data');
+      String? selectedCountry = box.get('selectedCountry');
+
+      if (selectedCountry == null) {
+        // Перенаправляємо на екран вибору країни, якщо вона не вибрана
+        Get.offAll(() => const CountryScreen());
+      } else {
       ModelUser? modelUser = Hive.box('data').get('modelUser');
       if (modelUser != null && modelUser.token != null) {
         Get.offAllNamed(Routes.app);
@@ -145,4 +153,5 @@ class MyStart extends HookWidget {
       }
     }
   }
+}
 }
