@@ -13,14 +13,17 @@ import '../../../../ui/buttons/b_transparent_scalable_button.dart';
 
 class ContactScreen extends StatelessWidget {
   final ModelContact contact;
+  final String id;
   final bool isVip;
   final Function() onLauchPhone;
   final HomeController controller = Get.find<HomeController>();
 
-   ContactScreen(
-      {super.key, required this.contact, required this.onLauchPhone, this.isVip = false});
-
-
+  ContactScreen(
+      {super.key,
+      required this.contact,
+      required this.id,
+      required this.onLauchPhone,
+      this.isVip = false});
 
   @override
   Widget build(BuildContext context) {
@@ -28,20 +31,21 @@ class ContactScreen extends StatelessWidget {
       color: Colors.transparent,
       child: Column(
         children: [
-         !isVip ?
-          readText(
-              text: 'Контакти фермера',
-              style: AppFonts.title2.black,
-              padding: const EdgeInsets.only(top: 20, bottom: 10)) : const SizedBox(height: 6),
+          !isVip
+              ? readText(
+                  text: 'Контакти фермера',
+                  style: AppFonts.title2.black,
+                  padding: const EdgeInsets.only(top: 20, bottom: 10))
+              : const SizedBox(height: 6),
           orderInfo(header: 'ПІБ', text: contact.userName.toString()),
           orderInfo(header: 'Регіон', text: contact.userRegion.toString()),
           orderInfo(header: 'Район', text: contact.userDistrict.toString()),
-           orderInfo(
+          orderInfo(
             header: 'Місто',
             text: contact.userCity.orNotSet(),
             icon: IconButton(
               icon: SvgPicture.asset(Assets.location, width: 24),
-              onPressed: () => controller.launchMap(context, contact),
+              onPressed: () => controller.launchMap(context, contact, id),
               alignment: Alignment.topCenter,
               padding: EdgeInsets.zero,
             ),
@@ -60,19 +64,19 @@ class ContactScreen extends StatelessWidget {
     );
   }
 
-  Widget orderInfo(
-          {required String header,
-          required String text,
-          Function()? onPressed,
-          Widget? icon,}) =>
+  Widget orderInfo({
+    required String header,
+    required String text,
+    Function()? onPressed,
+    Widget? icon,
+  }) =>
       Padding(
           padding: const EdgeInsets.only(bottom: 6),
           child: BTransparentScalableButton(
               onPressed: onPressed ?? () {},
               scale: onPressed == null ? ScaleFormat.none : ScaleFormat.small,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              child:
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 readText(
                     text: header, color: const Color(0xffA9A9A9), size: 20),
                 Expanded(
@@ -82,6 +86,6 @@ class ContactScreen extends StatelessWidget {
                         size: 20,
                         fontWeight: FontWeight.w500,
                         align: TextAlign.end)),
-                        if (icon != null) icon,
+                if (icon != null) icon,
               ])));
 }

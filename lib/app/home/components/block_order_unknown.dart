@@ -159,6 +159,7 @@ class _BlockOrderUnknownState extends State<BlockOrderUnknown> {
                             ? ContactScreen(
                                 isVip: widget.modelOrder.contact != null,
                                 contact: widget.modelOrder.contact!,
+                                id: widget.modelOrder.id.toString(),
                                 onLauchPhone: () => controller.onLaunchPhone(
                                     context, widget.modelOrder.contact!))
                             : const SizedBox(),

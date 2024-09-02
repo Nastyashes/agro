@@ -146,6 +146,7 @@ class _BlockOrderDobrivaState extends State<BlockOrderDobriva> {
                             ? ContactScreen(
                                 isVip: widget.modelOrder.contact != null,
                                 contact: widget.modelOrder.contact!,
+                                id: widget.modelOrder.id.toString(), //TODO check what number
                                 onLauchPhone: () => controller.onLaunchPhone(
                                     context, widget.modelOrder.contact!))
                             : const SizedBox(),

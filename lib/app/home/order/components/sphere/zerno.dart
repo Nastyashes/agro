@@ -48,6 +48,7 @@ class ZernoOrder extends StatelessWidget {
               controller.contactOpened)
           ? ContactScreen(
               contact: controller.contact,
+              id: controller.modelOrder?.id?.toString() ?? "",
               onLauchPhone: () => controller.onLaunchPhone(
                   context, controller.contact.userPhone))
           : const SizedBox(),

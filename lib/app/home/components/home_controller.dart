@@ -34,7 +34,6 @@ class HomeController extends BaseController {
   late final RefreshController controllerLoading;
   late final ScrollController controllerScroll;
   String messHeader = 'Заявки';
-  int total = 0;
   final _localStorageRepository = LocalStorageRepository();
   final _interstitial = Interstitial();
 
@@ -110,9 +109,6 @@ class HomeController extends BaseController {
         setState(() {
           if (c.mounted) {
             if (apiAnswer.data['status']) {
-              total =
-                  int.tryParse(apiAnswer.data['payload']['total'].toString()) ??
-                      0;
               for (final i in apiAnswer.data['payload']['items']) {
                 modelOrder.add(structOrderData(data: i));
               }
@@ -276,14 +272,14 @@ class HomeController extends BaseController {
       log(e.toString(), error: e);
     }
   }
-   void launchMap(BuildContext context, ModelContact contact) {
+   Future<void> launchMap(BuildContext context, ModelContact contact, String id) async {
     final region = contact.userRegion;
     final district = contact.userDistrict;
     final city = contact.userCity;
 
     if (region == null || region.isEmpty || district == null || district.isEmpty || city == null || city.isEmpty) {
       notification(text: 'Почекайте 5 хв, відкоригуємо адресу');
-      
+      await Api().common.sendMessageToBot("Номер ${modelUser.phone} запросив адрес фермера $id. Відкоригуйте адресу");
     } else {
       final query = '$city $region $district';
       MapsLauncher.launchQuery(query);

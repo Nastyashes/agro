@@ -6,13 +6,15 @@ class Tariff {
       balanceSms,
       balanceContactsDayTotal,
       balanceContactsDayOsttk,
-      tafiffId;
+      tafiffId,
+      orderCount;
   DateTime? balanceEnd;
 
   Tariff.fromJson(Map<String, dynamic> json) {
     vip = json['is_vip'];
     premium = json['is_premium'];
     balanceName = json['balance_name'];
+    orderCount = json['orders_count'];
 
     balanceContacts = int.tryParse(json['balance_contacts'].toString());
     balanceSms = int.tryParse(json['balance_sms'].toString());

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:agro/server/api/controller/common.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -15,18 +16,23 @@ int numRequestSend = 0;
 
 class Api {
   //   'Authorization': 'Bearer ${Hive.box('data').get('modelUser') != null ? Hive.box('data').get('modelUser').token : ''}',
-  Map<String, String> headers() => {
-       'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      };
+  Map<String, String> headers() =>
+      {'Content-Type': 'application/json', 'Accept': 'application/json'};
 
-  Map<String, String> headersNoBearer() => {'Content-Type': 'application/json', 'Accept': 'application/json'};
+  Map<String, String> headersNoBearer() =>
+      {'Content-Type': 'application/json', 'Accept': 'application/json'};
 
   final url = 'https://uagro.trade/apiapp.php';
 
   Future<StreamedResponse> dataRequest(path,
-      {String req = 'POST', String? parameter, bool urlActive = true, bool bearerActive = true, String? body, required BuildContext c}) async {
-    StreamedResponse request = await ((Request(req, Uri.parse('${urlActive ? url : ''}$path?${parameter ?? ''}')))
+      {String req = 'POST',
+      String? parameter,
+      bool urlActive = true,
+      bool bearerActive = true,
+      String? body,
+      required BuildContext c}) async {
+    StreamedResponse request = await ((Request(
+            req, Uri.parse('${urlActive ? url : ''}$path?${parameter ?? ''}')))
           ..headers.addAll(bearerActive ? headers() : headersNoBearer())
           ..body = body ?? json.encode({}))
         .send();
@@ -37,7 +43,10 @@ class Api {
   }
 
   Future<StreamedResponse> dataRequestMultipart(method,
-      {String? parameter, bool urlActive = true, bool bearerActive = true, Map<String, String>? formData}) async {
+      {String? parameter,
+      bool urlActive = true,
+      bool bearerActive = true,
+      Map<String, String>? formData}) async {
     var request = MultipartRequest(
         'POST',
         Uri.parse('${urlActive ? url : ''}?method=$method&'
@@ -60,6 +69,8 @@ class Api {
   Fermer get fermer => Fermer();
 
   Traider get traider => Traider();
+
+  Commmon get common => Commmon();
 }
 
 class ApiAnswer {

@@ -50,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         header: controller.modelUser.isTraider ? null : 'Ваші заявки',
         headerWidget: controller.modelUser.isTraider
             ? Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:  HomeHeader(
-                    tariff: controller.tariff, total: controller.total))
+                    tariff: controller.tariff, total: controller.tariff?.orderCount ?? 0))
             : null,
         endWidget: controller.modelUser.isTraider
             ? null
