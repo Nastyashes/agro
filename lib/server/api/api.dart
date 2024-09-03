@@ -32,6 +32,11 @@ class Api {
     }
   }
 
+  String getLanguage() {
+    var box = Hive.box('data');
+    return box.get('language') ?? 'en';
+  }
+
   //final url = 'https://uagro.trade/apiapp.php';
 
   Future<StreamedResponse> dataRequest(path,
@@ -60,7 +65,7 @@ class Api {
     var request = MultipartRequest(
         'POST',
         Uri.parse('${urlActive ? getUrl() : ''}?method=$method&'
-            'key=${Hive.box('data').get('modelUser') == null || Hive.box('data').get('modelUser').token == null ? '' : Hive.box('data').get('modelUser').token}${parameter == null ? '' : '&$parameter'}'));
+            'key=${Hive.box('data').get('modelUser') == null || Hive.box('data').get('modelUser').token == null ? '' : Hive.box('data').get('modelUser').token}${parameter == null ? '' : '&$parameter'}&lang=${getLanguage()}'));
 
     request.headers.addAll(bearerActive ? headers() : headersNoBearer());
 
@@ -69,7 +74,7 @@ class Api {
         request.fields[key] = value;
       });
     }
-    log('${getUrl()}/?method=$method?${parameter ?? ''}');
+    log('${getUrl()}/?method=$method?${parameter ?? ''}&lang=${getLanguage()}');
 
     return await request.send();
   }

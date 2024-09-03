@@ -1,3 +1,4 @@
+import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
@@ -79,10 +80,12 @@ class ProfileScreen extends GetView<ProfileController> {
                                   header: context.l.privacyPolicy,
                                   icon: Assets.accountPrivacy,
                                   onPressed: controller.onPrivacy),
-                              BlockSetting(
-                                  header: context.l.tariffs,
-                                  icon: Assets.accountTariffs,
-                                  onPressed: controller.onTariffs),
+                              controller.modelUser.value.isTraider
+                                  ? BlockSetting(
+                                      header: context.l.tariffs,
+                                      icon: Assets.accountTariffs,
+                                      onPressed: controller.onTariffs)
+                                  : const SizedBox(),
                               BlockSetting(
                                   header: context.l.deleteProfile,
                                   icon: Assets.accountDelete,
