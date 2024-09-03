@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:agro/app/country/country_screen.dart';
+import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/firebase_options.dart';
 import 'package:agro/model/answer/answer.dart';
 import 'package:agro/model/call_result/call_result.dart';

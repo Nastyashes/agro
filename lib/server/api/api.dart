@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:agro/auth/country/country_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -15,32 +16,50 @@ int numRequestSend = 0;
 
 class Api {
   //   'Authorization': 'Bearer ${Hive.box('data').get('modelUser') != null ? Hive.box('data').get('modelUser').token : ''}',
-  Map<String, String> headers() => {
-       'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      };
+  Map<String, String> headers() =>
+      {'Content-Type': 'application/json', 'Accept': 'application/json'};
 
-  Map<String, String> headersNoBearer() => {'Content-Type': 'application/json', 'Accept': 'application/json'};
+  Map<String, String> headersNoBearer() =>
+      {'Content-Type': 'application/json', 'Accept': 'application/json'};
 
-  final url = 'https://uagro.trade/apiapp.php';
+  String getUrl() {
+    var box = Hive.box('data');
+    String? selectedCountry = box.get('selectedCountry');
+    if (selectedCountry == Country.kazakh.name) {
+      return 'https://uagro.kz/apiapp.php';
+    } else {
+      return "https://uagro.trade/apiapp.php";
+    }
+  }
+
+  //final url = 'https://uagro.trade/apiapp.php';
 
   Future<StreamedResponse> dataRequest(path,
-      {String req = 'POST', String? parameter, bool urlActive = true, bool bearerActive = true, String? body, required BuildContext c}) async {
-    StreamedResponse request = await ((Request(req, Uri.parse('${urlActive ? url : ''}$path?${parameter ?? ''}')))
+      {String req = 'POST',
+      String? parameter,
+      bool urlActive = true,
+      bool bearerActive = true,
+      String? body,
+      required BuildContext c}) async {
+    StreamedResponse request = await ((Request(req,
+            Uri.parse('${urlActive ? getUrl() : ''}$path?${parameter ?? ''}')))
           ..headers.addAll(bearerActive ? headers() : headersNoBearer())
           ..body = body ?? json.encode({}))
         .send();
 
-    log('$url$path${parameter ?? ''}');
+    log('${getUrl()}$path${parameter ?? ''}');
 
     return request;
   }
 
   Future<StreamedResponse> dataRequestMultipart(method,
-      {String? parameter, bool urlActive = true, bool bearerActive = true, Map<String, String>? formData}) async {
+      {String? parameter,
+      bool urlActive = true,
+      bool bearerActive = true,
+      Map<String, String>? formData}) async {
     var request = MultipartRequest(
         'POST',
-        Uri.parse('${urlActive ? url : ''}?method=$method&'
+        Uri.parse('${urlActive ? getUrl() : ''}?method=$method&'
             'key=${Hive.box('data').get('modelUser') == null || Hive.box('data').get('modelUser').token == null ? '' : Hive.box('data').get('modelUser').token}${parameter == null ? '' : '&$parameter'}'));
 
     request.headers.addAll(bearerActive ? headers() : headersNoBearer());
@@ -50,7 +69,7 @@ class Api {
         request.fields[key] = value;
       });
     }
-    log('$url/?method=$method?${parameter ?? ''}');
+    log('${getUrl()}/?method=$method?${parameter ?? ''}');
 
     return await request.send();
   }

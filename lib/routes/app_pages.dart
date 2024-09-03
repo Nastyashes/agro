@@ -1,4 +1,4 @@
-import 'package:agro/app/country/country_screen.dart';
+import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/app/home/review/review_screen.dart';
 import 'package:agro/app/profile/components/scan_qr_code.dart';
 import 'package:agro/app/profile/profile_screen.dart';
