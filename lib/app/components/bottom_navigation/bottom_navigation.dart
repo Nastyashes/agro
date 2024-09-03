@@ -1,4 +1,5 @@
 import 'package:agro/ui/theme/colors.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
 import '../../../generated/assets.dart';
@@ -43,9 +44,9 @@ class BottomNavigation extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 15, right: 15),
                       child: Row(
                         children: [
-                          buttBottomNavigation(icon: Assets.bottomNavigationHome, text: 'Заявки', buttNum: 0, c: context),
-                          buttBottomNavigation(icon: Assets.bottomNavigationHelp, text: 'Підтримка', buttNum: 1, c: context),
-                          buttBottomNavigation(icon: Assets.bottomNavigationProfile, text: 'Профіль', buttNum: 2, c: context),
+                          buttBottomNavigation(icon: Assets.bottomNavigationHome, text: context.l.application, buttNum: 0, c: context),
+                          buttBottomNavigation(icon: Assets.bottomNavigationHelp, text: context.l.support, buttNum: 1, c: context),
+                          buttBottomNavigation(icon: Assets.bottomNavigationProfile, text: context.l.profile, buttNum: 2, c: context),
                         ],
                       ),
                     ),

@@ -1,5 +1,6 @@
 import 'package:agro/model/message/message.dart';
 import 'package:agro/ui/theme/colors.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:get/get.dart';
@@ -58,9 +59,9 @@ class BlockMessage extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(8)),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 10),
-                                  child: const Text(
-                                    "Прочитати",
-                                    style: TextStyle(
+                                  child:  Text(
+                                    context.l.read,
+                                    style: const TextStyle(
                                         fontSize: 20, color: Colors.black),
                                   )))))
             ]),

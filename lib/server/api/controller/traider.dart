@@ -4,6 +4,20 @@ import 'dart:developer';
 import '../api.dart';
 
 class Traider extends Api {
+
+  Future<ApiAnswer> loginWithQr(String code) async {
+   ApiAnswer apiAnswer = ApiAnswer();
+    var request = await dataRequestMultipart('qr_login',
+        parameter:
+            'secret=$code');
+
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+
+    return apiAnswer;
+  } 
+  
   Future<ApiAnswer> getOrderList(
       {required int page, required int limit, String? search}) async {
     ApiAnswer apiAnswer = ApiAnswer();

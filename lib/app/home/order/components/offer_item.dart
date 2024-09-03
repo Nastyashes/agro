@@ -1,10 +1,11 @@
 import 'package:agro/ui/buttons/outlined_button.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-Widget offerItem(int index, String date, String url) {
+Widget offerItem(int index, String date, String url, BuildContext context) {
   return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(children: [
@@ -13,7 +14,7 @@ Widget offerItem(int index, String date, String url) {
         Expanded(
             child: readText(text: date, style: AppFonts.body1medium.black)),
         AppOutlinedButton(
-            text: "Завантажити",
+            text: context.l.download,
             onTap: () {
               launchUrl(Uri.parse(url));
             }),

@@ -3,15 +3,16 @@ import 'package:agro/model/model_order/bids.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/ui/utils/date_extensions.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
-Widget bids(List<Bid> bids) {
+Widget bids(BuildContext context, List<Bid> bids) {
   return Column(
     children: [
       Row(children: [
         Expanded(
             child: readText(
-          text: 'Пропозиції цін на добрива',
+          text: context.l.fertilizerPriceOffers,
           style: AppFonts.body1bold.black,
         )),
         readText(
@@ -24,7 +25,7 @@ Widget bids(List<Bid> bids) {
             i + 1,
             DateTime.fromMillisecondsSinceEpoch(bids[i].created ?? 0)
                 .formatDateTimeShort(),
-            bids[i].priceList.toString())
+            bids[i].priceList.toString(), context)
       ],
       const SizedBox(height: 20)
     ],

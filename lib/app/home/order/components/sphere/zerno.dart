@@ -1,7 +1,7 @@
 import 'package:agro/app/home/order/components/block_price.dart';
 import 'package:agro/app/home/order/components/call_result_info.dart';
 import 'package:agro/app/home/order/components/contact.dart';
-import 'package:agro/app/home/order/components/orderInfo.dart';
+import 'package:agro/app/home/order/components/order_info.dart';
 import 'package:agro/app/home/order/components/order_controller.dart';
 import 'package:agro/app/home/order/components/sphere/seeds.dart';
 import 'package:agro/model/model_order_price/model_order_price.dart';
@@ -11,6 +11,7 @@ import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
 class ZernoOrder extends StatelessWidget {
@@ -22,20 +23,20 @@ class ZernoOrder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const SizedBox(height: 20),
-      orderInfo(header: 'Область', text: controller.modelOrder?.region ?? ''),
-      orderInfo(header: 'Культура', text: controller.modelOrder?.crop ?? ''),
-      orderInfo(header: 'Об’єм', text: controller.modelOrder?.capacity ?? ""),
+      orderInfo(header: context.l.region, text: controller.modelOrder?.region ?? ''),
+      orderInfo(header: context.l.crop, text: controller.modelOrder?.crop ?? ''),
+      orderInfo(header: context.l.volume, text: controller.modelOrder?.capacity ?? ""),
       orderInfo(
-          header: 'Рік врожаю',
+          header: context.l.harvestYear,
           text: controller.modelOrder?.harvestYear.toString() ?? ''),
       orderInfo(
-          header: 'Форма оплати', text: controller.modelOrder?.payment ?? ''),
+          header: context.l.formOfPayment, text: controller.modelOrder?.payment ?? ''),
       orderInfo(
-          header: 'Тип доставки',
+          header: context.l.typeOfDelivery,
           text: controller.modelOrder?.deliveryForm ?? ''),
       if (controller.modelOrder?.comment != null &&
           controller.modelOrder?.comment != '') ...[
-        readText(text: 'Коментар', color: const Color(0xffA9A9A9), size: 20),
+        readText(text: context.l.comment, color: const Color(0xffA9A9A9), size: 20),
         readText(
             text: controller.modelOrder?.comment ?? '',
             color: Colors.black,
@@ -55,7 +56,7 @@ class ZernoOrder extends StatelessWidget {
       const SizedBox(height: 10),
       controller.modelUser!.isTraider
           ? CallResultInfo(
-              text: controller.result?.label ?? "Встановити",
+              text: controller.result?.getLabel(context) ?? context.l.establish,
               textColor: controller.result?.color,
               onPressed: () => controller.onSetAnswer(context),
             )
@@ -66,11 +67,11 @@ class ZernoOrder extends StatelessWidget {
         fermersButton(controller, context)
       ],
       controller.modelOrder?.quality != null
-          ? statisticWidget(controller.modelOrder!.quality!)
+          ? statisticWidget(controller.modelOrder!.quality!, context)
           : const SizedBox(),
       Row(children: [
         readText(
-            text: 'Запропоновані ціни',
+            text: context.l.suggestedPrices,
             style: AppFonts.body1bold.black,
             padding: const EdgeInsets.only(top: 25)),
         const Spacer(),
@@ -95,7 +96,7 @@ class ZernoOrder extends StatelessWidget {
                 ? const SizedBox()
                 : Expanded(
                     child: bStyle(
-                        text: controller.contactOpened ? "Сховати" : 'Контакти',
+                        text: controller.contactOpened ?  context.l.hide : context.l.contacts,
                         c: context,
                         colorText: AppColors.darkGreen,
                         vertical: 15,
@@ -103,17 +104,17 @@ class ZernoOrder extends StatelessWidget {
                             Border.all(color: AppColors.darkGreen, width: 1),
                         colorButt: Colors.transparent,
                         onPressed: () {
-                          controller.onContactClick();
+                          controller.onContactClick(context);
                         })),
             controller.tariff?.isVip == true
                 ? Expanded(
                     child: bStyle(
-                        text: 'Угода',
+                        text: context.l.agreement,
                         c: context,
                         colorText: AppColors.white,
                         vertical: 15,
                         onPressed: () {
-                          controller.onDeal();
+                          controller.onDeal(context);
                         }))
                 : const SizedBox(),
             SizedBox(
@@ -123,7 +124,7 @@ class ZernoOrder extends StatelessWidget {
                     : 0),
             Expanded(
                 child: bStyle(
-                    text: 'Відгуки',
+                    text: context.l.reviews,
                     c: context,
                     colorText: AppColors.darkGreen,
                     vertical: 15,
@@ -134,7 +135,7 @@ class ZernoOrder extends StatelessWidget {
       const SizedBox(height: 16),
       bStyle(
           key: UniqueKey(),
-          text: 'Додати ціну',
+          text: context.l.addPrice,
           c: context,
           vertical: 15,
           colorButt: AppColors.yellow,
@@ -151,8 +152,8 @@ class ZernoOrder extends StatelessWidget {
           padding: const EdgeInsets.only(top: 35),
           text: DateTime.now().millisecondsSinceEpoch >
                   (controller.modelOrder?.endDate?.millisecondsSinceEpoch ?? 0)
-              ? 'Продано'
-              : 'Продав',
+              ? context.l.sold
+              : context.l.sell,
           size: 23,
           c: context,
           active: DateTime.now().millisecondsSinceEpoch <

@@ -1,3 +1,4 @@
+import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
@@ -63,6 +64,11 @@ class ProfileScreen extends GetView<ProfileController> {
                           child: Column(
                             children: [
                               BlockSetting(
+                                header: context.l.scanQrCode,
+                                icon: Assets.qrScan,
+                                onPressed: () => controller.onQrScan(),
+                              ),
+                              BlockSetting(
                                   header: context.l.ourSite,
                                   icon: Assets.accountSite,
                                   onPressed: controller.onSite),
@@ -74,10 +80,12 @@ class ProfileScreen extends GetView<ProfileController> {
                                   header: context.l.privacyPolicy,
                                   icon: Assets.accountPrivacy,
                                   onPressed: controller.onPrivacy),
-                              BlockSetting(
-                                  header: "Тарифи",
-                                  icon: Assets.accountTariffs,
-                                  onPressed: controller.onTariffs),
+                              controller.modelUser.value.isTraider
+                                  ? BlockSetting(
+                                      header: context.l.tariffs,
+                                      icon: Assets.accountTariffs,
+                                      onPressed: controller.onTariffs)
+                                  : const SizedBox(),
                               BlockSetting(
                                   header: context.l.deleteProfile,
                                   icon: Assets.accountDelete,

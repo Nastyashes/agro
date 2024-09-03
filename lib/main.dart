@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/firebase_options.dart';
 import 'package:agro/model/answer/answer.dart';
 import 'package:agro/model/call_result/call_result.dart';
@@ -84,7 +85,8 @@ class MyApp extends StatelessWidget {
             return GestureDetector(
               onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
               child: MediaQuery(
-                  data: MediaQuery.of(context).copyWith(textScaler: const TextScaler.linear(1.0)),
+                  data: MediaQuery.of(context)
+                      .copyWith(textScaler: const TextScaler.linear(1.0)),
                   child: ScrollConfiguration(
                     behavior: const ScrollBehavior(),
                     child: ResponsiveWrapper.builder(child,
@@ -137,11 +139,22 @@ class MyStart extends HookWidget {
     await Future.delayed(const Duration(milliseconds: 100));
 
     if (c.mounted) {
-      ModelUser? modelUser = Hive.box('data').get('modelUser');
-      if (modelUser != null && modelUser.token != null) {
-        Get.offAllNamed(Routes.app);
+      var box = Hive.box('data');
+      String? selectedCountry = box.get('selectedCountry');
+      String? locale = AppLocalizations.of(c)?.localeName;
+      await box.put('language', locale);
+      log("Locale: $locale");
+
+      if (selectedCountry == null) {
+        // Перенаправляємо на екран вибору країни, якщо вона не вибрана
+        Get.offAll(() => const CountryScreen());
       } else {
-        Get.offAllNamed(Routes.auth);
+        ModelUser? modelUser = Hive.box('data').get('modelUser');
+        if (modelUser != null && modelUser.token != null) {
+          Get.offAllNamed(Routes.app);
+        } else {
+          Get.offAllNamed(Routes.auth);
+        }
       }
     }
   }

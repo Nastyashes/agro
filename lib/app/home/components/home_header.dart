@@ -1,6 +1,7 @@
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:agro/ui/utils/date_extensions.dart';
 
@@ -14,11 +15,11 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      headerItem((total).toString(), "Заявок"),
-      headerItem((tariff?.balanceContactsDayOsttk ?? 0).toString(), "Котактів"),
-      headerItem((tariff?.balanceSms ?? 0).toString(), "SMS"),
+      headerItem((total).toString(), context.l.bids),
+      headerItem((tariff?.balanceContactsDayOsttk ?? 0).toString(), context.l.encounters),
+      headerItem((tariff?.balanceSms ?? 0).toString(), context.l.sms),
       headerItem(
-          tariff?.balanceEnd?.formatDateShort() ?? '', "Термін дії тарифу", isValid: tariff?.balanceEnd?.isActive() ?? true)
+          tariff?.balanceEnd?.formatDateShort() ?? '', context.l.tariffDuration, isValid: tariff?.balanceEnd?.isActive() ?? true)
     ]);
   }
 

@@ -1,3 +1,4 @@
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -38,8 +39,8 @@ class AuthRegisterOkScreen extends StatelessWidget {
                           padding: const EdgeInsets.all(15),
                           child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [
                             readText(
-                                text: 'Дякуємо за реєстрацію', fontWeight: FontWeight.w600, color: Colors.black, size: 26, padding: const EdgeInsets.only(bottom: 20)),
-                            readText(text: 'Наші менеджери скоро зв’яжуться із вами.', color: Colors.black, align: TextAlign.center, size: 20),
+                                text: context.l.thanksForRegistration, fontWeight: FontWeight.w600, color: Colors.black, size: 26, padding: const EdgeInsets.only(bottom: 20)),
+                            readText(text: context.l.managersContactYou, color: Colors.black, align: TextAlign.center, size: 20),
                           ]),
                         )),
                     const Spacer(),
@@ -50,7 +51,7 @@ class AuthRegisterOkScreen extends StatelessWidget {
                     ]),
                     Center(
                         child: readText(
-                            text: 'Потрібна допомога? Звертайтесь до\nнашої служби підтримки!',
+                            text: context.l.needHelpSupport,
                             color: const Color(0xffA9A9A9),
                             padding: const EdgeInsets.only(bottom: 30, top: 15),
                             size: 18,

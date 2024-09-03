@@ -34,6 +34,8 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+    <string>Цей додаток використовує камеру для сканування QR-кодів.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Надайте доступи, для загрузки фото</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>

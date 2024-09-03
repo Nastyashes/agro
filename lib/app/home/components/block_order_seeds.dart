@@ -7,6 +7,7 @@ import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/ui/utils/date_extensions.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:agro/model/model_order/model_order.dart';
 import 'package:agro/ui/text/read_text.dart';
@@ -65,14 +66,14 @@ class _BlockOrderSeedsState extends State<BlockOrderSeeds> {
                           Expanded(
                             child: readText(
                               text:
-                                  'Заявка № ${widget.modelOrder.id}\nвід: ${widget.modelOrder.startDate?.formatDateTimeShort()}',
+                                  '${context.l.applicationNo} ${widget.modelOrder.id}\n${context.l.from} ${widget.modelOrder.startDate?.formatDateTimeShort()}',
                               style: AppFonts.body1bold.black,
                             ),
                           ),
                           if (DateTime.now().millisecondsSinceEpoch >
                               widget.modelOrder.endDate!.millisecondsSinceEpoch) ...[
                             readText(
-                              text: 'Термін дії закінчився',
+                              text: context.l.expired,
                               style: AppFonts.body2semibold.red,
                             )
                           ] else if (widget.modelOrder.priceAdded != null &&
@@ -88,10 +89,10 @@ class _BlockOrderSeedsState extends State<BlockOrderSeeds> {
                                   child: BTransparentScalableButton(
                                       onPressed: () {
                                         Clipboard.setData(ClipboardData(
-                                            text: (widget.modelOrder.toText())));
+                                            text: (widget.modelOrder.toText(context))));
                                         inAppNotification(
                                             text:
-                                                "Дані про замовлення скопійовані в буфер обміну",
+                                                context.l.copiedToClipboard,
                                             c: context);
                                       },
                                       scale: ScaleFormat.big,
@@ -116,26 +117,26 @@ class _BlockOrderSeedsState extends State<BlockOrderSeeds> {
                         ]),
                       ),
                       orderInfo(
-                          header: 'Регіон', text: widget.modelOrder.region.toString()),
+                          header: context.l.region, text: widget.modelOrder.region.toString()),
                       orderInfo(
-                          header: 'Назва', text: widget.modelOrder.crop.toString()),
+                          header: context.l.name, text: widget.modelOrder.crop.toString()),
                       orderInfo(
-                          header: 'Обcяг',
+                          header: context.l.volume,
                           text: widget.modelOrder.capacity.toString()),
                       orderInfo(
-                          header: 'Форма розрахунку',
+                          header: context.l.formOfPayment,
                           text: widget.modelOrder.payForm == 'beznal'
-                              ? '1ф. (б/г)'
+                              ? context.l.paymentNonCash
                               : widget.modelOrder.payForm == 'nal'
-                                  ? '2ф. (гот.)'
+                                  ? context.l.paymentCash
                                   : widget.modelOrder.payment.toString()),
                       orderInfo(
-                          header: 'Тип доставки',
+                          header: context.l.typeOfDelivery,
                           text: widget.modelOrder.deliveryForm.toString()),
                       if (widget.modelOrder.comment != null &&
                           widget.modelOrder.comment != '') ...[
                         readText(
-                          text: 'Коментар',
+                          text: context.l.comment,
                           style: AppFonts.body1medium.grey3,
                         ),
                         readText(
@@ -148,7 +149,7 @@ class _BlockOrderSeedsState extends State<BlockOrderSeeds> {
                               padding: const EdgeInsets.only(top: 10),
                               child: CallResultInfo(
                                   text:
-                                      widget.answer?.result?.label ?? "Не встановлено",
+                                      widget.answer?.result?.getLabel(context) ?? context.l.notInstalled,
                                   horizontalPadding: 0,
                                   textColor: widget.answer?.result?.color,
                                   onPressed: () {}))
@@ -177,7 +178,7 @@ class _BlockOrderSeedsState extends State<BlockOrderSeeds> {
                                             padding: const EdgeInsets.only(
                                                 right: 10),
                                             child: bStyle(
-                                                text: 'Контакти',
+                                                text: context.l.contacts,
                                                 c: context,
                                                 colorText: AppColors.darkGreen,
                                                 vertical: 15,
@@ -190,14 +191,14 @@ class _BlockOrderSeedsState extends State<BlockOrderSeeds> {
                                                         isProgressShow = true;
                                                       });
                                                   controller.onContactClick(
-                                                      widget.modelOrder);
+                                                      widget.modelOrder, context);
                                                 })))
                                     : const SizedBox(),
 
                                 //кнопка додатково
                                 Expanded(
                                     child: bStyle(
-                                        text: 'Додатково',
+                                        text: context.l.additionally,
                                         c: context,
                                         colorText: AppColors.additionalGreen,
                                         vertical: 15,
@@ -209,7 +210,7 @@ class _BlockOrderSeedsState extends State<BlockOrderSeeds> {
                                             widget.onPressed(model: widget.modelOrder))),
 
                                 //додаткові кнопки
-                                //TODO
+                    
                               ],
                             )),
                       ]

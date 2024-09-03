@@ -1,25 +1,44 @@
 import 'dart:ui';
-
 import 'package:agro/ui/theme/colors.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 part 'call_result.g.dart';
 
 @HiveType(typeId: 3)
 enum CallResult {
   @HiveField(0)
-  agreement("Угода", AppColors.mainGreen),
+  agreement('agreementKey', AppColors.mainGreen),
   @HiveField(1)
-  noAnswer("Не підняв слухавку", AppColors.yellow),
+  noAnswer('noAnswerKey', AppColors.yellow),
   @HiveField(2)
-  noConnection("Не має зв’язку", AppColors.yellow),
+  noConnection('noConnectionKey', AppColors.yellow),
   @HiveField(3)
-  wrongPrice("Ціна не підійшла", AppColors.red),
+  wrongPrice('wrongPriceKey', AppColors.red),
   @HiveField(4)
-  notActual("Заявка не актуальна", AppColors.red);
+  notActual('notActualKey', AppColors.red);
 
-  final String label;
+  final String localizationKey;
   final Color color;
 
-  const CallResult(this.label, this.color);
+  const CallResult(this.localizationKey, this.color);
+
+  String getLabel(BuildContext context) {
+    final localizations = AppLocalizations.of(context);
+    switch (localizationKey) {
+      case 'agreementKey':
+        return localizations!.agreementKey;
+      case 'noAnswerKey':
+        return localizations!.noAnswerKey;
+      case 'noConnectionKey':
+        return localizations!.noConnectionKey;
+      case 'wrongPriceKey':
+        return localizations!.wrongPriceKey;
+      case 'notActualKey':
+        return localizations!.notActualKey;
+      default:
+        return '';
+    }
+  }
 }

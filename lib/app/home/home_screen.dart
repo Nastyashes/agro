@@ -11,6 +11,7 @@ import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -47,20 +48,25 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: EdgeInsets.only(
             left: controller.modelUser.isTraider ? 30 : 40,
             right: controller.modelUser.isTraider ? 30 : 0),
-        header: controller.modelUser.isTraider ? null : 'Ваші заявки',
+        header:
+            controller.modelUser.isTraider ? null : context.l.yourApplications,
         headerWidget: controller.modelUser.isTraider
-            ? Padding(padding: const EdgeInsets.symmetric(horizontal: 16), child:  HomeHeader(
-                    tariff: controller.tariff, total: controller.tariff?.orderCount ?? 0))
+            ? Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: HomeHeader(
+                    tariff: controller.tariff, total: controller.total))
             : null,
         endWidget: controller.modelUser.isTraider
             ? null
             : BTransparentScalableButton(
-                onPressed: controller.fermerCreateOrder,
+                onPressed: () => {controller.fermerCreateOrder(context.l.applicationSent)},
                 scale: ScaleFormat.big,
                 child: Row(
                   children: [
                     const Icon(Icons.add, color: Color(0xffFCD300), size: 45),
-                    readText(text: "Додати", style: AppFonts.title2.withColor(AppColors.mainGreen)),
+                    readText(
+                        text: context.l.add,
+                        style: AppFonts.title2.withColor(AppColors.mainGreen)),
                   ],
                 )),
         theme:
@@ -71,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.only(top: 12),
                 borderRadius: BorderRadius.circular(100),
                 border: Border.all(color: AppColors.grey2),
-                text: 'Пошук',
+                text: context.l.search,
                 height: 60,
                 textStyle: AppFonts.body1medium.black,
                 hintStyle: AppFonts.body1medium.grey3,
@@ -157,9 +163,9 @@ class CompleteWidget extends StatelessWidget {
         Container(
           width: 15.0,
         ),
-        const Text(
-          "Оновлення завершено",
-          style: TextStyle(color: Colors.grey),
+        Text(
+          context.l.updateComplete,
+          style: const TextStyle(color: Colors.grey),
         )
       ],
     );

@@ -1,6 +1,7 @@
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
 class CallResultInfo extends StatelessWidget {
@@ -25,7 +26,7 @@ class CallResultInfo extends StatelessWidget {
         child: Row(children: [
           Expanded(
               child: readText(
-                  text: "Результат дзвінка",
+                  text: context.l.callResult,
                   style: AppFonts.body1medium.grey3)),
           GestureDetector(
               onTap: onPressed,

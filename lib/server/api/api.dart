@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:agro/server/api/controller/common.dart';
+import 'package:agro/auth/country/country_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -22,7 +23,22 @@ class Api {
   Map<String, String> headersNoBearer() =>
       {'Content-Type': 'application/json', 'Accept': 'application/json'};
 
-  final url = 'https://uagro.trade/apiapp.php';
+  String getUrl() {
+    var box = Hive.box('data');
+    String? selectedCountry = box.get('selectedCountry');
+    if (selectedCountry == Country.kazakh.name) {
+      return 'https://uagro.kz/apiapp.php';
+    } else {
+      return "https://uagro.trade/apiapp.php";
+    }
+  }
+
+  String getLanguage() {
+    var box = Hive.box('data');
+    return box.get('language') ?? 'en';
+  }
+
+  //final url = 'https://uagro.trade/apiapp.php';
 
   Future<StreamedResponse> dataRequest(path,
       {String req = 'POST',
@@ -31,13 +47,13 @@ class Api {
       bool bearerActive = true,
       String? body,
       required BuildContext c}) async {
-    StreamedResponse request = await ((Request(
-            req, Uri.parse('${urlActive ? url : ''}$path?${parameter ?? ''}')))
+    StreamedResponse request = await ((Request(req,
+            Uri.parse('${urlActive ? getUrl() : ''}$path?${parameter ?? ''}')))
           ..headers.addAll(bearerActive ? headers() : headersNoBearer())
           ..body = body ?? json.encode({}))
         .send();
 
-    log('$url$path${parameter ?? ''}');
+    log('${getUrl()}$path${parameter ?? ''}');
 
     return request;
   }
@@ -49,8 +65,8 @@ class Api {
       Map<String, String>? formData}) async {
     var request = MultipartRequest(
         'POST',
-        Uri.parse('${urlActive ? url : ''}?method=$method&'
-            'key=${Hive.box('data').get('modelUser') == null || Hive.box('data').get('modelUser').token == null ? '' : Hive.box('data').get('modelUser').token}${parameter == null ? '' : '&$parameter'}'));
+        Uri.parse('${urlActive ? getUrl() : ''}?method=$method&'
+            'key=${Hive.box('data').get('modelUser') == null || Hive.box('data').get('modelUser').token == null ? '' : Hive.box('data').get('modelUser').token}${parameter == null ? '' : '&$parameter'}&lang=${getLanguage()}'));
 
     request.headers.addAll(bearerActive ? headers() : headersNoBearer());
 
@@ -59,7 +75,7 @@ class Api {
         request.fields[key] = value;
       });
     }
-    log('$url/?method=$method?${parameter ?? ''}');
+    log('${getUrl()}/?method=$method?${parameter ?? ''}&lang=${getLanguage()}');
 
     return await request.send();
   }

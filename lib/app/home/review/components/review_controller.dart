@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:agro/model/model_review/struct_review.dart';
 import 'package:agro/model/model_user/model_user.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:agro/model/model_order/model_order.dart';
 import 'package:agro/server/api/api.dart';
@@ -18,6 +19,7 @@ import '../add_review.dart';
 class ReviewController extends FormController {
   late Function(VoidCallback fn) setState;
   late BuildContext c;
+  late BuildContext context;
   late ModelOrder modelOrder;
   late ModelUser modelUser;
   bool loadPage = false;
@@ -59,9 +61,12 @@ class ReviewController extends FormController {
 
   void onAddReviewPage() => showCupertinoModalBottomSheet(topRadius: const Radius.circular(30), context: c, builder: (c) => const AddReviewScreen());
 
-  void onAddReview() => loadIfValid(() async {
+  void onAddReview(BuildContext context) => loadIfValid(() async {
+    final String needWriteReview = context.l.needWriteReview;
+    final String feedbackAdded = context.l.feedbackAdded;
+    final String errorAddingReview = context.l.errorAddingReview;
         if (reviewController.text == '') {
-          inAppNotification(text: 'Потрібно написати відгук', c: c);
+          inAppNotification(text: needWriteReview, c: c);
         }
 
         ApiAnswer apiAnswer = await Api().fermer.sendReviewFermer(orderId: modelOrder.id!, rating: countStar.round(), comment: reviewController.text);
@@ -72,7 +77,7 @@ class ReviewController extends FormController {
         if (apiAnswer.data['status'].toString() == 'true') {
           if (c.mounted) {
             Navigator.pop(c);
-            inAppNotification(text: 'Відгук додано', c: c);
+            inAppNotification(text: feedbackAdded, c: c);
             reviewController.text = '';
             countStar = 5;
             modelReview = [];
@@ -80,7 +85,7 @@ class ReviewController extends FormController {
           }
         } else {
           if (c.mounted) {
-            inAppNotification(text: 'Трапилась помилка при додаванні відгуку, перевірте ваші дані', c: c);
+            inAppNotification(text: errorAddingReview, c: c);
           }
         }
       }, c: c);

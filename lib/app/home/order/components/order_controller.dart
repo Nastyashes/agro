@@ -14,6 +14,7 @@ import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/repository/local_storage_repository.dart';
 import 'package:agro/ui/adds.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:agro/model/model_order/model_order.dart';
 import 'package:agro/server/api/api.dart';
@@ -137,9 +138,10 @@ class OrderController extends BaseController {
             Navigator.pop(c);
           }));
 
-  void onAddPriceSave(
+  void onAddPriceSave(BuildContext context,
           String currency, String paymentForm, String price, int orderId) =>
       loadIfValid(() async {
+        final String errorAddPrice = context.l.errorAddPrice;
         ApiAnswer apiAnswer = await Api().traider.addPrice(
             orderId: orderId,
             price: price,
@@ -154,11 +156,12 @@ class OrderController extends BaseController {
         } else {
           notification(
               text:
-                  'Трапилась помилка при додаванні ціни, перевірте ваші дані');
+                  errorAddPrice);
         }
       });
 
-  Future<void> onContactClick() async {
+  Future<void> onContactClick(BuildContext context) async {
+    final String errorTariffMail = context.l.errorTariffMail;
     if (contact.userName == null) {
       try {
         if (tariff?.isPremium == false || tariff?.isVip == false) {
@@ -187,7 +190,7 @@ class OrderController extends BaseController {
       } else {
         notification(
             text:
-                "Ви не можете відкрити ці контакти. Перевірте кількіть контактів в тарифі.");
+                errorTariffMail);
       }
     });
   }
@@ -214,7 +217,8 @@ class OrderController extends BaseController {
     }
   }
 
-  void onDeal() => loadIfValid(() async {
+  void onDeal(BuildContext context) => loadIfValid(() async {
+    final String errorAgreement = context.l.errorAgreement;
         ApiAnswer apiAnswer =
             await Api().traider.deal(tenderId: modelOrder!.id!);
 
@@ -224,18 +228,26 @@ class OrderController extends BaseController {
           modelOrderPrice = [];
           onLoadPrice();
         } else {
-          notification(text: 'Трапилась помилка при угоді');
+          notification(text: errorAgreement);
         }
       });
 
-  void checkSendOffer() => loadIfValid(() async {
+  void checkSendOffer(BuildContext context) => loadIfValid(() async {
+    final String setTicketSettings= context.l.setTicketSettings;
+    final String areYouSure = context.l.areYouSure;
+    final String yourProposalSent = context.l.yourProposalSent;
+    final String clickOk = context.l.clickOk;
+    final String wth = context.l.wth;
+    final String notEnoughMessages = context.l.notEnoughMessages;
+
+
         ApiAnswer apiAnswer =
             await Api().traider.checkSendOffer(sphere: modelOrder?.sphere);
         log(apiAnswer.data.toString());
         if (apiAnswer.data['status'] == '-') {
           notification(
               text:
-                  "Встановіть налаштування заявок у вашому кабінеті та завантажте прайс");
+                  setTicketSettings);
           return;
         }
         asId = apiAnswer.data['as_id'];
@@ -246,30 +258,31 @@ class OrderController extends BaseController {
             int.tryParse(apiAnswer.data['abonents'].toString()) ?? 0;
         if (smsCount >= abonents) {
           showConfirmDialog(
-              title: 'Чи впевнені ви?',
+              title: areYouSure,
               text:
-                  "Вашу пропозицію буде відправлено $abonents абонентам. Якщо впевнені в цій дії натисніть ОК.",
+                  ' $yourProposalSent $abonents $clickOk',
               onConfirm: () {
-                onSendOffer();
+                onSendOffer(context);
               });
         } else {
           showConfirmDialog(
-              title: 'Чи впевнені ви?',
-              text:
-                  "Через те що кількість доступних Вам sms менша за кількість абонентів, Вашу пропозицію буде відправлено $smsCount з $abonents абонентам. Якщо впевнені в цій дії натисніть ОК.",
+              title: areYouSure,
+              text:'$notEnoughMessages $abonents $wth $smsCount $clickOk',        
               onConfirm: () {
-                onSendOffer();
+                onSendOffer(context);
               });
         }
       });
 
-  void onSendOffer() => loadIfValid(() async {
+  void onSendOffer(BuildContext context) => loadIfValid(() async {
+    final String offerSent = context.l.offerSent;
+    final String abonen = context.l.abonen;
         ApiAnswer apiAnswer = await Api().traider.sendOffer(asId, sms);
         log(apiAnswer.data.toString());
         if (apiAnswer.data['status'] == '+') {
           final recepients = apiAnswer.data['recepients'];
           notification(
-              text: "Ваша пропозиція була надіслана $recepients-м абонентам.");
+              text: '$offerSent $recepients $abonen' );
           return;
         }
       });

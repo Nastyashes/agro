@@ -8,6 +8,7 @@ import 'package:agro/model/model_order/model_order.dart';
 import 'package:agro/ui/buttons/b_transparent_scalable_button.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/ui/theme/colors.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -41,17 +42,17 @@ class _OrderScreenState extends State<OrderScreen> {
         topbarColor: getOrderColor(controller.modelOrder),
         dividerColor: getOrderColor(controller.modelOrder),
         header: controller.loadPage
-            ? 'Заявка №${controller.modelOrder!.id} від ${DateFormat('dd.MM.yyyy').format(controller.modelOrder!.startDate!)}'
+            ? '${context.l.applicationNo} ${controller.modelOrder!.id} ${context.l.from} ${DateFormat('dd.MM.yyyy').format(controller.modelOrder!.startDate!)}'
             : '',
         isBack: true,
         endWidget: BTransparentScalableButton(
             onPressed: () {
               Clipboard.setData(ClipboardData(
                   text: (controller.contactOpened
-                      ? controller.modelOrder?.toTextFull(controller.contact)
-                      : controller.modelOrder?.toTextShort()) ?? ''));
+                      ? controller.modelOrder?.toTextFull(controller.contact, context)
+                      : controller.modelOrder?.toTextShort(context)) ?? ''));
               inAppNotification(
-                  text: "Дані про замовлення скопійовані в буфер обміну",
+                  text: context.l.copiedToClipboard,
                   c: context);
             },
             scale: ScaleFormat.big,

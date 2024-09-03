@@ -11,6 +11,7 @@ import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/repository/local_storage_repository.dart';
 import 'package:agro/ui/adds.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,15 +29,15 @@ import '../../../ui/local_notification/local_notification.dart';
 
 class HomeController extends BaseController {
   late Function(VoidCallback fn) setState;
-  late BuildContext c;
+  late BuildContext context;
   late TextEditingController searchController;
   late ModelUser modelUser;
   late final RefreshController controllerLoading;
   late final ScrollController controllerScroll;
-  String messHeader = 'Заявки';
+  String? messHeader;
+  int total = 0;
   final _localStorageRepository = LocalStorageRepository();
   final _interstitial = Interstitial();
-
   int page = 1;
   List<ModelOrder> modelOrder = [];
   List<Answer> callResults = [];
@@ -55,7 +56,7 @@ class HomeController extends BaseController {
   void initPage(
       {required BuildContext context,
       required Function(VoidCallback fn) set}) async {
-    c = context;
+    this.context = context;
     setState = set;
     modelUser = Hive.box('data').get('modelUser');
 
@@ -66,13 +67,13 @@ class HomeController extends BaseController {
     loadRequest();
   }
 
-  void fermerCreateOrder() => loadIfValid(() async {
+  void fermerCreateOrder(String message) => loadIfValid(() async {
         ApiAnswer apiAnswer = await Api().fermer.createOrder();
 
-        if (c.mounted) {
+        if (context.mounted) {
           if (apiAnswer.data['status']) {
             notification(
-              text: 'Заявка відправлена. Скоро з вами зв’яжеться оператор.',
+              text: message,
             );
           } else {
             notification(text: apiAnswer.data['message']);
@@ -107,7 +108,7 @@ class HomeController extends BaseController {
         log(apiAnswer.data.toString());
         callResults = await _localStorageRepository.getAll();
         setState(() {
-          if (c.mounted) {
+          if (context.mounted) {
             if (apiAnswer.data['status']) {
               for (final i in apiAnswer.data['payload']['items']) {
                 modelOrder.add(structOrderData(data: i));
@@ -141,7 +142,7 @@ class HomeController extends BaseController {
     controllerLoading.loadComplete();
   }
 
-  Future<void> onContactClick(ModelOrder order) async {
+  Future<void> onContactClick(ModelOrder order, BuildContext context) async {
     if (order.contact == null) {
       try {
         if (tariff?.isPremium == false || tariff?.isVip == false) {
@@ -172,22 +173,22 @@ class HomeController extends BaseController {
           });
         }
       } catch (e) {
-        notification(
-            text:
-                "Ви не можете відкрити ці контакти. Перевірте кількіть контактів в тарифі.");
+        if(context.mounted) {
+          notification(text: context.l.errorTariffMail);
+        }
         log("contact doesn't opened");
       }
     }
   }
 
-  void onDeal(ModelOrder order) => loadIfValid(() async {
+  void onDeal(ModelOrder order, String errorAgreement) => loadIfValid(() async {
         ApiAnswer apiAnswer = await Api().traider.deal(tenderId: order.id!);
 
         log(apiAnswer.data.toString());
         if (apiAnswer.data['status'].toString() == 'true') {
           Get.back();
         } else {
-          notification(text: 'Трапилась помилка при угоді');
+          notification(text: errorAgreement);
         }
       });
 
@@ -254,8 +255,9 @@ class HomeController extends BaseController {
   void onTariffInfo() async {
     try {
       ApiAnswer apiAnswer = await Api().traider.getTariff();
-      messHeader = apiAnswer.data['message'];
-      tariff = Tariff.fromJson(apiAnswer.data['payload']);
+      setState(() {
+        tariff = Tariff.fromJson(apiAnswer.data['payload']);
+      });
     } catch (e) {
       log(e.toString(), error: e);
     }
