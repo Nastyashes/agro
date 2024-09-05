@@ -1,7 +1,6 @@
 import 'package:agro/app/components/block_page_screen.dart';
 import 'package:agro/app/profile/tariffs/tariffs_controller.dart';
 import 'package:agro/generated/assets.dart';
-import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +20,6 @@ class TariffsScreenState extends State<TariffsScreen>
     with TickerProviderStateMixin {
   TariffsController tariffsController = Get.find();
   late PageController _pageViewController;
-  int _currentPageIndex = 0;
-  bool buyButtonVisible = false;
 
   @override
   void initState() {
@@ -61,10 +58,7 @@ class TariffsScreenState extends State<TariffsScreen>
                 child: PageView(
               controller: _pageViewController,
               onPageChanged: (int page) {
-                setState(() {
-                  _currentPageIndex = page;
-                  buyButtonVisible = getBuyButtonVisible(page);
-                });
+                tariffsController.onPageChanged(page);
               },
               children: <Widget>[
                 Center(
@@ -100,14 +94,14 @@ class TariffsScreenState extends State<TariffsScreen>
             const SizedBox(height: 20),
             SizedBox(
                 height: 60,
-                child: buyButtonVisible
+                child: tariffsController.buyButtonVisible
                     ? bStyle(
                         text: "Придбати пакет",
                         c: context,
                         colorText: AppColors.white,
                         vertical: 15,
                         onPressed: () {
-                          tariffsController.onBuyTariff(_currentPageIndex == 1 ? "Premium" : "Vip");
+                          tariffsController.onPayTariff(100);
                         })
                     : const SizedBox()),
             const SizedBox(height: 30)
@@ -149,21 +143,11 @@ class TariffsScreenState extends State<TariffsScreen>
   List<Widget> _buildPageIndicator() {
     List<Widget> list = [];
     for (int i = 0; i < 3; i++) {
-      list.add(i == _currentPageIndex ? _indicator(true) : _indicator(false));
+      list.add(i == tariffsController.currentPageIndex
+          ? _indicator(true)
+          : _indicator(false));
     }
     return list;
-  }
-
-  bool getBuyButtonVisible(int index) {
-    switch (index) {
-      case 0:
-        return false;
-      case 1:
-        return tariffsController.tariff?.isPremium != true;
-      case 2:
-        return tariffsController.tariff?.isVip != true;
-    }
-    return true;
   }
 }
 

@@ -17,4 +17,14 @@ Future<ApiAnswer> sendMessageToBot(String message) async {
     return apiAnswer;
   }
 
+  Future<ApiAnswer> tariffPay(
+      {required int amount}) async {
+    ApiAnswer apiAnswer = ApiAnswer();
+    var request = await dataRequestMultipart('checkout',
+        parameter: 'amount=$amount', langActive: false, apiUrl: "api.php");
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+    return apiAnswer;
+  }
 }

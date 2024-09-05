@@ -54,9 +54,9 @@ dependencies:
   get: ^4.6.5
   in_app_notification: ^1.1.2
   clipboard: ^0.1.3
-  flutter_local_notifications: ^15.1.0+1
+  flutter_local_notifications: ^17.2.2
   permission_handler: ^11.0.1
-  mobile_scanner: ^5.1.1
+  mobile_scanner: ^5.0.0
 
    #logger
   loggy: ^2.0.3

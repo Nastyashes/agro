@@ -31,6 +31,11 @@ class Tariff {
 }
 
 extension TariffX on Tariff {
-  bool get isPremium => premium == "Y";
-  bool get isVip => vip == "Y";
+  bool get isPremium =>
+      tafiffId == 10 && balanceEnd?.isAfter(DateTime.now()) == true;
+  bool get isVip => vip == "Y" && balanceEnd?.isAfter(DateTime.now()) == true;
+  bool get isBeslim =>
+      tafiffId == 8 && balanceEnd?.isBefore(DateTime.now()) == true;
+  bool get isFree =>
+      tafiffId == 0 && balanceEnd?.isBefore(DateTime.now()) == true;
 }

@@ -27,9 +27,9 @@ class Api {
     var box = Hive.box('data');
     String? selectedCountry = box.get('selectedCountry');
     if (selectedCountry == Country.kazakh.name) {
-      return 'https://uagro.kz/apiapp.php';
+      return 'https://uagro.kz/';
     } else {
-      return "https://uagro.trade/apiapp.php";
+      return "https://uagro.trade/";
     }
   }
 
@@ -60,13 +60,17 @@ class Api {
 
   Future<StreamedResponse> dataRequestMultipart(method,
       {String? parameter,
-      bool urlActive = true,
+      String apiUrl = "apiapp.php",
       bool bearerActive = true,
+      bool langActive = true,
       Map<String, String>? formData}) async {
-    var request = MultipartRequest(
-        'POST',
-        Uri.parse('${urlActive ? getUrl() : ''}?method=$method&'
-            'key=${Hive.box('data').get('modelUser') == null || Hive.box('data').get('modelUser').token == null ? '' : Hive.box('data').get('modelUser').token}${parameter == null ? '' : '&$parameter'}&lang=${getLanguage()}'));
+    String key = Hive.box('data').get('modelUser') == null ||
+            Hive.box('data').get('modelUser').token == null
+        ? ''
+        : Hive.box('data').get('modelUser').token;
+    String url =
+        '${getUrl()}$apiUrl?method=$method&key=$key${parameter == null ? '' : '&$parameter'}${langActive ? '&lang=${getLanguage()}' : ''}';
+    var request = MultipartRequest('POST', Uri.parse(url));
 
     request.headers.addAll(bearerActive ? headers() : headersNoBearer());
 
@@ -75,7 +79,7 @@ class Api {
         request.fields[key] = value;
       });
     }
-    log('${getUrl()}/?method=$method?${parameter ?? ''}&lang=${getLanguage()}');
+    log(url);
 
     return await request.send();
   }

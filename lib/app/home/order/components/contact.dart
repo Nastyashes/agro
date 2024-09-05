@@ -32,15 +32,29 @@ class ContactScreen extends StatelessWidget {
       color: Colors.transparent,
       child: Column(
         children: [
-         !isVip ?
-          readText(
-              text: context.l.farmerContacts,
-              style: AppFonts.title2.black,
-              padding: const EdgeInsets.only(top: 20, bottom: 10)) : const SizedBox(height: 6),
-          orderInfo(header: context.l.fullName, text: contact.userName.toString()),
-          orderInfo(header: context.l.region, text: contact.userRegion.toString()),
-          orderInfo(header: context.l.district, text: contact.userDistrict.toString()),
-          orderInfo(header: context.l.town, text: contact.userCity.orNotSet()),
+          !isVip
+              ? readText(
+                  text: context.l.farmerContacts,
+                  style: AppFonts.title2.black,
+                  padding: const EdgeInsets.only(top: 20, bottom: 10))
+              : const SizedBox(height: 6),
+          orderInfo(
+              header: context.l.fullName, text: contact.userName.toString()),
+          orderInfo(
+              header: context.l.region, text: contact.userRegion.toString()),
+          orderInfo(
+              header: context.l.district,
+              text: contact.userDistrict.toString()),
+          orderInfo(
+            header: context.l.town,
+            text: contact.userCity.orNotSet(),
+            icon: IconButton(
+              icon: SvgPicture.asset(Assets.location, width: 24),
+              onPressed: () => controller.launchMap(context, contact, id),
+              alignment: Alignment.topCenter,
+              padding: EdgeInsets.zero,
+            ),
+          ),
           orderInfo(
               header: context.l.eMail,
               text: contact.userEmail.orNotSet(),
