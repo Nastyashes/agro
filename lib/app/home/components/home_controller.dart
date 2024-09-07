@@ -173,7 +173,7 @@ class HomeController extends BaseController {
           });
         }
       } catch (e) {
-        if(context.mounted) {
+        if (context.mounted) {
           notification(text: context.l.errorTariffMail);
         }
         log("contact doesn't opened");
@@ -274,17 +274,29 @@ class HomeController extends BaseController {
       log(e.toString(), error: e);
     }
   }
-   Future<void> launchMap(BuildContext context, ModelContact contact, String id) async {
-    final region = contact.userRegion;
-    final district = contact.userDistrict;
-    final city = contact.userCity;
 
-    if (region == null || region.isEmpty || district == null || district.isEmpty || city == null || city.isEmpty) {
-      notification(text: 'Почекайте 5 хв, відкоригуємо адресу');
-      await Api().common.sendMessageToBot("Номер ${modelUser.phone} запросив адрес фермера $id. Відкоригуйте адресу");
+  Future<void> launchMap(
+      BuildContext context, ModelContact contact, String id) async {
+    if (tariff?.isFree == false) {
+      final region = contact.userRegion;
+      final district = contact.userDistrict;
+      final city = contact.userCity;
+
+      if (region == null ||
+          region.isEmpty ||
+          district == null ||
+          district.isEmpty ||
+          city == null ||
+          city.isEmpty) {
+        notification(text: 'Почекайте 5 хв, відкоригуємо адресу');
+        await Api().common.sendMessageToBot(
+            "Номер ${modelUser.phone} запросив адрес фермера $id. Відкоригуйте адресу");
+      } else {
+        final query = '$city $region $district';
+        MapsLauncher.launchQuery(query);
+      }
     } else {
-      final query = '$city $region $district';
-      MapsLauncher.launchQuery(query);
+      notification(text: context.l.mapForPaid);
     }
   }
 }
