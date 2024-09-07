@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 //+6
 class AppFonts {
+  static TextStyle titletariff = GoogleFonts.nunito(
+      fontSize: 32, fontWeight: FontWeight.w900, color: AppColors.black);
   static TextStyle title1 = GoogleFonts.nunito(
       fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.black);
 

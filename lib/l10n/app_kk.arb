@@ -120,6 +120,7 @@
   "loginFailed": "Кіру жаңылысы",
   "qrNotValidForLogin": "QR коды кіру үшін жарамсыз.",
   "error": "Қате",
+  "buyPackage": "Пакетті сатып алу",
   "@save": {},
   "@@locale": "kk"
 }

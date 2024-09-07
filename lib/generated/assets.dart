@@ -54,4 +54,5 @@ class Assets {
   static const String oil = 'picture/components/oil.svg';
   static const String location = 'picture/components/location.svg';
   static const String qrScan = 'picture/app/account/qr_code_scan.svg';
+  static const String hedTariff= 'picture/app/account/hed_tariff.png';
 }
