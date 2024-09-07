@@ -144,13 +144,16 @@ class MyStart extends HookWidget {
       String? locale = AppLocalizations.of(c)?.localeName;
       await box.put('language', locale);
       log("Locale: $locale");
+      log("Selected country: $selectedCountry");
 
-      if (selectedCountry == null) {
+
+      ModelUser? modelUser = Hive.box('data').get('modelUser');
+
+      if (selectedCountry == null || modelUser == null || modelUser.token == null) {
         // Перенаправляємо на екран вибору країни, якщо вона не вибрана
         Get.offAll(() => const CountryScreen());
       } else {
-        ModelUser? modelUser = Hive.box('data').get('modelUser');
-        if (modelUser != null && modelUser.token != null) {
+        if (modelUser.token != null) {
           Get.offAllNamed(Routes.app);
         } else {
           Get.offAllNamed(Routes.auth);

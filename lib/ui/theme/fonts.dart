@@ -4,8 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 
 //+6
 class AppFonts {
-  static TextStyle titletariff = GoogleFonts.nunito(
-      fontSize: 32, fontWeight: FontWeight.w900, color: AppColors.black);
+  static TextStyle tariffName = GoogleFonts.inter(
+      fontSize: 38, fontWeight: FontWeight.w900, color: AppColors.black);
+  static TextStyle tariffPrice = GoogleFonts.nunito(
+      fontSize: 38, fontWeight: FontWeight.w700, color: AppColors.black);    
+  static TextStyle tariffHeader = GoogleFonts.nunito(
+      fontSize: 18, fontWeight: FontWeight.w500, color: AppColors.black);
   static TextStyle title1 = GoogleFonts.nunito(
       fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.black);
 
@@ -29,8 +33,8 @@ class AppFonts {
   static TextStyle body3medium = GoogleFonts.nunito(
       fontSize: 16, fontWeight: FontWeight.w500, color: AppColors.black);
 
-    static TextStyle body3bold= GoogleFonts.nunito(
-      fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.black);    
+  static TextStyle body3bold = GoogleFonts.nunito(
+      fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.black);
 
   static TextStyle caption = GoogleFonts.nunito(
       fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.black);

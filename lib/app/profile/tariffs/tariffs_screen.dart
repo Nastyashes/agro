@@ -1,7 +1,6 @@
 import 'package:agro/app/components/block_page_screen.dart';
 import 'package:agro/app/profile/tariffs/tariff_item.dart';
 import 'package:agro/app/profile/tariffs/tariffs_controller.dart';
-import 'package:agro/generated/assets.dart';
 import 'package:agro/model/tariff/model_tariff.dart';
 import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/theme/colors.dart';
@@ -65,19 +64,18 @@ class TariffsScreenState extends State<TariffsScreen>
                 tariffsController.onPageChanged(page);
               },
               children: <Widget>[
-                Center(
-                  child: TariffItem(modelTariff: bezlimTariff), 
-                ),
-                Center(
-                  child: TariffItem(
+                TariffItem(modelTariff: bezlimTariff), 
+                
+                
+                  TariffItem(
                     modelTariff: isPremiumSale
                         ? premiumTariff
                         : premiumTariff,
                   ),
-                ),
-                Center(
-                  child: TariffItem(modelTariff: vipTariff),  
-                ),
+                
+               
+                TariffItem(modelTariff: vipTariff),  
+                
               ],
             )),
             const SizedBox(height: 10),

@@ -25,7 +25,8 @@ class Assets {
   static const String accountTariffs = 'picture/app/account/tariffs.svg';
   static const String tariffBeslim = 'picture/app/account/beslim.png';
   static const String tariffPremium = 'picture/app/account/premium.png';
-  static const String tariffPremiumSale = 'picture/app/account/premium_sale.png';
+  static const String tariffPremiumSale =
+      'picture/app/account/premium_sale.png';
   static const String tariffVip = 'picture/app/account/vip.png';
   static const String accountStatistics = 'picture/app/account/statistics.svg';
   static const String accountTelegram = 'picture/app/account/telegram.svg';
@@ -54,5 +55,8 @@ class Assets {
   static const String oil = 'picture/components/oil.svg';
   static const String location = 'picture/components/location.svg';
   static const String qrScan = 'picture/app/account/qr_code_scan.svg';
-  static const String hedTariff= 'picture/app/account/hed_tariff.png';
+  static const String hedTariff = 'picture/app/account/hed_tariff.png';
+  static const String checkCircle = 'picture/components/check-circle.svg';
+  static const String cancel = 'picture/components/cancel.svg';
+
 }
