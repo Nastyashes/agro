@@ -120,6 +120,7 @@
   "loginFailed": "Не вдалося увійти",
   "qrNotValidForLogin": "QR код не дійсний для входу.",
   "error": "Помилка",
+  "buyPackage": "Придбати пакет",
   "mapForPaid": "Сервіс доступний для платних тарифів",
   "@save": {},
   "@@locale": "uk"

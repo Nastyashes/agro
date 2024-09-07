@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/model/model_user/model_user.dart';
+import 'package:agro/model/tariff/model_tariff.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
@@ -15,6 +16,7 @@ class TariffsController extends BaseController {
   ModelUser? modelUser;
   int currentPageIndex = 0;
   bool buyButtonVisible = false;
+  List<ModelTariff> tariffs = [];
 
   void initPage(
       {required BuildContext context,
@@ -24,6 +26,7 @@ class TariffsController extends BaseController {
 
     await Future.delayed(const Duration(milliseconds: 100));
     onTariffInfo();
+    getTariffs();
   }
 
   void onTariffInfo() async {
@@ -34,6 +37,22 @@ class TariffsController extends BaseController {
           tariff = Tariff.fromJson(apiAnswer.data['payload']);
           currentPageIndex = 0;
           buyButtonVisible = getBuyButtonVisible(0, tariff);
+        },
+      );
+    } catch (e) {
+      log(e.toString(), error: e);
+    }
+  }
+
+  void getTariffs() async {
+    try {
+      ApiAnswer apiAnswer = await Api().common.getTariffs();
+      setState(
+        () {
+          tariffs.clear();
+          for (final item in apiAnswer.data['items']) {
+            tariffs.add(structTariffData(data: item));
+          }
         },
       );
     } catch (e) {
@@ -61,9 +80,9 @@ class TariffsController extends BaseController {
     }
   }
 
-  Future<void> onPayTariff(int amount) async {
+  Future<void> onPayTariff(ModelTariff tariff) async {
     try {
-      final apiAnswer = await Api().common.tariffPay(amount: amount);
+      final apiAnswer = await Api().common.tariffPay(amount: tariff.price ?? 0);
 
       if (apiAnswer.data['error'] != null) {
         log('Error: ${apiAnswer.data['error']}');

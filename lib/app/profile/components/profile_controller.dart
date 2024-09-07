@@ -69,9 +69,7 @@ class ProfileController extends BaseController {
                             .read<BottomMenuNotifier>()
                             .setActiveButtMenu(val: 0, upd: false);
                         inAppNotification(
-                            text:
-                                context.l.profileCancelActionLog,
-                            c: c);
+                            text: context.l.profileCancelActionLog, c: c);
                         Get.delete<HomeController>();
                         Get.deleteAll();
 

@@ -1,8 +1,9 @@
 import 'package:agro/app/components/block_page_screen.dart';
+import 'package:agro/app/profile/tariffs/tariff_item.dart';
 import 'package:agro/app/profile/tariffs/tariffs_controller.dart';
-import 'package:agro/generated/assets.dart';
 import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/theme/colors.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -36,16 +37,11 @@ class TariffsScreenState extends State<TariffsScreen>
 
   @override
   Widget build(BuildContext context) {
-    DateTime dateToCheck = DateTime.now();
-    DateTime startDate = DateTime(2024, 7, 1);
-    DateTime endDate = DateTime(2024, 7, 7);
-    bool isPremiumSale = isDateBetween(dateToCheck, startDate, endDate);
-
     return BlockPageScreen(
         headerSize: 20,
         headerColor: AppColors.black,
         topbarColor: AppColors.white,
-        header: 'Тарифи',
+        header: context.l.tariffs,
         isBack: true,
         theme:
             SystemUiOverlayStyle.dark.copyWith(statusBarColor: AppColors.white),
@@ -56,35 +52,14 @@ class TariffsScreenState extends State<TariffsScreen>
           children: [
             Expanded(
                 child: PageView(
-              controller: _pageViewController,
-              onPageChanged: (int page) {
-                tariffsController.onPageChanged(page);
-              },
-              children: <Widget>[
-                Center(
-                    child: Image.asset(
-                  Assets.tariffBeslim,
-                  fit: BoxFit.fitWidth,
-                  width: MediaQuery.of(context).size.width,
-                )),
-                Center(
-                  child: Image.asset(
-                    isPremiumSale
-                        ? Assets.tariffPremiumSale
-                        : Assets.tariffPremium,
-                    fit: BoxFit.fitWidth,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                ),
-                Center(
-                  child: Image.asset(
-                    Assets.tariffVip,
-                    fit: BoxFit.fitWidth,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                ),
-              ],
-            )),
+                    controller: _pageViewController,
+                    onPageChanged: (int page) {
+                      tariffsController.onPageChanged(page);
+                    },
+                    children: [
+                  ...tariffsController.tariffs
+                      .map((item) => TariffItem(modelTariff: item))
+                ])),
             const SizedBox(height: 10),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -96,12 +71,13 @@ class TariffsScreenState extends State<TariffsScreen>
                 height: 60,
                 child: tariffsController.buyButtonVisible
                     ? bStyle(
-                        text: "Придбати пакет",
+                        text: context.l.buyPackage,
                         c: context,
                         colorText: AppColors.white,
                         vertical: 15,
                         onPressed: () {
-                          tariffsController.onPayTariff(100);
+                          tariffsController.onPayTariff(tariffsController
+                              .tariffs[tariffsController.currentPageIndex]);
                         })
                     : const SizedBox()),
             const SizedBox(height: 30)

@@ -120,6 +120,7 @@
   "loginFailed": "Login failed",
   "qrNotValidForLogin": "The QR code is not valid for login.",
   "error": "Error",
+  "buyPackage": "Buy Package",
   "mapForPaid": "The service is available for paid tariffs",
   "@save": {},
   "@@locale": "en"
