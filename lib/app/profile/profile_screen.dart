@@ -1,3 +1,4 @@
+import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import '../../generated/assets.dart';
 import 'components/block_setting.dart';
 import 'components/profile_controller.dart';
@@ -17,6 +19,9 @@ class ProfileScreen extends GetView<ProfileController> {
 
   @override
   Widget build(BuildContext context) {
+    var box = Hive.box('data');
+    String? selectedCountry = box.get('selectedCountry');
+
     return Scaffold(
         appBar: AppBar(
           title:
@@ -80,7 +85,7 @@ class ProfileScreen extends GetView<ProfileController> {
                                   header: context.l.privacyPolicy,
                                   icon: Assets.accountPrivacy,
                                   onPressed: controller.onPrivacy),
-                              controller.modelUser.value.isTraider
+                              controller.modelUser.value.isTraider || selectedCountry == Country.ukraine.name
                                   ? BlockSetting(
                                       header: context.l.tariffs,
                                       icon: Assets.accountTariffs,

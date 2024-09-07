@@ -37,22 +37,26 @@ class TariffItem extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 60),
             child: Text(
-              modelTariff.name,
+              (modelTariff.name ?? "").toUpperCase(),
               style: AppFonts.tariffName.white,
             ),
           ),
+          const SizedBox(height: 60),
+          modelTariff.priceOld != 0
+              ? Text('${modelTariff.priceOld} грн',
+                  style: AppFonts.tariffPrice
+                      .withColor(AppColors.grey3)
+                      .copyWith(decoration: TextDecoration.lineThrough, height: 1.0))
+              : const SizedBox(),
           Stack(
             alignment: Alignment.topRight,
             children: [
+              Text('${modelTariff.price} грн',
+                  style: AppFonts.tariffPrice.withColor(modelTariff.color)),
               Padding(
-                padding: const EdgeInsets.only(top: 60),
-                child: Text(modelTariff.price,
-                    style: AppFonts.tariffPrice.withColor(modelTariff.color)),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 100),
+                padding: const EdgeInsets.only(top: 40),
                 child: Text(
-                  'на рік',
+                  modelTariff.pricePeriod ?? 'year', //TODO
                   style: AppFonts.body1bold.withColor(modelTariff.color),
                 ),
               )
@@ -67,7 +71,9 @@ class TariffItem extends StatelessWidget {
               text: adv)),
           // Недоліки
           ...modelTariff.disadvantages.map((disadv) => propItem(
-              iconAsset: Assets.cancel, iconColor: AppColors.red, text: disadv)),
+              iconAsset: Assets.cancel,
+              iconColor: AppColors.red,
+              text: disadv)),
         ],
       ),
     );

@@ -27,4 +27,13 @@ Future<ApiAnswer> sendMessageToBot(String message) async {
     checkAuth(apiAnswer.data);
     return apiAnswer;
   }
+
+  Future<ApiAnswer> getTariffs() async {
+    ApiAnswer apiAnswer = ApiAnswer();
+    var request = await dataRequestMultipart('voc.tariffs');
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+    return apiAnswer;
+  }
 }

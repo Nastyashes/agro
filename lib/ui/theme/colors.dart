@@ -24,8 +24,8 @@ class AppColors {
   static const dobriva = Color(0xFF90CAF9);
   static const seeds = Color(0xffff9100);
   static const oil = Color(0xFF736357);
-  static const tariffFree = Color(0xFF2579BE);
+  static const tariffBezlim = Color(0xFF2579BE);
   static const tariffPremium = Color(0xFF28B67B);
   static const tariffVip = Color(0xFFF65878);
-  static const tariffSpecial = Color(0xFFEB9340);
+
 }

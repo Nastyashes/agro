@@ -1,7 +1,6 @@
 import 'package:agro/app/components/block_page_screen.dart';
 import 'package:agro/app/profile/tariffs/tariff_item.dart';
 import 'package:agro/app/profile/tariffs/tariffs_controller.dart';
-import 'package:agro/model/tariff/model_tariff.dart';
 import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/vars/helper.dart';
@@ -22,7 +21,6 @@ class TariffsScreenState extends State<TariffsScreen>
     with TickerProviderStateMixin {
   TariffsController tariffsController = Get.find();
   late PageController _pageViewController;
-  late ModelTariff modelTariff;
 
   @override
   void initState() {
@@ -39,11 +37,6 @@ class TariffsScreenState extends State<TariffsScreen>
 
   @override
   Widget build(BuildContext context) {
-    DateTime dateToCheck = DateTime.now();
-    DateTime startDate = DateTime(2024, 7, 1);
-    DateTime endDate = DateTime(2024, 7, 7);
-    bool isPremiumSale = isDateBetween(dateToCheck, startDate, endDate);
-
     return BlockPageScreen(
         headerSize: 20,
         headerColor: AppColors.black,
@@ -59,25 +52,14 @@ class TariffsScreenState extends State<TariffsScreen>
           children: [
             Expanded(
                 child: PageView(
-              controller: _pageViewController,
-              onPageChanged: (int page) {
-                tariffsController.onPageChanged(page);
-              },
-              children: <Widget>[
-                TariffItem(modelTariff: bezlimTariff), 
-                
-                
-                  TariffItem(
-                    modelTariff: isPremiumSale
-                        ? premiumTariff
-                        : premiumTariff,
-                  ),
-                
-               
-                TariffItem(modelTariff: vipTariff),  
-                
-              ],
-            )),
+                    controller: _pageViewController,
+                    onPageChanged: (int page) {
+                      tariffsController.onPageChanged(page);
+                    },
+                    children: [
+                  ...tariffsController.tariffs
+                      .map((item) => TariffItem(modelTariff: item))
+                ])),
             const SizedBox(height: 10),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -94,7 +76,8 @@ class TariffsScreenState extends State<TariffsScreen>
                         colorText: AppColors.white,
                         vertical: 15,
                         onPressed: () {
-                          tariffsController.onPayTariff(100);
+                          tariffsController.onPayTariff(tariffsController
+                              .tariffs[tariffsController.currentPageIndex]);
                         })
                     : const SizedBox()),
             const SizedBox(height: 30)
