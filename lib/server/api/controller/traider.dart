@@ -38,7 +38,8 @@ class Traider extends Api {
     ApiAnswer apiAnswer = ApiAnswer();
     var request = await dataRequestMultipart('uagro.listorders',
     apiUrl: "api.php",
-        parameter: 'mode=trader&page=$page&limit=$limit&search=$search&sphere=0');
+        parameter: 'mode=trader&page=$page&limit=$limit&sphere=15&filters=[]'
+        );
 
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(await request.stream.bytesToString());

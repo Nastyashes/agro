@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 ModelOrder structOrderData({required data}) {
   ModelOrder modelOrder = ModelOrder();
 
-  modelOrder.id = data['id'];
+  modelOrder.id = int.tryParse(data['id'].toString());
   modelOrder.title = data['title'].toString();
   modelOrder.crop = data['crop'].toString();
   modelOrder.comment = data['comment'].toString();

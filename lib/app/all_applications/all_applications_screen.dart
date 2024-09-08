@@ -78,7 +78,7 @@ class  AllApplicationsScreenState extends State<AllApplicationsScreen> {
                         itemBuilder: (_, e) {
                           return Column(
                             children: [
-                              for (Created item in controller.combinedList) ...[
+                              for (Created item in controller.modelOrder) ...[
                                 item is ModelOrder
                                     ? getBlockOrder(
                                         item,

@@ -35,7 +35,7 @@ class HomeController extends BaseController {
   late final RefreshController controllerLoading;
   late final ScrollController controllerScroll;
   String? messHeader;
-  final _localStorageRepository = LocalStorageRepository();
+  final localStorageRepository = LocalStorageRepository();
   final _interstitial = Interstitial();
   int page = 1;
   List<ModelOrder> modelOrder = [];
@@ -105,7 +105,7 @@ class HomeController extends BaseController {
         }
 
         log(apiAnswer.data.toString());
-        callResults = await _localStorageRepository.getAll();
+        callResults = await localStorageRepository.getAll();
         setState(() {
           if (context.mounted) {
             if (apiAnswer.data['status']) {
@@ -216,7 +216,7 @@ class HomeController extends BaseController {
 
   void updateCallResults() async {
     log('callResults.length: ${callResults.length}');
-    callResults = await _localStorageRepository.getAll();
+    callResults = await localStorageRepository.getAll();
   }
 
   onPageOrderFermer({required ModelOrder model}) async {
