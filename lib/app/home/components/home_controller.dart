@@ -35,7 +35,6 @@ class HomeController extends BaseController {
   late final RefreshController controllerLoading;
   late final ScrollController controllerScroll;
   String? messHeader;
-  int total = 0;
   final _localStorageRepository = LocalStorageRepository();
   final _interstitial = Interstitial();
   int page = 1;

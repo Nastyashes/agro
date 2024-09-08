@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: HomeHeader(
-                    tariff: controller.tariff, total: controller.total))
+                    tariff: controller.tariff))
             : null,
         endWidget: controller.modelUser.isTraider
             ? null

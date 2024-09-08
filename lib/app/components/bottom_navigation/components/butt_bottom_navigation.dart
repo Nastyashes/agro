@@ -32,6 +32,7 @@ Widget buttBottomNavigation(
                       BlendMode.srcIn)),
               readText(
                   text: text,
+                  align: TextAlign.center,
                   style: AppFonts.body2semibold.withColor(
                       c.watch<BottomMenuNotifier>().activeButtMenu != buttNum
                           ? AppColors.greyGreen

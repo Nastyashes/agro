@@ -33,6 +33,20 @@ class Traider extends Api {
     return apiAnswer;
   }
 
+  Future<ApiAnswer> getAllOrders(
+      {required int page, required int limit, String? search}) async {
+    ApiAnswer apiAnswer = ApiAnswer();
+    var request = await dataRequestMultipart('uagro.listorders',
+    apiUrl: "api.php",
+        parameter: 'mode=trader&page=$page&limit=$limit&search=$search&sphere=0');
+
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+
+    return apiAnswer;
+  }
+
   Future<ApiAnswer> getOrder({required int? orderId}) async {
     ApiAnswer apiAnswer = ApiAnswer();
     var request = await dataRequestMultipart('order.view',

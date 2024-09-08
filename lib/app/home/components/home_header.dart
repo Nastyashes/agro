@@ -6,16 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:agro/ui/utils/date_extensions.dart';
 
 class HomeHeader extends StatelessWidget {
-  const HomeHeader({Key? key, required this.tariff, required this.total})
+  const HomeHeader({Key? key, required this.tariff})
       : super(key: key);
 
   final Tariff? tariff;
-  final int total;
 
   @override
   Widget build(BuildContext context) {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      headerItem((total).toString(), context.l.bids),
+      headerItem((tariff?.orderCount ?? 0).toString(), context.l.bids),
       headerItem((tariff?.balanceContactsDayOsttk ?? 0).toString(), context.l.encounters),
       headerItem((tariff?.balanceSms ?? 0).toString(), context.l.sms),
       headerItem(
