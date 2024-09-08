@@ -39,6 +39,7 @@ class  AllApplicationsScreenState extends State<AllApplicationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
     return BlockPageScreen(
         header: context.l.allApplications,
         theme: SystemUiOverlayStyle.dark,

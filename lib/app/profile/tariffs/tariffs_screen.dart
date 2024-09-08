@@ -77,7 +77,7 @@ class TariffsScreenState extends State<TariffsScreen>
                         vertical: 15,
                         onPressed: () {
                           tariffsController.onPayTariff(tariffsController
-                              .tariffs[tariffsController.currentPageIndex]);
+                              .tariffs[tariffsController.currentPageIndex], context);
                         })
                     : const SizedBox()),
             const SizedBox(height: 30)

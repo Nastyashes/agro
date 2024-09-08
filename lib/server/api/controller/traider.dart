@@ -33,6 +33,21 @@ class Traider extends Api {
     return apiAnswer;
   }
 
+ /* Future<ApiAnswer> getPremiumOrderList({required int page, required int limit, String? search,}) async {
+   ApiAnswer apiAnswer = ApiAnswer();
+  
+  log('Fetching orders with page=$page, limit=$limit, search=$search');
+  var request = await dataRequestMultipart('uagro.listorder',
+  parameter: 'mode=trader&page=$page&limit=$limit&search=$search');
+  apiAnswer.code = request.statusCode;
+  apiAnswer.data = json.decode(await request.stream.bytesToString());
+
+  // Перевірка автентифікації
+  checkAuth(apiAnswer.data);
+
+  return apiAnswer;
+} */
+
   Future<ApiAnswer> getOrder({required int? orderId}) async {
     ApiAnswer apiAnswer = ApiAnswer();
     var request = await dataRequestMultipart('order.view',

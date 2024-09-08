@@ -6,12 +6,14 @@ import 'package:agro/model/tariff/model_tariff.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TariffsController extends BaseController {
   late Function(VoidCallback fn) setState;
+  late BuildContext context; 
   Tariff? tariff;
   ModelUser? modelUser;
   int currentPageIndex = 0;
@@ -80,15 +82,17 @@ class TariffsController extends BaseController {
     }
   }
 
-  Future<void> onPayTariff(ModelTariff tariff) async {
+  Future<void> onPayTariff(ModelTariff tariff, BuildContext content) async {
     try {
       final apiAnswer = await Api().common.tariffPay(amount: tariff.price ?? 0);
 
-      if (apiAnswer.data['error'] != null) {
+      if (apiAnswer.data['error'] != null){
+        if (context.mounted){
+        
         log('Error: ${apiAnswer.data['error']}');
-        notification(text: "Щось пішло не так(. Спробуйте пізніше.");
-        // Відображення помилки користувачу
-      } else {
+        notification(text: content.l.somethingWentWrong);
+       
+      }} else {
         final String payUrl = apiAnswer.data['pay_url'];
         if (await canLaunchUrl(Uri.parse(payUrl))) {
           await launchUrl(Uri.parse(payUrl));
@@ -98,9 +102,10 @@ class TariffsController extends BaseController {
         log('Order ID: ${apiAnswer.data['order_id']}');
       }
     } catch (e) {
+        if (context.mounted) {
       log('Error purchasing tariff: ${e.toString()}', error: e);
-      notification(text: "Щось пішло не так(. Спробуйте пізніше.");
-    }
+      notification(text: content.l.somethingWentWrong);
+    }}
   }
 
   void onPageChanged(int page) {
