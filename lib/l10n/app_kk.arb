@@ -126,6 +126,7 @@
   "number": "Сан",
   "requestingAddress": "фермердің мекен-жайын сұрату арқылы",
   "correctAddress": ". Адресті түзету",
+  "somethingWentWrong": "Бірдеңе дұрыс болмады (. Кейінірек қайталап көріңіз.",
   "@save": {},
   "@@locale": "kk"
 }

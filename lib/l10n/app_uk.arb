@@ -126,6 +126,7 @@
   "nomber": "Номер",
   "requestingAddress": "запросив адресу фермера",
   "correctAddress": ". Відкоригуйте адресу",
+  "somethingWentWrong": "Щось пішло не так (. Спробуйте пізніше.",
   "@save": {},
   "@@locale": "uk"
 }

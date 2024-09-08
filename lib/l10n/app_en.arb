@@ -126,6 +126,7 @@
   "number": "Number",
   "requestingAddress": "by requesting the farmer's address",
   "correctAddress": ". Correct the address",
+  "somethingWentWrong": "Something went wrong (. Please try again later.",
   "@save": {},
   "@@locale": "en"
 }

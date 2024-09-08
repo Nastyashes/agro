@@ -3,6 +3,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class AllApplicationsController extends HomeController {
   
+
   final RefreshController allApplicationsRefreshController = RefreshController();
 
   @override

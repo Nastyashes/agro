@@ -45,7 +45,7 @@ class Traider extends Api {
     checkAuth(apiAnswer.data);
 
     return apiAnswer;
-  }
+    }
 
   Future<ApiAnswer> getOrder({required int? orderId}) async {
     ApiAnswer apiAnswer = ApiAnswer();
