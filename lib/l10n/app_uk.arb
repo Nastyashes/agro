@@ -122,6 +122,10 @@
   "error": "Помилка",
   "buyPackage": "Придбати пакет",
   "mapForPaid": "Сервіс доступний для платних тарифів",
+  "allApplications": "Всі заявки",
+  "nomber": "Номер",
+  "requestingAddress": "запросив адресу фермера",
+  "correctAddress": ". Відкоригуйте адресу",
   "@save": {},
   "@@locale": "uk"
 }

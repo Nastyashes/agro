@@ -122,6 +122,10 @@
   "error": "Error",
   "buyPackage": "Buy Package",
   "mapForPaid": "The service is available for paid tariffs",
+  "allApplications": "All Applications",
+  "number": "Number",
+  "requestingAddress": "by requesting the farmer's address",
+  "correctAddress": ". Correct the address",
   "@save": {},
   "@@locale": "en"
 }

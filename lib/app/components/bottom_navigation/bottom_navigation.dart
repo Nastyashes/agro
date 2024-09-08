@@ -44,7 +44,8 @@ class BottomNavigation extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 15, right: 15),
                       child: Row(
                         children: [
-                          buttBottomNavigation(icon: Assets.bottomNavigationHome, text: context.l.application, buttNum: 0, c: context),
+                          buttBottomNavigation(icon: Assets.bottomNavigationHome, text: context.l.yourApplications, buttNum: 0, c: context),
+                          buttBottomNavigation(icon: Assets.bottomNavigationAllApplications, text: context.l.allApplications, buttNum: 3, c: context),
                           buttBottomNavigation(icon: Assets.bottomNavigationHelp, text: context.l.support, buttNum: 1, c: context),
                           buttBottomNavigation(icon: Assets.bottomNavigationProfile, text: context.l.profile, buttNum: 2, c: context),
                         ],

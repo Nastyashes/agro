@@ -288,9 +288,9 @@ class HomeController extends BaseController {
           district.isEmpty ||
           city == null ||
           city.isEmpty) {
-        notification(text: 'Почекайте 5 хв, відкоригуємо адресу');
+        notification(text: context.l.waitAddress);
         await Api().common.sendMessageToBot(
-            "Номер ${modelUser.phone} запросив адрес фермера $id. Відкоригуйте адресу");
+            "${context.l.nomber} ${modelUser.phone} ${context.l.requestingAddress} $id ${context.l.correctAddress}");
       } else {
         final query = '$city $region $district';
         MapsLauncher.launchQuery(query);

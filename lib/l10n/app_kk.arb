@@ -122,6 +122,10 @@
   "error": "Қате",
   "buyPackage": "Пакетті сатып алу",
   "mapForPaid": "Қызмет ақылы тарифтер бойынша қолжетімді",
+  "allApplications": "Барлық қосымшалар",
+  "number": "Сан",
+  "requestingAddress": "фермердің мекен-жайын сұрату арқылы",
+  "correctAddress": ". Адресті түзету",
   "@save": {},
   "@@locale": "kk"
 }

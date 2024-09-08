@@ -1,3 +1,4 @@
+import 'package:agro/app/all_applications/all_applications_screen.dart';
 import 'package:agro/app/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -49,6 +50,8 @@ class _AppScreenState extends State<AppScreen> {
                         const Expanded(child: HelpScreen())
                       ] else if (c.watch<BottomMenuNotifier>().activeButtMenu == 2) ...[
                         const Expanded(child: ProfileScreen())
+                      ] else if (c.watch<BottomMenuNotifier>().activeButtMenu == 3) ...[
+                        const Expanded(child: AllApplicationsScreen())
                       ]
                     ],
                   ),

@@ -40,6 +40,8 @@ class Assets {
       'picture/app/bottom_navigation/help.svg';
   static const String bottomNavigationHome =
       'picture/app/bottom_navigation/home.svg';
+  static const String bottomNavigationAllApplications =
+      'picture/app/bottom_navigation/all_applications.svg';
   static const String bottomNavigationProfile =
       'picture/app/bottom_navigation/profile.svg';
   static const String componentsArrowBot = 'picture/components/arrow_bot.svg';
