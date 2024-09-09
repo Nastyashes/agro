@@ -4,27 +4,36 @@ import 'dart:developer';
 import '../api.dart';
 
 class Traider extends Api {
-
   Future<ApiAnswer> loginWithQr(String code) async {
-   ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('qr_login',
-        parameter:
-            'secret=$code');
+    ApiAnswer apiAnswer = ApiAnswer();
+    var request =
+        await dataRequestMultipart('qr_login', parameter: 'secret=$code');
 
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(await request.stream.bytesToString());
     checkAuth(apiAnswer.data);
 
     return apiAnswer;
-  } 
-  
+  }
+
   Future<ApiAnswer> getOrderList(
       {required int page, required int limit, String? search}) async {
     ApiAnswer apiAnswer = ApiAnswer();
     log('mode=trader&page=$page&limit=$limit&search=$search&sphere=15');
     var request = await dataRequestMultipart('order.list',
-        parameter:
-            'mode=trader&page=$page&limit=$limit&search=$search');
+        parameter: 'mode=trader&page=$page&limit=$limit&search=$search');
+
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+
+    return apiAnswer;
+  }
+
+  Future<ApiAnswer> getOrder({required int? orderId}) async {
+    ApiAnswer apiAnswer = ApiAnswer();
+    var request = await dataRequestMultipart('order.view',
+        parameter: 'order_id=$orderId');
 
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(await request.stream.bytesToString());
@@ -37,21 +46,8 @@ class Traider extends Api {
       {required int page, required int limit, String? search}) async {
     ApiAnswer apiAnswer = ApiAnswer();
     var request = await dataRequestMultipart('uagro.listorders',
-    apiUrl: "api.php",
-        parameter: 'mode=trader&page=$page&limit=$limit&sphere=15&filters=[]'
-        );
-
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
-
-    return apiAnswer;
-    }
-
-  Future<ApiAnswer> getOrder({required int? orderId}) async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('order.view',
-        parameter: 'order_id=$orderId');
+        apiUrl: "api.php",
+        parameter: 'mode=trader&page=$page&limit=$limit&sphere=15&filters=[]');
 
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(await request.stream.bytesToString());

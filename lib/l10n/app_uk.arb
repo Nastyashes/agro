@@ -127,6 +127,7 @@
   "requestingAddress": "запросив адресу фермера",
   "correctAddress": ". Відкоригуйте адресу",
   "somethingWentWrong": "Щось пішло не так (. Спробуйте пізніше.",
+  "myTariff": "Мій тариф",
   "@save": {},
   "@@locale": "uk"
 }

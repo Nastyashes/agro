@@ -112,6 +112,7 @@ class TariffsController extends BaseController {
     setState(() {
       currentPageIndex = page;
       buyButtonVisible = getBuyButtonVisible(page, tariff);
+      buyButtonVisible = getBuyButtonVisible(page, tariff);
     });
   }
 
@@ -131,5 +132,6 @@ class TariffsController extends BaseController {
     return true;
   }
 
+ 
   void onBack(BuildContext context) => Navigator.pop(context);
 }

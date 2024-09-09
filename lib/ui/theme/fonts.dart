@@ -7,7 +7,7 @@ class AppFonts {
   static TextStyle tariffName = GoogleFonts.inter(
       fontSize: 38, fontWeight: FontWeight.w900, color: AppColors.black);
   static TextStyle tariffPrice = GoogleFonts.nunito(
-      fontSize: 38, fontWeight: FontWeight.w700, color: AppColors.black);    
+      fontSize: 38, fontWeight: FontWeight.w700, color: AppColors.black);
   static TextStyle tariffHeader = GoogleFonts.nunito(
       fontSize: 18, fontWeight: FontWeight.w500, color: AppColors.black);
   static TextStyle title1 = GoogleFonts.nunito(

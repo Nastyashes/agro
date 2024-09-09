@@ -85,7 +85,8 @@ class ProfileScreen extends GetView<ProfileController> {
                                   header: context.l.privacyPolicy,
                                   icon: Assets.accountPrivacy,
                                   onPressed: controller.onPrivacy),
-                              controller.modelUser.value.isTraider || selectedCountry == Country.ukraine.name
+                              controller.modelUser.value.isTraider ||
+                                      selectedCountry == Country.ukraine.name
                                   ? BlockSetting(
                                       header: context.l.tariffs,
                                       icon: Assets.accountTariffs,
