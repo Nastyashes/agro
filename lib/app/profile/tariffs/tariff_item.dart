@@ -1,4 +1,3 @@
-
 import 'package:agro/generated/assets.dart';
 import 'package:agro/model/tariff/model_tariff.dart';
 import 'package:agro/model/tariff/tariff.dart';
@@ -9,9 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class TariffItem extends StatelessWidget {
-  const TariffItem({super.key, required this.modelTariff, this.tariff, required this.index});
+  const TariffItem(
+      {super.key, required this.modelTariff, this.tariff, required this.index});
   final ModelTariff modelTariff;
-  final Tariff? tariff;  
+  final Tariff? tariff;
   final int index;
 
   @override
@@ -41,27 +41,26 @@ class TariffItem extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 10),
-            child:Visibility(
-    visible: getBuyLabelVisible(index, tariff),
-    replacement: const SizedBox(
-      width: 120,
-      height: 54,
-    ), 
-    child:
-             Container(
-              width: 120,
-              height: 54,
-              alignment: Alignment.topCenter,
-              padding: const EdgeInsets.only(top: 5),
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage(Assets.myTariffLable),
-                      fit: BoxFit.fill)),
-              child: Text(
-                context.l.myTariff,
-                style: AppFonts.body1bold.white,
-              ),
-            )),
+            child: Visibility(
+                visible: getBuyLabelVisible(index, tariff),
+                replacement: const SizedBox(
+                  width: 120,
+                  height: 54,
+                ),
+                child: Container(
+                  width: 120,
+                  height: 54,
+                  alignment: Alignment.topCenter,
+                  padding: const EdgeInsets.only(top: 5),
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(Assets.myTariffLable),
+                          fit: BoxFit.fill)),
+                  child: Text(
+                    context.l.myTariff,
+                    style: AppFonts.body1bold.white,
+                  ),
+                )),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 1),
@@ -96,29 +95,27 @@ class TariffItem extends StatelessWidget {
             height: 30,
           ),
           Expanded(
-  child: SingleChildScrollView(
-    child: Column(
-      children: [
-        // Переваги
-        ...modelTariff.advantages.map((adv) => propItem(
-            iconAsset: Assets.checkCircle,
-            iconColor: modelTariff.color,
-            text: adv)),
-        // Недоліки
-        ...modelTariff.disadvantages.map((disadv) => propItem(
-            iconAsset: Assets.cancel,
-            iconColor: AppColors.red,
-            text: disadv)),
-      ],
-    ),
-  ),
-),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  ...modelTariff.advantages.map((adv) => propItem(
+                      iconAsset: Assets.checkCircle,
+                      iconColor: modelTariff.color,
+                      text: adv)),
+                  ...modelTariff.disadvantages.map((disadv) => propItem(
+                      iconAsset: Assets.cancel,
+                      iconColor: AppColors.red,
+                      text: disadv)),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-bool getBuyLabelVisible(int index, Tariff? tariff) {
+  bool getBuyLabelVisible(int index, Tariff? tariff) {
     switch (index) {
       case 0:
         return (tariff?.isVip == false &&
@@ -126,16 +123,16 @@ bool getBuyLabelVisible(int index, Tariff? tariff) {
                 tariff?.isBeslim == false) ||
             tariff?.isFree == true;
       case 1:
-        return tariff?.isFree != false &&
-               tariff?.isBeslim == false && 
-               tariff?.isVip == false ||
-            (tariff?.isPremium == true);
+        return (tariff?.isFree != false &&
+                tariff?.isBeslim == false &&
+                tariff?.isVip == false) ||
+            tariff?.isPremium == true;
       case 2:
-        return (tariff?.isVip != true &&
-                tariff?.isBeslim != true);
+        return (tariff?.isVip != true && tariff?.isBeslim == false);
     }
     return true;
   }
+
   Widget propItem(
       {required String iconAsset,
       required Color iconColor,
@@ -145,8 +142,7 @@ bool getBuyLabelVisible(int index, Tariff? tariff) {
       child: Row(
         children: [
           SvgPicture.asset(iconAsset,
-              colorFilter: ColorFilter.mode(
-                  iconColor, BlendMode.srcIn)),
+              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn)),
           const SizedBox(width: 10.0),
           Expanded(
               child: Text(

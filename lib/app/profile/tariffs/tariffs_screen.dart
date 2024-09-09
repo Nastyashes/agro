@@ -59,10 +59,10 @@ class TariffsScreenState extends State<TariffsScreen>
                     },
                     children: [
                   ...tariffsController.tariffs.asMap().entries.map((entry) {
-  int index = entry.key;
-  ModelTariff item = entry.value;
-  return TariffItem(modelTariff: item, index: index);
-}).toList(),
+                    int index = entry.key;
+                    ModelTariff item = entry.value;
+                    return TariffItem(modelTariff: item, index: index);
+                  }).toList(),
                 ])),
             const SizedBox(height: 10),
             Row(
@@ -80,8 +80,10 @@ class TariffsScreenState extends State<TariffsScreen>
                         colorText: AppColors.white,
                         vertical: 15,
                         onPressed: () {
-                          tariffsController.onPayTariff(tariffsController
-                              .tariffs[tariffsController.currentPageIndex], context);
+                          tariffsController.onPayTariff(
+                              tariffsController
+                                  .tariffs[tariffsController.currentPageIndex],
+                              context);
                         })
                     : const SizedBox()),
             const SizedBox(height: 30)
