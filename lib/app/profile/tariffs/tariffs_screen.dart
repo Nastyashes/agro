@@ -2,6 +2,7 @@ import 'package:agro/app/components/block_page_screen.dart';
 import 'package:agro/app/profile/tariffs/tariff_item.dart';
 import 'package:agro/app/profile/tariffs/tariffs_controller.dart';
 import 'package:agro/model/tariff/model_tariff.dart';
+import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/vars/helper.dart';
@@ -61,7 +62,7 @@ class TariffsScreenState extends State<TariffsScreen>
                   ...tariffsController.tariffs.asMap().entries.map((entry) {
                     int index = entry.key;
                     ModelTariff item = entry.value;
-                    return TariffItem(modelTariff: item, index: index);
+                    return TariffItem(modelTariff: item, isMyTariff: getMyLabelVisible(index, tariffsController.tariff),);
                   }).toList(),
                 ])),
             const SizedBox(height: 10),
@@ -141,4 +142,16 @@ bool isDateBetween(DateTime date, DateTime startDate, DateTime endDate) {
 
   return (date.isAfter(startDate) || date.isAtSameMomentAs(startDate)) &&
       (date.isBefore(endDate) || date.isAtSameMomentAs(endDate));
+}
+
+bool getMyLabelVisible(int index, Tariff? tariff) {
+  switch (index) {
+    case 2:
+      return tariff?.isVip == true;
+    case 1:
+      return tariff?.isPremium == true;
+    case 0:
+      return tariff?.isBeslim == true;
+  }
+  return true;
 }

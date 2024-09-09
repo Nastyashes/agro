@@ -9,10 +9,10 @@ import 'package:flutter_svg/svg.dart';
 
 class TariffItem extends StatelessWidget {
   const TariffItem(
-      {super.key, required this.modelTariff, this.tariff, required this.index});
+      {super.key, required this.modelTariff, this.tariff, required this.isMyTariff});
   final ModelTariff modelTariff;
   final Tariff? tariff;
-  final int index;
+  final bool isMyTariff;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class TariffItem extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 10),
             child: Visibility(
-                visible: getBuyLabelVisible(index, tariff),
+                visible: isMyTariff,
                 replacement: const SizedBox(
                   width: 120,
                   height: 54,
@@ -110,27 +110,10 @@ class TariffItem extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 10)
         ],
       ),
     );
-  }
-
-  bool getBuyLabelVisible(int index, Tariff? tariff) {
-    switch (index) {
-      case 0:
-        return (tariff?.isVip == false &&
-                tariff?.isPremium == false &&
-                tariff?.isBeslim == false) ||
-            tariff?.isFree == true;
-      case 1:
-        return (tariff?.isFree != false &&
-                tariff?.isBeslim == false &&
-                tariff?.isVip == false) ||
-            tariff?.isPremium == true;
-      case 2:
-        return (tariff?.isVip != true && tariff?.isBeslim == false);
-    }
-    return true;
   }
 
   Widget propItem(

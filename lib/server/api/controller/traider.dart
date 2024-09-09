@@ -43,11 +43,11 @@ class Traider extends Api {
   }
 
   Future<ApiAnswer> getAllOrders(
-      {required int page, required int limit, String? search}) async {
+      {required int page, required int limit}) async {
     ApiAnswer apiAnswer = ApiAnswer();
     var request = await dataRequestMultipart('uagro.listorders',
         apiUrl: "api.php",
-        parameter: 'mode=trader&page=$page&limit=$limit&sphere=15&filters=[]');
+        parameter: 'sphere=0&filters=[]&page=$page&perpage=$limit');
 
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(await request.stream.bytesToString());
