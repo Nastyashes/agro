@@ -165,7 +165,7 @@ class OrderController extends BaseController {
     if (contact.userName == null) {
       try {
         if (tariff?.isPremium == false || tariff?.isVip == false) {
-          await _interstitial.loadInterstitialAd(
+          await _interstitial.loadRewardedAd(
             doAfter: () async {
               await onLoadInfoUser();
               homeController.onContactOpened(modelOrder!);

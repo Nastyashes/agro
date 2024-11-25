@@ -234,6 +234,11 @@ class HomeController extends BaseController {
     setState(() {});
   }
 
+  onContactSought(String orderId) async {
+    await Api().common.setOrderReaded(orderId);
+    log("read order $orderId");
+  }
+
   onReadMessage(Message message) async {
     await Api().traider.readMessage(message.id);
     log("read message ${message.id}");
@@ -276,7 +281,7 @@ class HomeController extends BaseController {
 
   Future<void> launchMap(
       BuildContext context, ModelContact contact, String id) async {
-    if (tariff?.isFree == false) {
+    if (tariff?.isPremium == true || tariff?.isVip == true) {
       final region = contact.userRegion;
       final district = contact.userDistrict;
       final city = contact.userCity;

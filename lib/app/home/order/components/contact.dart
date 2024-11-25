@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../../../ui/buttons/b_transparent_scalable_button.dart';
 
@@ -28,45 +29,53 @@ class ContactScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.transparent,
-      child: Column(
-        children: [
-          !isVip
-              ? readText(
-                  text: context.l.farmerContacts,
-                  style: AppFonts.title2.black,
-                  padding: const EdgeInsets.only(top: 20, bottom: 10))
-              : const SizedBox(height: 6),
-          orderInfo(
-              header: context.l.fullName, text: contact.userName.toString()),
-          orderInfo(
-              header: context.l.region, text: contact.userRegion.toString()),
-          orderInfo(
-              header: context.l.district,
-              text: contact.userDistrict.toString()),
-          orderInfo(
-            header: context.l.town,
-            text: contact.userCity.orNotSet(),
-            icon: IconButton(
-              icon: SvgPicture.asset(Assets.location, width: 24),
-              onPressed: () => controller.launchMap(context, contact, id),
-              alignment: Alignment.topCenter,
-              padding: EdgeInsets.zero,
-            ),
+    return VisibilityDetector(
+        key: Key(id),
+        onVisibilityChanged: (VisibilityInfo info) {
+          controller.onContactSought(id);
+          debugPrint("${info.visibleFraction} of my widget is visible");
+        },
+        child: Container(
+          color: Colors.transparent,
+          child: Column(
+            children: [
+              !isVip
+                  ? readText(
+                      text: context.l.farmerContacts,
+                      style: AppFonts.title2.black,
+                      padding: const EdgeInsets.only(top: 20, bottom: 10))
+                  : const SizedBox(height: 6),
+              orderInfo(
+                  header: context.l.fullName,
+                  text: contact.userName.toString()),
+              orderInfo(
+                  header: context.l.region,
+                  text: contact.userRegion.toString()),
+              orderInfo(
+                  header: context.l.district,
+                  text: contact.userDistrict.toString()),
+              orderInfo(
+                header: context.l.town,
+                text: contact.userCity.orNotSet(),
+                icon: IconButton(
+                  icon: SvgPicture.asset(Assets.location, width: 24),
+                  onPressed: () => controller.launchMap(context, contact, id),
+                  alignment: Alignment.topCenter,
+                  padding: EdgeInsets.zero,
+                ),
+              ),
+              orderInfo(
+                  header: context.l.eMail,
+                  text: contact.userEmail.orNotSet(),
+                  onPressed: () => launchUrl(Uri(
+                      scheme: 'mailto', path: contact.userEmail.toString()))),
+              orderInfo(
+                  header: context.l.phone,
+                  text: contact.userPhone.toString(),
+                  onPressed: onLauchPhone)
+            ],
           ),
-          orderInfo(
-              header: context.l.eMail,
-              text: contact.userEmail.orNotSet(),
-              onPressed: () => launchUrl(
-                  Uri(scheme: 'mailto', path: contact.userEmail.toString()))),
-          orderInfo(
-              header: context.l.phone,
-              text: contact.userPhone.toString(),
-              onPressed: onLauchPhone)
-        ],
-      ),
-    );
+        ));
   }
 
   Widget orderInfo({

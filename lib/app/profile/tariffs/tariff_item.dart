@@ -80,7 +80,7 @@ class TariffItem extends StatelessWidget {
           Stack(
             alignment: Alignment.topRight,
             children: [
-              Text('${modelTariff.price} грн',
+              Text('${modelTariff.price} ${modelTariff.currency}',
                   style: AppFonts.tariffPrice.withColor(modelTariff.color)),
               Padding(
                 padding: const EdgeInsets.only(top: 40),

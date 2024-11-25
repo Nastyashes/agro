@@ -5,7 +5,7 @@ class ModelTariff {
   String? name;
   int? price;
   int? priceOld;
-  String? pricePeriod;
+  String? pricePeriod, currency;
 
   List<String> advantages;
   List<String> disadvantages;
@@ -15,16 +15,18 @@ class ModelTariff {
     this.price,
     this.priceOld,
     this.pricePeriod,
+    this.currency,
     this.advantages = const [],
     this.disadvantages = const [],
   });
 }
 
 ModelTariff structTariffData({required data}) {
-  String? name = data['name'];
-  int? price = data['price'];
-  int? priceOld = data['price_old'];
-  String? pricePeriod = data['price_period'];
+  String? name = data['name'].toString();
+  int? price =  int.tryParse(data['price'].toString());
+  int? priceOld = int.tryParse(data['price_old'].toString());
+  String? pricePeriod = data['price_period'].toString();
+  String? currency = data['currency'].toString();
   List<String> advantages = [];
   for (var element in data['options_ok']) {
     advantages.add(element);
@@ -40,6 +42,7 @@ ModelTariff structTariffData({required data}) {
   tariff.priceOld = priceOld;
   tariff.name = name;
   tariff.pricePeriod = pricePeriod;
+  tariff.currency = currency;
   return tariff;
 }
 
