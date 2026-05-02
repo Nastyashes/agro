@@ -3,12 +3,12 @@ import 'dart:developer';
 
 import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/firebase_options.dart';
+import 'package:agro/l10n/app_localizations.dart';
 import 'package:agro/model/answer/answer.dart';
 import 'package:agro/model/call_result/call_result.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
