@@ -56,9 +56,9 @@ dependencies:
   clipboard: ^0.1.3
   flutter_local_notifications: ^17.2.2
   permission_handler: ^11.0.1
-  mobile_scanner: ^5.0.0
+  mobile_scanner: ^6.0.0
 
-   #logger
+   #loggerf
   loggy: ^2.0.3
 
   # CONNECT
