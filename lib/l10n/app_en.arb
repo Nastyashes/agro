@@ -129,6 +129,9 @@
   "somethingWentWrong": "Something went wrong (. Please try again later.",
   "myTariff": "My Tariff",
   "allPaymentForm": "1f/2f",
+  "youBalance": "Your balance",
+  "topUp": "Top up",
+
   "@save": {},
   "@@locale": "en"
 }

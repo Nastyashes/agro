@@ -413,4 +413,10 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get allPaymentForm => '1ф/2ф';
+
+  @override
+  String get youBalance => 'Ваш баланс';
+
+  @override
+  String get topUp => 'Поповнити';
 }

@@ -43,6 +43,7 @@ class HomeController extends BaseController {
   List<Message> messages = [];
   List<Created> combinedList = [];
   Tariff? tariff;
+  int? balance;
 
   @override
   void onInit() {
@@ -63,6 +64,7 @@ class HomeController extends BaseController {
     await Future.delayed(const Duration(milliseconds: 100));
     modelOrder = [];
     onTariffInfo();
+    onBalanceInfo();
     loadRequest();
   }
 
@@ -266,7 +268,19 @@ class HomeController extends BaseController {
       log(e.toString(), error: e);
     }
   }
+void onBalanceInfo() async {
+    try {
+      ApiAnswer apiAnswer = await Api().common.getBalance();
+          final data = apiAnswer.data;
 
+      setState(() {
+        
+      balance = data['balance'] ?? 0;
+      });
+    } catch (e) {
+      log(e.toString(), error: e);
+    }
+  }
   Future<void> onMessages() async {
     try {
       ApiAnswer apiAnswer = await Api().traider.getMessages();

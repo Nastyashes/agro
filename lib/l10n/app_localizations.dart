@@ -881,6 +881,18 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'1ф/2ф'**
   String get allPaymentForm;
+
+  /// No description provided for @youBalance.
+  ///
+  /// In uk, this message translates to:
+  /// **'Ваш баланс'**
+  String get youBalance;
+
+  /// No description provided for @topUp.
+  ///
+  /// In uk, this message translates to:
+  /// **'Поповнити'**
+  String get topUp;
 }
 
 class _AppLocalizationsDelegate

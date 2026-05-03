@@ -16,7 +16,9 @@ class TariffItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+final isByPiece =
+    (modelTariff.name?.toUpperCase() == 'ПОШТУЧНО');
+        return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
       padding: const EdgeInsets.symmetric(horizontal: 20),
       width: MediaQuery.of(context).size.width,
@@ -71,7 +73,8 @@ class TariffItem extends StatelessWidget {
           ),
           const SizedBox(height: 60),
           modelTariff.priceOld != 0
-              ? Text('${modelTariff.priceOld} грн',
+             ?
+              Text('${modelTariff.priceOld} грн',
                   style: AppFonts.tariffPrice
                       .withColor(AppColors.grey3)
                       .copyWith(
@@ -80,7 +83,7 @@ class TariffItem extends StatelessWidget {
           Stack(
             alignment: Alignment.topRight,
             children: [
-              Text('${modelTariff.price} ${modelTariff.currency}',
+              Text('${isByPiece ? 'від' : ''} ${modelTariff.price} ${modelTariff.currency}',
                   style: AppFonts.tariffPrice.withColor(modelTariff.color)),
               Padding(
                 padding: const EdgeInsets.only(top: 40),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:agro/server/api/api.dart';
 
@@ -19,6 +20,8 @@ class Commmon extends Api {
     ApiAnswer apiAnswer = ApiAnswer();
     var request = await dataRequestMultipart('checkout',
         parameter: 'amount=$amount', langActive: false, apiUrl: "api.php");
+        final rawBody = await request.stream.bytesToString();
+  log('RAW BODY: $rawBody');
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(await request.stream.bytesToString());
     checkAuth(apiAnswer.data);
@@ -28,8 +31,20 @@ class Commmon extends Api {
   Future<ApiAnswer> getTariffs() async {
     ApiAnswer apiAnswer = ApiAnswer();
     var request = await dataRequestMultipart('voc.tariffs');
+
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+    return apiAnswer;
+  }
+Future<ApiAnswer> getBalance() async {
+    ApiAnswer apiAnswer = ApiAnswer();
+    var request = await dataRequestMultipart('balance', apiUrl: 'api.php');
+   final rawBody = await request.stream.bytesToString();
+  log('BALANCE RAW: $rawBody');
+   
+    apiAnswer.data = json.decode(rawBody);
+     apiAnswer.code = request.statusCode;
     checkAuth(apiAnswer.data);
     return apiAnswer;
   }

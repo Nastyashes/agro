@@ -129,6 +129,8 @@
     "somethingWentWrong": "Что-то пошло не так (. Попробуйте позже.",
     "myTariff": "Мой тариф",
     "allPaymentForm": "1ф/2ф",
+    "youBalance": "Ваш баланс",
+    "topUp": "Пополнить",
     "@save": {},
     "@@locale": "ru"
 }

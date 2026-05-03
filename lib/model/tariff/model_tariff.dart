@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class ModelTariff {
   String? name;
-  int? price;
+  String? price;
   int? priceOld;
   String? pricePeriod, currency;
 
@@ -23,7 +23,7 @@ class ModelTariff {
 
 ModelTariff structTariffData({required data}) {
   String? name = data['name'].toString();
-  int? price =  int.tryParse(data['price'].toString());
+  String? price =  data['price'].toString();
   int? priceOld = int.tryParse(data['price_old'].toString());
   String? pricePeriod = data['price_period'].toString();
   String? currency = data['currency'].toString();

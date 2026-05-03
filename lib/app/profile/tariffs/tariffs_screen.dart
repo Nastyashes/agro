@@ -72,7 +72,7 @@ class TariffsScreenState extends State<TariffsScreen>
               children: _buildPageIndicator(),
             ),
             const SizedBox(height: 20),
-            SizedBox(
+      /*      SizedBox(
                 height: 60,
                 child: tariffsController.buyButtonVisible
                     ? bStyle(
@@ -87,6 +87,7 @@ class TariffsScreenState extends State<TariffsScreen>
                               context);
                         })
                     : const SizedBox()),
+                    */
             const SizedBox(height: 30)
           ],
         ));

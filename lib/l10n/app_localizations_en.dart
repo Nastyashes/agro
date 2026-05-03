@@ -414,4 +414,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get allPaymentForm => '1f/2f';
+
+  @override
+  String get youBalance => 'Your balance';
+
+  @override
+  String get topUp => 'Top up';
 }

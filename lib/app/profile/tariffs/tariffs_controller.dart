@@ -82,31 +82,50 @@ class TariffsController extends BaseController {
     }
   }
 
-  Future<void> onPayTariff(ModelTariff tariff, BuildContext content) async {
-    try {
-      final apiAnswer = await Api().common.tariffPay(amount: tariff.price ?? 0);
+  Future<void> onPayTariff(ModelTariff tariff, BuildContext context) async {
+  try {
+    // 1. нормалізація price
+    final rawPrice = tariff.price ?? '';
 
-      if (apiAnswer.data['error'] != null){
-        if (context.mounted){
-        
-        log('Error: ${apiAnswer.data['error']}');
-        notification(text: content.l.somethingWentWrong);
-       
-      }} else {
-        final String payUrl = apiAnswer.data['pay_url'];
-        if (await canLaunchUrl(Uri.parse(payUrl))) {
-          await launchUrl(Uri.parse(payUrl));
-        } else {
-          throw Exception('Could not launch pay_url: $payUrl');
-        }
-        log('Order ID: ${apiAnswer.data['order_id']}');
+    final normalized = rawPrice.replaceAll(RegExp(r'[^0-9]'), '');
+    final amount = int.tryParse(normalized) ?? 0;
+
+    // 2. виклик API
+    final apiAnswer = await Api().common.tariffPay(
+      amount: amount,
+    );
+
+    // 3. базова валідація response
+    if (apiAnswer.data == null || apiAnswer.data is! Map) {
+      if (context.mounted) {
+        notification(text: context.l.somethingWentWrong);
       }
-    } catch (e) {
-        if (context.mounted) {
+      return;
+    }
+
+    if (apiAnswer.data['error'] != null) {
+      if (context.mounted) {
+        log('Error: ${apiAnswer.data['error']}');
+        notification(text: context.l.somethingWentWrong);
+      }
+    } else {
+      final String payUrl = apiAnswer.data['pay_url'];
+
+      if (await canLaunchUrl(Uri.parse(payUrl))) {
+        await launchUrl(Uri.parse(payUrl));
+      } else {
+        throw Exception('Could not launch pay_url: $payUrl');
+      }
+
+      log('Order ID: ${apiAnswer.data['order_id']}');
+    }
+  } catch (e) {
+    if (context.mounted) {
       log('Error purchasing tariff: ${e.toString()}', error: e);
-      notification(text: content.l.somethingWentWrong);
-    }}
+      notification(text: context.l.somethingWentWrong);
+    }
   }
+}
 
   void onPageChanged(int page) {
     setState(() {
