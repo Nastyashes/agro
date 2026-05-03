@@ -131,6 +131,12 @@
   "allPaymentForm": "1ф/2ф",
   "youBalance": "Сіздің балансыңыз",
   "topUp": "Шотты толықтырыңыз",
+  "errorPaymant":"Минималды толықтыру сомасы: 10 UAH",
+  "orInputSum": "Немесе соманы енгізіңіз (UAH):",
+  "onPay":"Төлеу",
+  "sum":"Сома",
+  "topUpBalance": "Шотты толықтыру",
+
   "@save": {},
   "@@locale": "kk"
 }

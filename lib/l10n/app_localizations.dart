@@ -893,6 +893,36 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Поповнити'**
   String get topUp;
+
+  /// No description provided for @errorPaymant.
+  ///
+  /// In uk, this message translates to:
+  /// **'Мінімальна сума поповнення 10 грн'**
+  String get errorPaymant;
+
+  /// No description provided for @orInputSum.
+  ///
+  /// In uk, this message translates to:
+  /// **'Або введіть суму (грн):'**
+  String get orInputSum;
+
+  /// No description provided for @onPay.
+  ///
+  /// In uk, this message translates to:
+  /// **'Оплатити'**
+  String get onPay;
+
+  /// No description provided for @sum.
+  ///
+  /// In uk, this message translates to:
+  /// **'Сума'**
+  String get sum;
+
+  /// No description provided for @topUpBalance.
+  ///
+  /// In uk, this message translates to:
+  /// **'Поповнити рахунок'**
+  String get topUpBalance;
 }
 
 class _AppLocalizationsDelegate

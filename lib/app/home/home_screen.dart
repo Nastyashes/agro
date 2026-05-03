@@ -4,6 +4,7 @@ import 'package:agro/app/home/components/block_order_oil.dart';
 import 'package:agro/app/home/components/block_order_seeds.dart';
 import 'package:agro/app/home/components/block_order_unknown.dart';
 import 'package:agro/app/home/components/home_header.dart';
+import 'package:agro/app/home/components/top_up_balance_popup.dart';
 import 'package:agro/model/answer/answer.dart';
 import 'package:agro/model/message/created.dart';
 import 'package:agro/model/message/message.dart';
@@ -53,13 +54,22 @@ class _HomeScreenState extends State<HomeScreen> {
         headerWidget: controller.modelUser.isTraider
             ? Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: HomeHeader( baslance: controller.balance,
-                    tariff: controller.tariff))
+                child: HomeHeader(
+                  baslance: controller.balance,
+                  // monopay load
+                  tariff: controller.tariff,
+                  onTabTopUp: () {
+                    showTopUpDialog(context, controller.balance, (amount) {
+                      controller.onPayBalance(amount, context);
+                    });
+                  },
+                ))
             : null,
         endWidget: controller.modelUser.isTraider
             ? null
             : BTransparentScalableButton(
-                onPressed: () => {controller.fermerCreateOrder(context.l.applicationSent)},
+                onPressed: () =>
+                    {controller.fermerCreateOrder(context.l.applicationSent)},
                 scale: ScaleFormat.big,
                 child: Row(
                   children: [

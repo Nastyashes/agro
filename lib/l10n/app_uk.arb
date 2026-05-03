@@ -131,6 +131,13 @@
   "allPaymentForm": "1ф/2ф",
   "youBalance": "Ваш баланс",
   "topUp": "Поповнити",
+  "errorPaymant":"Мінімальна сума поповнення 10 грн",
+  "orInputSum": "Або введіть суму (грн):",
+  "onPay":"Оплатити",
+  "sum":"Сума",
+  "topUpBalance": "Поповнити рахунок",
+
+
   "@save": {},
   "@@locale": "uk"
 }

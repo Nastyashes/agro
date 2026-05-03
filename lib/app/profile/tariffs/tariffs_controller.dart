@@ -13,7 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 class TariffsController extends BaseController {
   late Function(VoidCallback fn) setState;
-  late BuildContext context; 
+  late BuildContext context;
   Tariff? tariff;
   ModelUser? modelUser;
   int currentPageIndex = 0;
@@ -83,49 +83,46 @@ class TariffsController extends BaseController {
   }
 
   Future<void> onPayTariff(ModelTariff tariff, BuildContext context) async {
-  try {
-    // 1. нормалізація price
-    final rawPrice = tariff.price ?? '';
+    try {
+      final rawPrice = tariff.price ?? '';
 
-    final normalized = rawPrice.replaceAll(RegExp(r'[^0-9]'), '');
-    final amount = int.tryParse(normalized) ?? 0;
+      final normalized = rawPrice.replaceAll(RegExp(r'[^0-9]'), '');
+      final amount = int.tryParse(normalized) ?? 0;
 
-    // 2. виклик API
-    final apiAnswer = await Api().common.tariffPay(
-      amount: amount,
-    );
+      final apiAnswer = await Api().common.tariffPay(
+            amount: amount,
+          );
 
-    // 3. базова валідація response
-    if (apiAnswer.data == null || apiAnswer.data is! Map) {
-      if (context.mounted) {
-        notification(text: context.l.somethingWentWrong);
+      if (apiAnswer.data == null || apiAnswer.data is! Map) {
+        if (context.mounted) {
+          notification(text: context.l.somethingWentWrong);
+        }
+        return;
       }
-      return;
-    }
 
-    if (apiAnswer.data['error'] != null) {
-      if (context.mounted) {
-        log('Error: ${apiAnswer.data['error']}');
-        notification(text: context.l.somethingWentWrong);
-      }
-    } else {
-      final String payUrl = apiAnswer.data['pay_url'];
-
-      if (await canLaunchUrl(Uri.parse(payUrl))) {
-        await launchUrl(Uri.parse(payUrl));
+      if (apiAnswer.data['error'] != null) {
+        if (context.mounted) {
+          log('Error: ${apiAnswer.data['error']}');
+          notification(text: context.l.somethingWentWrong);
+        }
       } else {
-        throw Exception('Could not launch pay_url: $payUrl');
-      }
+        final String payUrl = apiAnswer.data['pay_url'];
 
-      log('Order ID: ${apiAnswer.data['order_id']}');
-    }
-  } catch (e) {
-    if (context.mounted) {
-      log('Error purchasing tariff: ${e.toString()}', error: e);
-      notification(text: context.l.somethingWentWrong);
+        if (await canLaunchUrl(Uri.parse(payUrl))) {
+          await launchUrl(Uri.parse(payUrl));
+        } else {
+          throw Exception('Could not launch pay_url: $payUrl');
+        }
+
+        log('Order ID: ${apiAnswer.data['order_id']}');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        log('Error purchasing tariff: ${e.toString()}', error: e);
+        notification(text: context.l.somethingWentWrong);
+      }
     }
   }
-}
 
   void onPageChanged(int page) {
     setState(() {
@@ -151,6 +148,5 @@ class TariffsController extends BaseController {
     return true;
   }
 
- 
   void onBack(BuildContext context) => Navigator.pop(context);
 }

@@ -420,4 +420,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get topUp => 'Top up';
+
+  @override
+  String get errorPaymant => 'Minimum top-up amount: 10 UAH';
+
+  @override
+  String get orInputSum => 'Or enter an amount (UAH):';
+
+  @override
+  String get onPay => 'Pay';
+
+  @override
+  String get sum => 'Amount';
+
+  @override
+  String get topUpBalance => 'Top up a balance';
 }

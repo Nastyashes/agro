@@ -131,6 +131,11 @@
   "allPaymentForm": "1f/2f",
   "youBalance": "Your balance",
   "topUp": "Top up",
+  "errorPaymant":"Minimum top-up amount: 10 UAH",
+  "orInputSum": "Or enter an amount (UAH):",
+  "onPay":"Pay",
+  "sum":"Amount",
+  "topUpBalance": "Top up a balance",
 
   "@save": {},
   "@@locale": "en"

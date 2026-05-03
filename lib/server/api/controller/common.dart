@@ -20,10 +20,22 @@ class Commmon extends Api {
     ApiAnswer apiAnswer = ApiAnswer();
     var request = await dataRequestMultipart('checkout',
         parameter: 'amount=$amount', langActive: false, apiUrl: "api.php");
-        final rawBody = await request.stream.bytesToString();
-  log('RAW BODY: $rawBody');
+    final rawBody = await request.stream.bytesToString();
+    log('RAW BODY: $rawBody');
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+    return apiAnswer;
+  }
+
+  Future<ApiAnswer> balancePay({required int amount}) async {
+    ApiAnswer apiAnswer = ApiAnswer();
+    var request = await dataRequestMultipart('uagro.wallet.topup',
+        parameter: 'amount=$amount', apiUrl: "api.php");
+    final rawBody = await request.stream.bytesToString();
+    log('Balance pay url: $rawBody');
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(rawBody);
     checkAuth(apiAnswer.data);
     return apiAnswer;
   }
@@ -37,21 +49,23 @@ class Commmon extends Api {
     checkAuth(apiAnswer.data);
     return apiAnswer;
   }
-Future<ApiAnswer> getBalance() async {
+
+  Future<ApiAnswer> getBalance() async {
     ApiAnswer apiAnswer = ApiAnswer();
     var request = await dataRequestMultipart('balance', apiUrl: 'api.php');
-   final rawBody = await request.stream.bytesToString();
-  log('BALANCE RAW: $rawBody');
-   
+    final rawBody = await request.stream.bytesToString();
+    log('BALANCE RAW: $rawBody');
+
     apiAnswer.data = json.decode(rawBody);
-     apiAnswer.code = request.statusCode;
+    apiAnswer.code = request.statusCode;
     checkAuth(apiAnswer.data);
     return apiAnswer;
   }
 
   Future<ApiAnswer> setOrderReaded(String orderId) async {
     ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('order.setReaded', parameter: "order_id=$orderId");
+    var request = await dataRequestMultipart('order.setReaded',
+        parameter: "order_id=$orderId");
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(await request.stream.bytesToString());
     checkAuth(apiAnswer.data);

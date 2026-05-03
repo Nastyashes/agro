@@ -421,4 +421,19 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get topUp => 'Шотты толықтырыңыз';
+
+  @override
+  String get errorPaymant => 'Минималды толықтыру сомасы: 10 UAH';
+
+  @override
+  String get orInputSum => 'Немесе соманы енгізіңіз (UAH):';
+
+  @override
+  String get onPay => 'Төлеу';
+
+  @override
+  String get sum => 'Сома';
+
+  @override
+  String get topUpBalance => 'Шотты толықтыру';
 }

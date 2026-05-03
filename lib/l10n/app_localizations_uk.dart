@@ -419,4 +419,19 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get topUp => 'Поповнити';
+
+  @override
+  String get errorPaymant => 'Мінімальна сума поповнення 10 грн';
+
+  @override
+  String get orInputSum => 'Або введіть суму (грн):';
+
+  @override
+  String get onPay => 'Оплатити';
+
+  @override
+  String get sum => 'Сума';
+
+  @override
+  String get topUpBalance => 'Поповнити рахунок';
 }

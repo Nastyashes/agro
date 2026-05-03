@@ -8,6 +8,7 @@ import 'package:agro/model/message/created.dart';
 import 'package:agro/model/message/message.dart';
 import 'package:agro/model/model_order/model_contact.dart';
 import 'package:agro/model/model_user/model_user.dart';
+import 'package:agro/model/tariff/model_tariff.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/repository/local_storage_repository.dart';
 import 'package:agro/ui/adds.dart';
@@ -22,6 +23,7 @@ import 'package:hive/hive.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../controllers/app_input_controller.dart';
 import '../../../model/model_order/model_order.dart';
@@ -141,6 +143,48 @@ class HomeController extends BaseController {
   void onLoadData() {
     loadRequest();
     controllerLoading.loadComplete();
+  }
+
+  Future<void> onPayBalance(int? paySum, BuildContext context) async {
+    try {
+      // 1. нормалізація price
+      final amount = paySum ?? 0;
+
+      // 2. виклик API
+      final apiAnswer = await Api().common.balancePay(
+            amount: amount,
+          );
+
+      // 3. базова валідація response
+      if (apiAnswer.data == null || apiAnswer.data is! Map) {
+        if (context.mounted) {
+          notification(text: context.l.somethingWentWrong);
+        }
+        return;
+      }
+
+      if (apiAnswer.data['error'] != null) {
+        if (context.mounted) {
+          log('Error: ${apiAnswer.data['error']}');
+          notification(text: context.l.somethingWentWrong);
+        }
+      } else {
+        final String payUrl = apiAnswer.data['url'];
+
+        if (await canLaunchUrl(Uri.parse(payUrl))) {
+          await launchUrl(Uri.parse(payUrl));
+        } else {
+          throw Exception('Could not launch pay_url: $payUrl');
+        }
+
+        log('Order ID: ${apiAnswer.data['order_id']}');
+      }
+    } catch (e) {
+      if (context.mounted) {
+        log('Error purchasing tariff: ${e.toString()}', error: e);
+        notification(text: context.l.somethingWentWrong);
+      }
+    }
   }
 
   Future<void> onContactClick(ModelOrder order, BuildContext context) async {
@@ -268,19 +312,20 @@ class HomeController extends BaseController {
       log(e.toString(), error: e);
     }
   }
-void onBalanceInfo() async {
+
+  void onBalanceInfo() async {
     try {
       ApiAnswer apiAnswer = await Api().common.getBalance();
-          final data = apiAnswer.data;
+      final data = apiAnswer.data;
 
       setState(() {
-        
-      balance = data['balance'] ?? 0;
+        balance = data['balance'] ?? 0;
       });
     } catch (e) {
       log(e.toString(), error: e);
     }
   }
+
   Future<void> onMessages() async {
     try {
       ApiAnswer apiAnswer = await Api().traider.getMessages();
