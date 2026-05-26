@@ -82,15 +82,19 @@ class _BidListItemState extends State<BidListItem> {
       final controller = Get.find<HomeController>();
 
       final contactPrice = _bidItem.contactPrice ?? 0;
-
       final tariff = controller.tariff;
 
       final isPremium = tariff?.isPremium == true || tariff?.isVip == true;
 
-      final shouldShowAd = contactPrice == 0 && !isPremium;
+      final isFree = tariff?.isFree == true;
+
+      final isAdsDisabled = controller.userfield['is_ads_disabled'] == true;
+
+      final shouldShowAd = contactPrice == 0 && isFree && !isAdsDisabled;
 
       log('contactPrice=$contactPrice');
-      log('isPremium=$isPremium');
+      log('isFree=$isFree');
+      log('isAdsDisabled=$isAdsDisabled');
       log('shouldShowAd=$shouldShowAd');
 
       if (shouldShowAd) {
@@ -308,6 +312,18 @@ class _BidListItemState extends State<BidListItem> {
               ]),
               Row(children: [
                 readText(
+                    text: context.l.company,
+                    style: AppFonts.body1medium.darkGreen),
+                const SizedBox(width: 24),
+                Expanded(
+                    child: readText(
+                  align: TextAlign.end,
+                  text: _bidItem.fermerCompany ?? '',
+                  style: AppFonts.body1bold.mainGreen,
+                )),
+              ]),
+              Row(children: [
+                readText(
                     text: context.l.district,
                     style: AppFonts.body1medium.darkGreen),
                 const SizedBox(width: 24),
@@ -379,8 +395,7 @@ class _BidListItemState extends State<BidListItem> {
                 vertical: 15,
                 border: Border.all(color: AppColors.darkGreen, width: 1),
                 colorButt: Colors.transparent,
-                onPressed: () => _onContactClick(context),
-              ),
+                onPressed: () => _onContactClick(context)),
       );
 
   Widget orderInfo({required String header, required String text}) => Padding(

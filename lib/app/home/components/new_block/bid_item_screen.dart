@@ -3,9 +3,7 @@ import 'package:agro/app/home/components/home_controller.dart';
 import 'package:agro/app/home/components/new_block/bid_item_controller.dart';
 import 'package:agro/app/home/components/new_block/bids_item_new_model.dart';
 import 'package:agro/app/home/order/components/call_result_info.dart';
-import 'package:agro/app/home/order/components/order_controller.dart';
 import 'package:agro/model/model_user/model_user.dart';
-import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/buttons/b_transparent_scalable_button.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
@@ -126,7 +124,7 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
         (item.contacts?.email != null && item.contacts!.email!.isNotEmpty)
             ? _row(context.l.eMail, item.contacts?.email ?? '—')
             : SizedBox(),
-        _homeController.modelUser.isTraider &&
+        /*       _homeController.modelUser.isTraider &&
                 item.contacts != null &&
                 item.contacts!.phone != null
             ? CallResultInfo(
@@ -136,6 +134,7 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
                 onPressed: () => controller.onSetAnswer(context),
               )
             : const SizedBox(),
+           */
         if (_homeController.modelUser.isTraider) ...[
           _traidersButtons(context)
         ] else ...[
@@ -216,6 +215,7 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
         const SizedBox(height: 16),
         // --- Угода (тільки VIP) ---
         //  if (controller.tariff?.isVip == true)
+        /*
         Row(
           children: [
             Expanded(
@@ -228,7 +228,8 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
               ),
             ),
           ],
-        )
+          
+        )*/
         // --- Додати ціну ---
         //    bStyle(
         //      key: UniqueKey(),

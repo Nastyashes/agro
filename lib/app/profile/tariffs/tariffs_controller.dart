@@ -135,9 +135,7 @@ class TariffsController extends BaseController {
   bool getBuyButtonVisible(int index, Tariff? tariff) {
     switch (index) {
       case 0:
-        return (tariff?.isVip == false &&
-                tariff?.isPremium == false &&
-                tariff?.isBeslim == false) ||
+        return (tariff?.isVip == false && tariff?.isPremium == false) ||
             tariff?.isFree == true;
       case 1:
         return tariff?.isFree != false ||

@@ -1,5 +1,7 @@
 import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/model/model_user/model_user.dart';
+import 'package:agro/model/tariff/tariff.dart';
+import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
@@ -14,8 +16,25 @@ import '../../generated/assets.dart';
 import 'components/block_setting.dart';
 import 'components/profile_controller.dart';
 
-class ProfileScreen extends GetView<ProfileController> {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final controller = Get.find<ProfileController>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller.setState = setState;
+
+    controller.loadRequest(context);
+    controller.onTariffInfo();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +74,55 @@ class ProfileScreen extends GetView<ProfileController> {
                                     width: 200, height: 200),
                               ))),
                       Positioned(
-                          bottom: 0,
-                          child: readText(
-                              text: controller.modelUser.value.phone.toString(),
-                              style: AppFonts.title2,
-                              padding: const EdgeInsets.only(top: 20))),
+                        bottom: 0,
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              readText(
+                                  text: context.l.myTariff,
+                                  style: AppFonts.body1medium,
+                                  padding: const EdgeInsets.only(
+                                      left: 20, right: 10)),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: controller.tariff?.isVip == true
+                                        ? AppColors.tariffVip
+                                        : controller.tariff?.isPremium == true
+                                            ? AppColors.tariffPremium
+                                            : AppColors.tariffBezlim,
+                                    borderRadius: BorderRadius.circular(100)),
+                                child: readText(
+                                    text: controller.tariff?.isVip == true
+                                        ? 'VIP'
+                                        : controller.tariff?.isPremium == true
+                                            ? 'Premium'
+                                            : controller.tariff?.isFree == true
+                                                ? 'Free'
+                                                : context.l.myTariff,
+                                    style: AppFonts.body2medium.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 5)),
+                              ),
+                            ]),
+                      ),
                     ]),
+                    readText(
+                        text: controller.modelUser.value.phone.toString(),
+                        style: AppFonts.title2,
+                        padding: const EdgeInsets.only(
+                          top: 20,
+                        )),
+                    if (controller.shouldShowAds)
+                      Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: bStyle(
+                          text: 'Вимкнути рекламу (${controller.adsPrice})',
+                          c: context,
+                          colorText: AppColors.white,
+                          vertical: 15,
+                          onPressed: () => controller.disableAds(context),
+                        ),
+                      ),
                     Padding(
                         padding: const EdgeInsets.only(
                             left: 10, right: 10, top: 0, bottom: 35),

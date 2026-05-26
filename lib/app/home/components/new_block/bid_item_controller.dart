@@ -60,11 +60,19 @@ class BidItemController extends BaseController {
 
       final isPremium = tariff?.isPremium == true || tariff?.isVip == true;
 
-      final shouldShowAd = contactPrice == 0 && !isPremium;
+      final isFree = tariff?.isFree == true;
+
+      final isAdsDisabled =
+          _homeController.userfield['is_ads_disabled'] == true;
+
+      final shouldShowAd = contactPrice == 0 && isFree && !isAdsDisabled;
+
       log('contactPrice=$contactPrice');
-      log('tariff=$tariff');
+      log('isFree=$isFree');
+      log('isAdsDisabled=$isAdsDisabled');
       log('isPremium=$isPremium');
       log('shouldShowAd=$shouldShowAd');
+
       if (shouldShowAd) {
         await _interstitial.loadRewardedAd(
           doAfter: () async => await _openContact(context),

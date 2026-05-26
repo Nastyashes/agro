@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/model/model_user/model_user.dart';
+import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/repository/local_storage_repository.dart';
 import 'package:agro/routes/app_pages.dart';
+import 'package:agro/server/api/api.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:agro/vars/model_notifier/user_notifier/user_notifier.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,12 +25,23 @@ class ProfileController extends BaseController {
   late Function(VoidCallback fn) setState;
   final modelUser = Rx<ModelUser>(ModelUser());
   final user = ModelUser();
+  Tariff? tariff;
+  Map<String, dynamic> userfield = {};
   @override
   void onInit() {
     modelUser.value = Hive.box('data').get('modelUser');
     super.onInit();
   }
 
+  bool get isFree => tariff?.isFree == true;
+
+  bool get isAdsDisabled => userfield['is_ads_disabled'] == true;
+
+  bool get shouldShowAds => isFree && !isAdsDisabled;
+
+  int get adsDisabledUntil => userfield['ads_disabled_until'] ?? 0;
+
+  String get adsPrice => adsDisabledUntil == 0 ? '150 грн' : '300 грн';
   void onSite() => launchUrl(Uri.parse('https://uagro.trade/'));
 
   void onHelp() => launchUrl(Uri.parse('https://t.me/uagro_admin'));
@@ -37,6 +52,49 @@ class ProfileController extends BaseController {
   void onTariffs() => Get.toNamed(Routes.tariffs);
 
   void onQrScan() => Get.toNamed(Routes.scanQrCode);
+
+  void loadRequest(BuildContext context) => loadIfValid(() async {
+        final apiAnswer = await Api().traider.getFreeOrders();
+
+        if (!context.mounted) return;
+
+        setState(() {
+          userfield = Map<String, dynamic>.from(
+            apiAnswer.data['userfield'] ?? {},
+          );
+
+          log(userfield.toString());
+        });
+      });
+  Future<void> disableAds(BuildContext context) async {
+    final result = await Api().traider.disableAds();
+
+    if (result.data['status'] == '+') {
+      loadRequest(context);
+
+      inAppNotification(
+        text: result.data['message'],
+        c: context,
+      );
+    } else {
+      inAppNotification(
+        text: result.data['message'],
+        c: context,
+      );
+    }
+  }
+
+  void onTariffInfo() async {
+    try {
+      ApiAnswer apiAnswer = await Api().traider.getTariff();
+      setState(() {
+        log('tariff info: ${apiAnswer.data['payload'].toString()}');
+        tariff = Tariff.fromJson(apiAnswer.data['payload']);
+      });
+    } catch (e) {
+      log(e.toString(), error: e);
+    }
+  }
 
   void onDeleteAccount(BuildContext context) => showCupertinoModalPopup<void>(
       context: context,

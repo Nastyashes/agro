@@ -59,12 +59,12 @@ class TariffsScreenState extends State<TariffsScreen>
                     },
                     children: [
                   ...tariffsController.tariffs.asMap().entries.map((entry) {
-                    String? name = entry.value.name;
+                    int index = entry.key;
                     ModelTariff item = entry.value;
                     return TariffItem(
                       modelTariff: item,
                       isMyTariff:
-                          getMyLabelVisible(name!, tariffsController.tariff),
+                          getMyLabelVisible(index, tariffsController.tariff),
                     );
                   }).toList(),
                 ])),
@@ -148,18 +148,14 @@ bool isDateBetween(DateTime date, DateTime startDate, DateTime endDate) {
       (date.isBefore(endDate) || date.isAtSameMomentAs(endDate));
 }
 
-bool getMyLabelVisible(String name, Tariff? tariff) {
-  switch (name) {
-    case 'VIP':
+bool getMyLabelVisible(int index, Tariff? tariff) {
+  switch (index) {
+    case 2:
       return tariff?.isVip == true;
-    case 'Premium':
+    case 1:
       return tariff?.isPremium == true;
-    case 'BESLIM':
-      return tariff?.isBeslim == true;
-    case 'FREE':
+    case 0:
       return tariff?.isFree == true;
-    case 'ПОШТУЧНО':
-      return tariff?.isByPiece == true;
   }
   return true;
 }

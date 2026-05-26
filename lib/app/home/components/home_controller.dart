@@ -47,6 +47,7 @@ class HomeController extends BaseController {
   List<Created> combinedList = [];
   Tariff? tariff;
   int? balance;
+  Map<String, dynamic> userfield = {};
 
   @override
   void onInit() {
@@ -71,6 +72,13 @@ class HomeController extends BaseController {
     loadRequest();
   }
 
+  bool get isFree => tariff?.isFree == true;
+
+  bool get isAdsDisabled => userfield['is_ads_disabled'] == true;
+
+  bool get shouldShowAds => isFree && !isAdsDisabled;
+
+  int get adsDisabledUntil => userfield['ads_disabled_until'] ?? 0;
   void fermerCreateOrder(String message) => loadIfValid(() async {
         ApiAnswer apiAnswer = await Api().fermer.createOrder();
 
@@ -105,7 +113,13 @@ class HomeController extends BaseController {
           ApiAnswer apiFreeAnswer = await Api().traider.getFreeOrders();
           final bidsResponse = BidsResponse.fromJson(apiFreeAnswer.data);
           log(apiFreeAnswer.data['bids'].toString());
+          setState(() {
+            userfield = Map<String, dynamic>.from(
+              apiFreeAnswer.data['userfield'] ?? {},
+            );
 
+            log(userfield.toString());
+          });
           bids = bidsResponse.bids;
           await onCombineListWithBids();
           return;

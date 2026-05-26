@@ -31,6 +31,7 @@ class AllApplicationsController extends BaseController {
   int page = 1;
   List<Application> orders = [];
   Tariff? tariff;
+  Map<String, dynamic> userfield = {};
 
   List<BidItem> bids = [];
   List<BidItem> bidsFresh = [];
@@ -56,6 +57,13 @@ class AllApplicationsController extends BaseController {
     loadRequest();
   }
 
+  bool get isFree => tariff?.isFree == true;
+
+  bool get isAdsDisabled => userfield['is_ads_disabled'] == true;
+
+  bool get shouldShowAds => isFree && !isAdsDisabled;
+
+  int get adsDisabledUntil => userfield['ads_disabled_until'] ?? 0;
   void loadRequest() => loadIfValid(() async {
         //    ApiAnswer apiAnswer =
         //        await Api().traider.getAllOrders(page: page, limit: 50);
@@ -68,14 +76,22 @@ class AllApplicationsController extends BaseController {
             //     orders.addAll(parseApplications(apiAnswer.data['orders']));
             bids = bidsResponse.bids;
             bidsFresh = bidsResponse.bidsFresh;
+
+            setState(() {
+              userfield = Map<String, dynamic>.from(
+                apiFreeAnswer.data['userfield'] ?? {},
+              );
+
+              log(userfield.toString());
+            });
             log('''
-bids NEW
+  bids NEW
 
  ${apiFreeAnswer.data['bids'].toString()}
 
 
- bidsFresh NEW  
-${apiFreeAnswer.data['bids_fresh'].toString()}''');
+  bidsFresh NEW  
+ ${apiFreeAnswer.data['bids_fresh'].toString()}''');
             page++;
           }
         });

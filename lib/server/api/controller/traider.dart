@@ -107,6 +107,20 @@ class Traider extends Api {
     return apiAnswer;
   }
 
+  Future<ApiAnswer> disableAds() async {
+    ApiAnswer apiAnswer = ApiAnswer();
+
+    var request = await dataRequestMultipart(
+      'free.disable_ads',
+      apiUrl: "api.php",
+    );
+
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(await request.stream.bytesToString());
+
+    return apiAnswer;
+  }
+
   Future<ApiAnswer> getMessages() async {
     ApiAnswer apiAnswer = ApiAnswer();
     var request =
