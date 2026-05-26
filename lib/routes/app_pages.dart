@@ -1,3 +1,5 @@
+import 'package:agro/app/home/components/new_block/bid_binding.dart';
+import 'package:agro/app/home/components/new_block/bid_item_screen.dart';
 import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/app/home/review/review_screen.dart';
 import 'package:agro/app/profile/components/scan_qr_code.dart';
@@ -22,17 +24,37 @@ part './app_routes.dart';
 
 abstract class AppPages {
   static pages({required BuildContext context}) => [
-        GetPage(name: Routes.auth, page: () => const AuthScreen(), binding: AuthBinding()),
-        GetPage(name: Routes.authConfirm, page: () => const AuthConfirmScreen(), binding: AuthConfirmationBinding()),
-        GetPage(name: Routes.app, page: () => const AppScreen(), binding: AppBinding()),
-        GetPage(name: Routes.authRegisterOk, page: () => const AuthRegisterOkScreen(), binding: AuthRegisterOkBinding()),
-        GetPage(name: Routes.orderInfo, page: () => const OrderScreen(), binding: OrderBinding()),
-        GetPage(name: Routes.review, page: () => const ReviewScreen(), binding: ReviewBinding()),
+        GetPage(
+            name: Routes.auth,
+            page: () => const AuthScreen(),
+            binding: AuthBinding()),
+        GetPage(
+            name: Routes.authConfirm,
+            page: () => const AuthConfirmScreen(),
+            binding: AuthConfirmationBinding()),
+        GetPage(
+            name: Routes.app,
+            page: () => const AppScreen(),
+            binding: AppBinding()),
+        GetPage(
+            name: Routes.authRegisterOk,
+            page: () => const AuthRegisterOkScreen(),
+            binding: AuthRegisterOkBinding()),
+        GetPage(
+            name: Routes.orderInfo,
+            page: () => const OrderScreen(),
+            binding: OrderBinding()),
+        GetPage(
+            name: Routes.review,
+            page: () => const ReviewScreen(),
+            binding: ReviewBinding()),
         GetPage(name: Routes.tariffs, page: () => const TariffsScreen()),
         GetPage(name: Routes.scanQrCode, page: () => const QRScannerScreen()),
         GetPage(name: Routes.profile, page: () => const ProfileScreen()),
         GetPage(name: Routes.country, page: () => const CountryScreen()),
-
-        
+        GetPage(
+            name: Routes.bidItemScreen,
+            page: () => const BidDetailScreen(),
+            binding: BidBinding()),
       ];
 }

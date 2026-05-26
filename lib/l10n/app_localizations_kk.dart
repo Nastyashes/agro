@@ -219,6 +219,9 @@ class AppLocalizationsKk extends AppLocalizations {
   String get fullName => 'ФИО';
 
   @override
+  String get company => 'Кәсіпорын';
+
+  @override
   String get callResult => 'Қоңырау нәтижесі';
 
   @override
@@ -436,4 +439,70 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get topUpBalance => 'Шотты толықтыру';
+
+  @override
+  String get age => 'Жасы';
+
+  @override
+  String get seller => 'Сатушы';
+
+  @override
+  String get freshApplications => 'Жаңа қолданбалар';
+
+  @override
+  String get noFreshApplications => 'Жаңа қолданбалар жоқ';
+
+  @override
+  String get all => 'Барлығы';
+
+  @override
+  String get deliveryTypeAny => 'Кез келген';
+
+  @override
+  String get deliveryTypeEXWG => 'EXW (шаруашылықтан)';
+
+  @override
+  String get deliveryTypeEXWF => 'EXW (егістіктен)';
+
+  @override
+  String get deliveryTypeEXWE => 'EXW (элеватордан)';
+
+  @override
+  String get deliveryTypeCPT => 'CPT';
+
+  @override
+  String get deliveryTypeCPTP => 'CPT (портқа)';
+
+  @override
+  String get deliveryTypeCPTE => 'CPT (элеваторға/қоймаға)';
+
+  @override
+  String get paymentType1f2f => '1ф/2ф';
+
+  @override
+  String get paymentType1fNonCash => '1ф Қолма-қолсыз';
+
+  @override
+  String get paymentType2fCash => '2ф Қолма-қол';
+
+  @override
+  String get paymentType3fNonCashVatFree => '3ф (қ/қ ҚҚС-сыз)';
+
+  @override
+  String get amountTypeTon => 'т.';
+
+  @override
+  String get amountTypeBigBag500 => 'x Үлкен-қап-500';
+
+  @override
+  String get amountTypeBag50 => 'x Қап-50';
+
+  @override
+  String get amountTypeBulk => 'Сұйық';
+
+  @override
+  String get amountTypeSeedUnit => 'егіс.бір.';
+
+  @override
+  String get amountTypeHectare => 'га';
 }

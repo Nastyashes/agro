@@ -510,6 +510,12 @@ abstract class AppLocalizations {
   /// **'ПІБ'**
   String get fullName;
 
+  /// No description provided for @company.
+  ///
+  /// In uk, this message translates to:
+  /// **'Підприємство'**
+  String get company;
+
   /// No description provided for @callResult.
   ///
   /// In uk, this message translates to:
@@ -923,6 +929,138 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Поповнити рахунок'**
   String get topUpBalance;
+
+  /// No description provided for @age.
+  ///
+  /// In uk, this message translates to:
+  /// **'Вік'**
+  String get age;
+
+  /// No description provided for @seller.
+  ///
+  /// In uk, this message translates to:
+  /// **'Продавець'**
+  String get seller;
+
+  /// No description provided for @freshApplications.
+  ///
+  /// In uk, this message translates to:
+  /// **'Свіжі заявки'**
+  String get freshApplications;
+
+  /// No description provided for @noFreshApplications.
+  ///
+  /// In uk, this message translates to:
+  /// **'Свіжих заявок немає'**
+  String get noFreshApplications;
+
+  /// No description provided for @all.
+  ///
+  /// In uk, this message translates to:
+  /// **'Всі'**
+  String get all;
+
+  /// No description provided for @deliveryTypeAny.
+  ///
+  /// In uk, this message translates to:
+  /// **'Будь-який'**
+  String get deliveryTypeAny;
+
+  /// No description provided for @deliveryTypeEXWG.
+  ///
+  /// In uk, this message translates to:
+  /// **'EXW (з господарства)'**
+  String get deliveryTypeEXWG;
+
+  /// No description provided for @deliveryTypeEXWF.
+  ///
+  /// In uk, this message translates to:
+  /// **'EXW (з поля)'**
+  String get deliveryTypeEXWF;
+
+  /// No description provided for @deliveryTypeEXWE.
+  ///
+  /// In uk, this message translates to:
+  /// **'EXW (з елеватора)'**
+  String get deliveryTypeEXWE;
+
+  /// No description provided for @deliveryTypeCPT.
+  ///
+  /// In uk, this message translates to:
+  /// **'CPT'**
+  String get deliveryTypeCPT;
+
+  /// No description provided for @deliveryTypeCPTP.
+  ///
+  /// In uk, this message translates to:
+  /// **'CPT (на порт)'**
+  String get deliveryTypeCPTP;
+
+  /// No description provided for @deliveryTypeCPTE.
+  ///
+  /// In uk, this message translates to:
+  /// **'CPT (на елеватор/склад)'**
+  String get deliveryTypeCPTE;
+
+  /// No description provided for @paymentType1f2f.
+  ///
+  /// In uk, this message translates to:
+  /// **'1ф/2ф'**
+  String get paymentType1f2f;
+
+  /// No description provided for @paymentType1fNonCash.
+  ///
+  /// In uk, this message translates to:
+  /// **'1ф Безгот'**
+  String get paymentType1fNonCash;
+
+  /// No description provided for @paymentType2fCash.
+  ///
+  /// In uk, this message translates to:
+  /// **'2ф Готівка'**
+  String get paymentType2fCash;
+
+  /// No description provided for @paymentType3fNonCashVatFree.
+  ///
+  /// In uk, this message translates to:
+  /// **'3ф (б/г без ПДВ)'**
+  String get paymentType3fNonCashVatFree;
+
+  /// No description provided for @amountTypeTon.
+  ///
+  /// In uk, this message translates to:
+  /// **'т.'**
+  String get amountTypeTon;
+
+  /// No description provided for @amountTypeBigBag500.
+  ///
+  /// In uk, this message translates to:
+  /// **'x Біг-бег-500'**
+  String get amountTypeBigBag500;
+
+  /// No description provided for @amountTypeBag50.
+  ///
+  /// In uk, this message translates to:
+  /// **'x Мішок-50'**
+  String get amountTypeBag50;
+
+  /// No description provided for @amountTypeBulk.
+  ///
+  /// In uk, this message translates to:
+  /// **'Налив'**
+  String get amountTypeBulk;
+
+  /// No description provided for @amountTypeSeedUnit.
+  ///
+  /// In uk, this message translates to:
+  /// **'пос.од.'**
+  String get amountTypeSeedUnit;
+
+  /// No description provided for @amountTypeHectare.
+  ///
+  /// In uk, this message translates to:
+  /// **'га'**
+  String get amountTypeHectare;
 }
 
 class _AppLocalizationsDelegate

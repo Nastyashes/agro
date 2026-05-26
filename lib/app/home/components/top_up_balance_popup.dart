@@ -101,7 +101,7 @@ void showTopUpDialog(BuildContext context, int? balance,
                   ),
                   if (isNoValidSum)
                     Padding(
-                      padding: EdgeInsetsGeometry.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                       child: Text(
                         context.l.errorPaymant,
                         style: AppFonts.body2bold.red,
@@ -136,7 +136,7 @@ void showTopUpDialog(BuildContext context, int? balance,
                                   });
                                 },
                           child: Text(
-                            'Оплатити',
+                            context.l.onPay,
                             style: AppFonts.body2bold.white,
                           ),
                         ),

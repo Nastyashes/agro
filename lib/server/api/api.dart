@@ -58,6 +58,43 @@ class Api {
     return request;
   }
 
+  Future<StreamedResponse> dataRequestMultipartBody(
+    String method, {
+    String apiUrl = "apiapp.php",
+    bool bearerActive = true,
+    bool langActive = true,
+    Map<String, String>? formData,
+  }) async {
+    final key = Hive.box('data').get('modelUser')?.token ?? '';
+
+    final url = '${getUrl()}$apiUrl';
+
+    final request = MultipartRequest(
+      'POST',
+      Uri.parse(url),
+    );
+
+    request.headers.addAll(
+      bearerActive ? headers() : headersNoBearer(),
+    );
+
+    request.fields['method'] = method;
+    request.fields['key'] = key;
+
+    if (langActive) {
+      request.fields['lang'] = getLanguage();
+    }
+
+    if (formData != null) {
+      request.fields.addAll(formData);
+    }
+
+    log('POST $url');
+    log('FIELDS: ${request.fields}');
+
+    return await request.send();
+  }
+
   Future<StreamedResponse> dataRequestMultipart(method,
       {String? parameter,
       String apiUrl = "apiapp.php",

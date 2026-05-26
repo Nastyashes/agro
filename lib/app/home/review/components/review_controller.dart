@@ -33,7 +33,9 @@ class ReviewController extends FormController {
     super.onInit();
   }
 
-  void initPage({required BuildContext context, required Function(VoidCallback fn) set}) async {
+  void initPage(
+      {required BuildContext context,
+      required Function(VoidCallback fn) set}) async {
     c = context;
     setState = set;
     modelUser = c.read<UserNotifier>().modelUser;
@@ -51,7 +53,8 @@ class ReviewController extends FormController {
   }
 
   void onLoadReview() async => loadIfValid(() async {
-        ApiAnswer apiAnswer = await Api().fermer.viewReview(orderId: modelOrder.id!);
+        ApiAnswer apiAnswer =
+            await Api().fermer.viewReview(orderId: modelOrder.id!);
 
         for (final i in apiAnswer.data['payload']['items']) {
           modelReview.add(structReview(data: i));
@@ -59,17 +62,23 @@ class ReviewController extends FormController {
         setState(() {});
       }, c: c);
 
-  void onAddReviewPage() => showCupertinoModalBottomSheet(topRadius: const Radius.circular(30), context: c, builder: (c) => const AddReviewScreen());
+  void onAddReviewPage() => showCupertinoModalBottomSheet(
+      topRadius: const Radius.circular(30),
+      context: c,
+      builder: (c) => const AddReviewScreen());
 
   void onAddReview(BuildContext context) => loadIfValid(() async {
-    final String needWriteReview = context.l.needWriteReview;
-    final String feedbackAdded = context.l.feedbackAdded;
-    final String errorAddingReview = context.l.errorAddingReview;
+        final String needWriteReview = context.l.needWriteReview;
+        final String feedbackAdded = context.l.feedbackAdded;
+        final String errorAddingReview = context.l.errorAddingReview;
         if (reviewController.text == '') {
           inAppNotification(text: needWriteReview, c: c);
         }
 
-        ApiAnswer apiAnswer = await Api().fermer.sendReviewFermer(orderId: modelOrder.id!, rating: countStar.round(), comment: reviewController.text);
+        ApiAnswer apiAnswer = await Api().fermer.sendReviewFermer(
+            orderId: modelOrder.id!,
+            rating: countStar.round(),
+            comment: reviewController.text);
 
         log(modelOrder.id.toString());
         log(apiAnswer.data.toString());
@@ -90,7 +99,9 @@ class ReviewController extends FormController {
         }
       }, c: c);
 
-  void onChangeStar({required double val, required Function(VoidCallback fn) set}) => set(() => countStar = val);
+  void onChangeStar(
+          {required double val, required Function(VoidCallback fn) set}) =>
+      set(() => countStar = val);
 
 // void onSell() => loadIfValid(() async {
 //       ApiAnswer apiAnswer = await Api().fermer.closePriceOrder(c: c, orderId: modelOrder.id!);

@@ -1,6 +1,8 @@
 import 'dart:developer';
-
+import 'package:get/get.dart';
+import 'package:agro/routes/app_pages.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
+import 'package:agro/app/home/components/new_block/bids_item_new_model.dart';
 import 'package:agro/model/model_order/application.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -30,6 +32,9 @@ class AllApplicationsController extends BaseController {
   List<Application> orders = [];
   Tariff? tariff;
 
+  List<BidItem> bids = [];
+  List<BidItem> bidsFresh = [];
+
   @override
   void onInit() {
     controllerLoading = RefreshController();
@@ -52,17 +57,29 @@ class AllApplicationsController extends BaseController {
   }
 
   void loadRequest() => loadIfValid(() async {
-        ApiAnswer apiAnswer =
-            await Api().traider.getAllOrders(page: page, limit: 50);
+        //    ApiAnswer apiAnswer =
+        //        await Api().traider.getAllOrders(page: page, limit: 50);
 
-        log(apiAnswer.data.toString());
+        //    log(apiAnswer.data.toString());
+        ApiAnswer apiFreeAnswer = await Api().traider.getFreeOrders();
+        final bidsResponse = BidsResponse.fromJson(apiFreeAnswer.data);
         setState(() {
           if (context.mounted) {
-            orders.addAll(parseApplications(apiAnswer.data['orders']));
+            //     orders.addAll(parseApplications(apiAnswer.data['orders']));
+            bids = bidsResponse.bids;
+            bidsFresh = bidsResponse.bidsFresh;
+            log('''
+bids NEW
+
+ ${apiFreeAnswer.data['bids'].toString()}
+
+
+ bidsFresh NEW  
+${apiFreeAnswer.data['bids_fresh'].toString()}''');
             page++;
           }
         });
-        log('modelOrder.length: ${orders.length}');
+        //   log('modelOrder.length: ${orders.length}');
       });
 
   void onLaunchPhone(BuildContext context, ModelContact contact) =>
@@ -70,6 +87,11 @@ class AllApplicationsController extends BaseController {
           topRadius: const Radius.circular(30),
           context: context,
           builder: (c) => LaunchPhone(contact: contact.userPhone));
+
+  void onPageBidItem({required BidItem item}) async {
+    await Get.toNamed(Routes.bidItemScreen, arguments: [item]);
+    setState(() {});
+  }
 
   void onSearch() {
     page = 1;
@@ -84,9 +106,8 @@ class AllApplicationsController extends BaseController {
 
   void onRefresh() {
     setState(() {
-      page = 0;
-
-      orders = [];
+      bids = [];
+      bidsFresh = [];
     });
     loadRequest();
     controllerLoading.refreshCompleted();
@@ -127,4 +148,6 @@ class AllApplicationsController extends BaseController {
       notification(text: context.l.mapForPaid);
     }
   }
+
+  bool get hasFreshBids => bidsFresh.isNotEmpty;
 }

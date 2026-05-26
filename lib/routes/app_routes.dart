@@ -12,5 +12,5 @@ abstract class Routes {
   static const scanQrCode = "/scanQrCode";
   static const profile = "/profile";
   static const country = "/country";
-
+  static const bidItemScreen = "/bidItemScreen";
 }

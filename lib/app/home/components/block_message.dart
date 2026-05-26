@@ -59,7 +59,7 @@ class BlockMessage extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(8)),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 20, vertical: 10),
-                                  child:  Text(
+                                  child: Text(
                                     context.l.read,
                                     style: const TextStyle(
                                         fontSize: 20, color: Colors.black),

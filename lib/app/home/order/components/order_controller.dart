@@ -138,8 +138,8 @@ class OrderController extends BaseController {
             Navigator.pop(c);
           }));
 
-  void onAddPriceSave(BuildContext context,
-          String currency, String paymentForm, String price, int orderId) =>
+  void onAddPriceSave(BuildContext context, String currency, String paymentForm,
+          String price, int orderId) =>
       loadIfValid(() async {
         final String errorAddPrice = context.l.errorAddPrice;
         ApiAnswer apiAnswer = await Api().traider.addPrice(
@@ -154,9 +154,7 @@ class OrderController extends BaseController {
           modelOrderPrice = [];
           onLoadPrice();
         } else {
-          notification(
-              text:
-                  errorAddPrice);
+          notification(text: errorAddPrice);
         }
       });
 
@@ -188,9 +186,7 @@ class OrderController extends BaseController {
       if (contact.userName != null) {
         contactOpened = !contactOpened;
       } else {
-        notification(
-            text:
-                errorTariffMail);
+        notification(text: errorTariffMail);
       }
     });
   }
@@ -218,7 +214,7 @@ class OrderController extends BaseController {
   }
 
   void onDeal(BuildContext context) => loadIfValid(() async {
-    final String errorAgreement = context.l.errorAgreement;
+        final String errorAgreement = context.l.errorAgreement;
         ApiAnswer apiAnswer =
             await Api().traider.deal(tenderId: modelOrder!.id!);
 
@@ -233,21 +229,18 @@ class OrderController extends BaseController {
       });
 
   void checkSendOffer(BuildContext context) => loadIfValid(() async {
-    final String setTicketSettings= context.l.setTicketSettings;
-    final String areYouSure = context.l.areYouSure;
-    final String yourProposalSent = context.l.yourProposalSent;
-    final String clickOk = context.l.clickOk;
-    final String wth = context.l.wth;
-    final String notEnoughMessages = context.l.notEnoughMessages;
-
+        final String setTicketSettings = context.l.setTicketSettings;
+        final String areYouSure = context.l.areYouSure;
+        final String yourProposalSent = context.l.yourProposalSent;
+        final String clickOk = context.l.clickOk;
+        final String wth = context.l.wth;
+        final String notEnoughMessages = context.l.notEnoughMessages;
 
         ApiAnswer apiAnswer =
             await Api().traider.checkSendOffer(sphere: modelOrder?.sphere);
         log(apiAnswer.data.toString());
         if (apiAnswer.data['status'] == '-') {
-          notification(
-              text:
-                  setTicketSettings);
+          notification(text: setTicketSettings);
           return;
         }
         asId = apiAnswer.data['as_id'];
@@ -259,15 +252,14 @@ class OrderController extends BaseController {
         if (smsCount >= abonents) {
           showConfirmDialog(
               title: areYouSure,
-              text:
-                  ' $yourProposalSent $abonents $clickOk',
+              text: ' $yourProposalSent $abonents $clickOk',
               onConfirm: () {
                 onSendOffer(context);
               });
         } else {
           showConfirmDialog(
               title: areYouSure,
-              text:'$notEnoughMessages $abonents $wth $smsCount $clickOk',        
+              text: '$notEnoughMessages $abonents $wth $smsCount $clickOk',
               onConfirm: () {
                 onSendOffer(context);
               });
@@ -275,14 +267,13 @@ class OrderController extends BaseController {
       });
 
   void onSendOffer(BuildContext context) => loadIfValid(() async {
-    final String offerSent = context.l.offerSent;
-    final String abonen = context.l.abonen;
+        final String offerSent = context.l.offerSent;
+        final String abonen = context.l.abonen;
         ApiAnswer apiAnswer = await Api().traider.sendOffer(asId, sms);
         log(apiAnswer.data.toString());
         if (apiAnswer.data['status'] == '+') {
           final recepients = apiAnswer.data['recepients'];
-          notification(
-              text: '$offerSent $recepients $abonen' );
+          notification(text: '$offerSent $recepients $abonen');
           return;
         }
       });

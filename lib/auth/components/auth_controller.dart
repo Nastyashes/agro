@@ -47,13 +47,16 @@ class AuthController extends FormController {
         ApiAnswer apiAnswer = await Api().auth.loginNumber(
             number: '+${numberController.text.replaceAll(RegExp('\\D'), '')}');
 
-        log(apiAnswer.data.toString());
+        log('apiAnswer.data: ${apiAnswer.data}');
 
-        if (apiAnswer.data['status']) {
+        final bool hasAuthKey = apiAnswer.data['data']?['auth']?['key'] != null;
+
+        if (hasAuthKey) {
           Get.offAllNamed(Routes.authConfirm);
         } else {
-          context.mounted ? notification(text: context.l.numberNoRegistered) : {};
-          //Get.offAllNamed(Routes.authRegisterOk);
+          context.mounted
+              ? notification(text: context.l.numberNoRegistered)
+              : {};
         }
       }, c: c);
 }

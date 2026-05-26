@@ -1,13 +1,14 @@
 import 'package:agro/app/home/components/block_message.dart';
-import 'package:agro/app/home/components/block_order_dobriva.dart';
-import 'package:agro/app/home/components/block_order_oil.dart';
-import 'package:agro/app/home/components/block_order_seeds.dart';
-import 'package:agro/app/home/components/block_order_unknown.dart';
+
 import 'package:agro/app/home/components/home_header.dart';
+import 'package:agro/app/home/components/block_order_unified.dart';
+import 'package:agro/app/home/components/new_block/bid_list_item.dart';
+import 'package:agro/app/home/components/new_block/bids_item_new_model.dart';
 import 'package:agro/app/home/components/top_up_balance_popup.dart';
 import 'package:agro/model/answer/answer.dart';
 import 'package:agro/model/message/created.dart';
 import 'package:agro/model/message/message.dart';
+import 'package:agro/model/enums.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
@@ -17,7 +18,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:agro/app/components/block_page_screen.dart';
-import 'package:agro/app/home/components/block_order_zerno.dart';
 import 'package:agro/model/model_order/model_order.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -117,17 +117,25 @@ class _HomeScreenState extends State<HomeScreen> {
                           return Column(
                             children: [
                               for (Created item in controller.combinedList) ...[
-                                item is ModelOrder
-                                    ? getBlockOrder(
-                                        item,
-                                        controller.callResults.firstWhereOrNull(
-                                            (element) =>
-                                                element.orderId ==
-                                                item.id.toString()),
-                                        controller.onPageOrderFermer)
-                                    : item is Message
-                                        ? BlockMessage(message: item)
-                                        : const SizedBox()
+                                if (item is ModelOrder)
+                                  getBlockOrder(
+                                    item,
+                                    controller.callResults.firstWhereOrNull(
+                                        (element) =>
+                                            element.orderId ==
+                                            item.id.toString()),
+                                    controller.onPageOrderFermer,
+                                  )
+                                else if (item is BidItem)
+                                  BidListItem(
+                                    bidItem: item,
+                                    onPressed: ({required BidItem model}) =>
+                                        controller.onPageBidItem(item: model),
+                                  )
+                                else if (item is Message)
+                                  BlockMessage(message: item)
+                                else
+                                  const SizedBox(),
                               ]
                             ],
                           );
@@ -141,20 +149,35 @@ Widget getBlockOrder(ModelOrder order, Answer? answer,
     Function({required ModelOrder model}) onPressed) {
   switch (order.sphere) {
     case 15:
-      return BlockOrderZerno(
-          modelOrder: order, answer: answer, onPressed: onPressed);
+      return BlockOrderUnified(
+          modelOrder: order,
+          answer: answer,
+          onPressed: onPressed,
+          orderType: OrderType.zerno);
     case 12:
-      return BlockOrderDobriva(
-          modelOrder: order, answer: answer, onPressed: onPressed);
+      return BlockOrderUnified(
+          modelOrder: order,
+          answer: answer,
+          onPressed: onPressed,
+          orderType: OrderType.dobriva);
     case 13:
-      return BlockOrderSeeds(
-          modelOrder: order, answer: answer, onPressed: onPressed);
+      return BlockOrderUnified(
+          modelOrder: order,
+          answer: answer,
+          onPressed: onPressed,
+          orderType: OrderType.seeds);
     case 14:
-      return BlockOrderOil(
-          modelOrder: order, answer: answer, onPressed: onPressed);
+      return BlockOrderUnified(
+          modelOrder: order,
+          answer: answer,
+          onPressed: onPressed,
+          orderType: OrderType.oil);
     default:
-      return BlockOrderUnknown(
-          modelOrder: order, answer: answer, onPressed: onPressed);
+      return BlockOrderUnified(
+          modelOrder: order,
+          answer: answer,
+          onPressed: onPressed,
+          orderType: OrderType.unknown);
   }
 }
 

@@ -41,7 +41,7 @@ class Assets {
   static const String bottomNavigationHome =
       'picture/app/bottom_navigation/home.svg';
   static const String bottomNavigationAllApplications =
-      'picture/app/bottom_navigation/all_applications.svg';
+      'picture/app/bottom_navigation/leaf_fresh.svg';
   static const String bottomNavigationProfile =
       'picture/app/bottom_navigation/profile.svg';
   static const String componentsArrowBot = 'picture/components/arrow_bot.svg';
@@ -61,4 +61,5 @@ class Assets {
   static const String checkCircle = 'picture/components/check-circle.svg';
   static const String cancel = 'picture/components/cancel.svg';
   static const String myTariffLable = 'picture/app/account/my_tariff.png';
+  static const String newBadge = 'picture/components/new_badge.png';
 }

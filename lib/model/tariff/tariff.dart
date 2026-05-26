@@ -10,6 +10,8 @@ class Tariff {
       orderCount;
   DateTime? balanceEnd;
 
+  var isByPiece;
+
   Tariff.fromJson(Map<String, dynamic> json) {
     vip = json['is_vip'];
     premium = json['is_premium'];

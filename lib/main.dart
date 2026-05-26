@@ -146,11 +146,12 @@ class MyStart extends HookWidget {
       log("Locale: $locale");
       log("Selected country: $selectedCountry");
 
-
       ModelUser? modelUser = Hive.box('data').get('modelUser');
 
-      if (selectedCountry == null || modelUser == null || modelUser.token == null) {
-        // Перенаправляємо на екран вибору країни, якщо вона не вибрана
+      if (selectedCountry == null ||
+          modelUser == null ||
+          modelUser.token == null) {
+        // Route to country selection if no country is selected or user is not authenticated
         Get.offAll(() => const CountryScreen());
       } else {
         if (modelUser.token != null) {

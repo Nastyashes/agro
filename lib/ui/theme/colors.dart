@@ -11,6 +11,8 @@ class AppColors {
 
   static const yellow = Color(0xffE6C027);
   static const red = Color(0xffD64500);
+  static const pink = Color(0xFFE64C94);
+  static const blue = Color(0xFF1F3EAB);
 
   static const white = Color(0xffffffff);
   static const black = Color(0xff1E1E1E);
@@ -27,5 +29,4 @@ class AppColors {
   static const tariffBezlim = Color(0xFF2579BE);
   static const tariffPremium = Color(0xFF28B67B);
   static const tariffVip = Color(0xFFF65878);
-
 }

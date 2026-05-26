@@ -1,3 +1,4 @@
+import 'package:agro/generated/assets.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import '../../../../vars/model_notifier/bottom_menu_notifier/bottom_menu_notifie
 Widget buttBottomNavigation(
         {required String icon,
         required int buttNum,
+        required bool isNew,
         required String text,
         required BuildContext c}) =>
     Expanded(
@@ -21,24 +23,46 @@ Widget buttBottomNavigation(
           onPressed: () =>
               c.read<BottomMenuNotifier>().setActiveButtMenu(val: buttNum),
           scale: ScaleFormat.big,
-          child: Column(
+          child: Stack(
+            clipBehavior: Clip.none,
             children: [
-              SvgPicture.asset(icon,
-                  height: 32,
-                  colorFilter: ColorFilter.mode(
-                      c.watch<BottomMenuNotifier>().activeButtMenu != buttNum
-                          ? AppColors.greyGreen
-                          : AppColors.white,
-                      BlendMode.srcIn)),
-              readText(
-                  text: text,
-                  maxLine: 1,
-                  align: TextAlign.center,
-                  style: AppFonts.body2semibold.withColor(
-                      c.watch<BottomMenuNotifier>().activeButtMenu != buttNum
-                          ? AppColors.greyGreen
-                          : AppColors.white),
-                  padding: const EdgeInsets.only(top: 4))
+              Column(
+                children: [
+                  SvgPicture.asset(icon,
+                      height: 32,
+                      colorFilter: ColorFilter.mode(
+                          c.watch<BottomMenuNotifier>().activeButtMenu !=
+                                  buttNum
+                              ? AppColors.greyGreen
+                              : AppColors.white,
+                          BlendMode.srcIn)),
+                  readText(
+                      text: text,
+                      maxLine: 1,
+                      align: TextAlign.center,
+                      style: AppFonts.body2semibold.withColor(
+                          c.watch<BottomMenuNotifier>().activeButtMenu !=
+                                  buttNum
+                              ? AppColors.greyGreen
+                              : AppColors.white),
+                      padding: const EdgeInsets.only(top: 4)),
+                ],
+              ),
+              if (isNew)
+                Positioned(
+                  left: -20,
+                  top: -10,
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage(Assets.newBadge),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                )
             ],
           ),
         )),

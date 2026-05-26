@@ -3,7 +3,6 @@ import 'package:agro/app/profile/tariffs/tariff_item.dart';
 import 'package:agro/app/profile/tariffs/tariffs_controller.dart';
 import 'package:agro/model/tariff/model_tariff.dart';
 import 'package:agro/model/tariff/tariff.dart';
-import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
@@ -60,9 +59,13 @@ class TariffsScreenState extends State<TariffsScreen>
                     },
                     children: [
                   ...tariffsController.tariffs.asMap().entries.map((entry) {
-                    int index = entry.key;
+                    String? name = entry.value.name;
                     ModelTariff item = entry.value;
-                    return TariffItem(modelTariff: item, isMyTariff: getMyLabelVisible(index, tariffsController.tariff),);
+                    return TariffItem(
+                      modelTariff: item,
+                      isMyTariff:
+                          getMyLabelVisible(name!, tariffsController.tariff),
+                    );
                   }).toList(),
                 ])),
             const SizedBox(height: 10),
@@ -72,7 +75,7 @@ class TariffsScreenState extends State<TariffsScreen>
               children: _buildPageIndicator(),
             ),
             const SizedBox(height: 20),
-      /*      SizedBox(
+            /*      SizedBox(
                 height: 60,
                 child: tariffsController.buyButtonVisible
                     ? bStyle(
@@ -145,14 +148,18 @@ bool isDateBetween(DateTime date, DateTime startDate, DateTime endDate) {
       (date.isBefore(endDate) || date.isAtSameMomentAs(endDate));
 }
 
-bool getMyLabelVisible(int index, Tariff? tariff) {
-  switch (index) {
-    case 2:
+bool getMyLabelVisible(String name, Tariff? tariff) {
+  switch (name) {
+    case 'VIP':
       return tariff?.isVip == true;
-    case 1:
+    case 'Premium':
       return tariff?.isPremium == true;
-    case 0:
+    case 'BESLIM':
       return tariff?.isBeslim == true;
+    case 'FREE':
+      return tariff?.isFree == true;
+    case 'ПОШТУЧНО':
+      return tariff?.isByPiece == true;
   }
   return true;
 }

@@ -48,8 +48,8 @@ class HomeHeader extends StatelessWidget {
                   borderRadius: BorderRadius.circular(60),
                   color: AppColors.mainGreen),
               child: Padding(
-                  padding: const EdgeInsetsGeometry.symmetric(
-                      horizontal: 12, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   child: Row(
                     children: [
                       const Icon(

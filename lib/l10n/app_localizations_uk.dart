@@ -219,6 +219,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get fullName => 'ПІБ';
 
   @override
+  String get company => 'Підприємство';
+
+  @override
   String get callResult => 'Результат дзвінка';
 
   @override
@@ -434,4 +437,70 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get topUpBalance => 'Поповнити рахунок';
+
+  @override
+  String get age => 'Вік';
+
+  @override
+  String get seller => 'Продавець';
+
+  @override
+  String get freshApplications => 'Свіжі заявки';
+
+  @override
+  String get noFreshApplications => 'Свіжих заявок немає';
+
+  @override
+  String get all => 'Всі';
+
+  @override
+  String get deliveryTypeAny => 'Будь-який';
+
+  @override
+  String get deliveryTypeEXWG => 'EXW (з господарства)';
+
+  @override
+  String get deliveryTypeEXWF => 'EXW (з поля)';
+
+  @override
+  String get deliveryTypeEXWE => 'EXW (з елеватора)';
+
+  @override
+  String get deliveryTypeCPT => 'CPT';
+
+  @override
+  String get deliveryTypeCPTP => 'CPT (на порт)';
+
+  @override
+  String get deliveryTypeCPTE => 'CPT (на елеватор/склад)';
+
+  @override
+  String get paymentType1f2f => '1ф/2ф';
+
+  @override
+  String get paymentType1fNonCash => '1ф Безгот';
+
+  @override
+  String get paymentType2fCash => '2ф Готівка';
+
+  @override
+  String get paymentType3fNonCashVatFree => '3ф (б/г без ПДВ)';
+
+  @override
+  String get amountTypeTon => 'т.';
+
+  @override
+  String get amountTypeBigBag500 => 'x Біг-бег-500';
+
+  @override
+  String get amountTypeBag50 => 'x Мішок-50';
+
+  @override
+  String get amountTypeBulk => 'Налив';
+
+  @override
+  String get amountTypeSeedUnit => 'пос.од.';
+
+  @override
+  String get amountTypeHectare => 'га';
 }

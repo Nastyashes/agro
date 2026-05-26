@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:agro/app/home/components/new_block/bids_item_new_model.dart';
 import 'package:agro/app/home/order/components/add_price.dart';
 import 'package:agro/app/home/order/components/launch_phone.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
@@ -8,7 +9,6 @@ import 'package:agro/model/message/created.dart';
 import 'package:agro/model/message/message.dart';
 import 'package:agro/model/model_order/model_contact.dart';
 import 'package:agro/model/model_user/model_user.dart';
-import 'package:agro/model/tariff/model_tariff.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/repository/local_storage_repository.dart';
 import 'package:agro/ui/adds.dart';
@@ -40,6 +40,7 @@ class HomeController extends BaseController {
   final localStorageRepository = LocalStorageRepository();
   final _interstitial = Interstitial();
   int page = 1;
+  List<BidItem> bids = [];
   List<ModelOrder> modelOrder = [];
   List<Answer> callResults = [];
   List<Message> messages = [];
@@ -101,8 +102,13 @@ class HomeController extends BaseController {
         late ApiAnswer apiAnswer;
 
         if (modelUser.role == 'distrib') {
-          apiAnswer = await Api().traider.getOrderList(
-              page: page, limit: 15, search: searchController.text);
+          ApiAnswer apiFreeAnswer = await Api().traider.getFreeOrders();
+          final bidsResponse = BidsResponse.fromJson(apiFreeAnswer.data);
+          log(apiFreeAnswer.data['bids'].toString());
+
+          bids = bidsResponse.bids;
+          await onCombineListWithBids();
+          return;
         } else {
           apiAnswer = await Api().fermer.getOrderList(
               page: page, limit: 15, search: searchController.text);
@@ -120,9 +126,41 @@ class HomeController extends BaseController {
             }
           }
         });
-        log('modelOrder.length: ${modelOrder.length}');
+        //   log('modelOrder.length: ${modelOrder.length}');
         await onCombineList();
       });
+  Future<void> onCombineListWithBids() async {
+    final List<Created> list = [];
+    final splitedMessage =
+        messages.splitMatch((element) => (element.readed ?? 0) == 0);
+    list.addAll(splitedMessage.matched);
+
+    final List<Created> tale = [];
+    tale.addAll(bids);
+    tale.addAll(splitedMessage.unmatched);
+    tale.sort((a, b) => (b.createdAt?.millisecondsSinceEpoch ?? 0)
+        .compareTo(a.createdAt?.millisecondsSinceEpoch ?? 0));
+    list.addAll(tale);
+    setState(() => combinedList = list);
+  }
+
+  void updateBid(BidItem updatedBid) {
+    final bidIndex = bids.indexWhere((e) => e.orderId == updatedBid.orderId);
+
+    if (bidIndex != -1) {
+      bids[bidIndex] = updatedBid;
+    }
+
+    final combinedIndex = combinedList.indexWhere(
+      (e) => e is BidItem && e.orderId == updatedBid.orderId,
+    );
+
+    if (combinedIndex != -1) {
+      combinedList[combinedIndex] = updatedBid;
+    }
+
+    setState(() {});
+  }
 
   Future<void> onCombineList() async {
     final List<Created> list = [];
@@ -260,6 +298,11 @@ class HomeController extends BaseController {
     return contact;
   }
 
+  void onPageBidItem({required BidItem item}) async {
+    await Get.toNamed(Routes.bidItemScreen, arguments: [item]);
+    setState(() {});
+  }
+
   void updateCallResults() async {
     log('callResults.length: ${callResults.length}');
     callResults = await localStorageRepository.getAll();
@@ -295,7 +338,7 @@ class HomeController extends BaseController {
   void onRefresh() {
     setState(() {
       page = 0;
-
+      bids = [];
       modelOrder = [];
     });
     loadRequest();
@@ -323,6 +366,16 @@ class HomeController extends BaseController {
       });
     } catch (e) {
       log(e.toString(), error: e);
+    }
+  }
+
+  void updateBidItem(BidItem updated) {
+    final index = bids.indexWhere((e) => e.orderId == updated.orderId);
+
+    if (index != -1) {
+      bids[index] = updated;
+      onCombineListWithBids();
+      setState(() {});
     }
   }
 

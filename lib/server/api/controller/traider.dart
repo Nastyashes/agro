@@ -16,6 +16,44 @@ class Traider extends Api {
     return apiAnswer;
   }
 
+  Future<ApiAnswer> openBidContact({
+    required int orderId,
+  }) async {
+    ApiAnswer apiAnswer = ApiAnswer();
+
+    var request = await dataRequestMultipartBody(
+      'uagro.order.contacts',
+      apiUrl: 'api.php',
+      formData: {
+        'order_id': orderId.toString(),
+      },
+    );
+
+    apiAnswer.code = request.statusCode;
+
+    apiAnswer.data = json.decode(
+      await request.stream.bytesToString(),
+    );
+
+    checkAuth(apiAnswer.data);
+
+    return apiAnswer;
+  }
+
+// Укласти угоду (новий ендпоінт)
+  Future<ApiAnswer> dealNew({required int orderId}) async {
+    ApiAnswer apiAnswer = ApiAnswer();
+    var request = await dataRequestMultipart(
+      'uagro.order.deal',
+      apiUrl: "api.php",
+      parameter: 'order_id=$orderId',
+    );
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+    return apiAnswer;
+  }
+
   Future<ApiAnswer> getOrderList(
       {required int page, required int limit, String? search}) async {
     ApiAnswer apiAnswer = ApiAnswer();
@@ -49,6 +87,19 @@ class Traider extends Api {
         apiUrl: "api.php",
         parameter: 'sphere=0&filters=[]&page=$page&perpage=$limit');
 
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+
+    return apiAnswer;
+  }
+
+  Future<ApiAnswer> getFreeOrders() async {
+    ApiAnswer apiAnswer = ApiAnswer();
+    var request = await dataRequestMultipart(
+      'auth.my',
+      apiUrl: "api.php",
+    );
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(await request.stream.bytesToString());
     checkAuth(apiAnswer.data);

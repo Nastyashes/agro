@@ -218,6 +218,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fullName => 'NAME';
 
   @override
+  String get company => 'Company';
+
+  @override
   String get callResult => 'Call Result';
 
   @override
@@ -435,4 +438,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get topUpBalance => 'Top up a balance';
+
+  @override
+  String get age => 'Age';
+
+  @override
+  String get seller => 'Seller';
+
+  @override
+  String get freshApplications => 'Fresh Applications';
+
+  @override
+  String get noFreshApplications => 'No Fresh Applications';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get deliveryTypeAny => 'Any';
+
+  @override
+  String get deliveryTypeEXWG => 'EXW (from farm)';
+
+  @override
+  String get deliveryTypeEXWF => 'EXW (from field)';
+
+  @override
+  String get deliveryTypeEXWE => 'EXW (from elevator)';
+
+  @override
+  String get deliveryTypeCPT => 'CPT';
+
+  @override
+  String get deliveryTypeCPTP => 'CPT (to port)';
+
+  @override
+  String get deliveryTypeCPTE => 'CPT (to elevator/warehouse)';
+
+  @override
+  String get paymentType1f2f => '1p/2p';
+
+  @override
+  String get paymentType1fNonCash => '1p Non-cash';
+
+  @override
+  String get paymentType2fCash => '2p Cash';
+
+  @override
+  String get paymentType3fNonCashVatFree => '3p (Non-cash, VAT-free)';
+
+  @override
+  String get amountTypeTon => 't.';
+
+  @override
+  String get amountTypeBigBag500 => 'x Big-bag-500';
+
+  @override
+  String get amountTypeBag50 => 'x Bag-50';
+
+  @override
+  String get amountTypeBulk => 'Bulk liquid';
+
+  @override
+  String get amountTypeSeedUnit => 'seed unit';
+
+  @override
+  String get amountTypeHectare => 'ha';
 }

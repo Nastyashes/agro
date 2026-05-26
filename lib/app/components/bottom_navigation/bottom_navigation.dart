@@ -10,7 +10,6 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     return Stack(
       children: [
         Align(
@@ -23,7 +22,11 @@ class BottomNavigation extends StatelessWidget {
                 height: 3,
                 decoration: BoxDecoration(
                   boxShadow: [
-                    BoxShadow(color: const Color(0xffE8E8E8).withOpacity(0.5), spreadRadius: 0, blurRadius: 4, offset: const Offset(0, 4)),
+                    BoxShadow(
+                        color: const Color(0xffE8E8E8).withOpacity(0.5),
+                        spreadRadius: 0,
+                        blurRadius: 4,
+                        offset: const Offset(0, 4)),
                   ],
                 ),
               ),
@@ -33,8 +36,8 @@ class BottomNavigation extends StatelessWidget {
         Align(
           alignment: Alignment.bottomCenter,
           child: Container(
-              decoration: const BoxDecoration(color: AppColors.mainGreen),
-              child: Padding(
+            decoration: const BoxDecoration(color: AppColors.mainGreen),
+            child: Padding(
               padding: const EdgeInsets.only(bottom: 5),
               child: SafeArea(
                   top: false,
@@ -45,10 +48,30 @@ class BottomNavigation extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 15, right: 15),
                       child: Row(
                         children: [
-                          buttBottomNavigation(icon: Assets.bottomNavigationHome, text: context.l.yourApplications, buttNum: 0, c: context),
-                          buttBottomNavigation(icon: Assets.bottomNavigationAllApplications, text: context.l.allApplications, buttNum: 3, c: context),
-                          buttBottomNavigation(icon: Assets.bottomNavigationHelp, text: context.l.support, buttNum: 1, c: context),
-                          buttBottomNavigation(icon: Assets.bottomNavigationProfile, text: context.l.profile, buttNum: 2, c: context),
+                          buttBottomNavigation(
+                              icon: Assets.bottomNavigationHome,
+                              text: context.l.yourApplications,
+                              buttNum: 0,
+                              c: context,
+                              isNew: false),
+                          buttBottomNavigation(
+                              icon: Assets.bottomNavigationAllApplications,
+                              text: 'Fresh',
+                              buttNum: 3,
+                              c: context,
+                              isNew: true),
+                          buttBottomNavigation(
+                              icon: Assets.bottomNavigationHelp,
+                              text: context.l.support,
+                              buttNum: 1,
+                              c: context,
+                              isNew: false),
+                          buttBottomNavigation(
+                              icon: Assets.bottomNavigationProfile,
+                              text: context.l.profile,
+                              buttNum: 2,
+                              c: context,
+                              isNew: false),
                         ],
                       ),
                     ),
