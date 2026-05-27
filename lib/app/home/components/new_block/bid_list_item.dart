@@ -6,6 +6,7 @@ import 'package:agro/generated/assets.dart';
 import 'package:agro/app/home/components/new_block/bids_item_new_model.dart';
 import 'package:agro/model/enums.dart';
 import 'package:agro/model/tariff/tariff.dart';
+import 'package:agro/routes/app_pages.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:agro/ui/adds.dart';
 import 'package:agro/ui/buttons/b_style.dart';
@@ -25,9 +26,11 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 class BidListItem extends StatefulWidget {
   final BidItem bidItem;
   final Function({required BidItem model}) onPressed;
+  final bool isFresh;
 
   const BidListItem({
     super.key,
+    required this.isFresh,
     required this.bidItem,
     required this.onPressed,
   });
@@ -84,8 +87,6 @@ class _BidListItemState extends State<BidListItem> {
       final contactPrice = _bidItem.contactPrice ?? 0;
       final tariff = controller.tariff;
 
-      final isPremium = tariff?.isPremium == true || tariff?.isVip == true;
-
       final isFree = tariff?.isFree == true;
 
       final isAdsDisabled = controller.userfield['is_ads_disabled'] == true;
@@ -115,6 +116,8 @@ class _BidListItemState extends State<BidListItem> {
       setState(() => _isLoading = false);
     }
   }
+
+  void onReview() => Get.toNamed(Routes.review, arguments: _bidItem.orderId);
 
   Future<void> _openContact(BuildContext context) async {
     try {
@@ -179,9 +182,13 @@ class _BidListItemState extends State<BidListItem> {
         scale: ScaleFormat.small,
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: widget.isFresh
+                ? AppColors.dobriva.withOpacity(0.06)
+                : AppColors.zerno.withOpacity(0.06),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: _borderColor),
+            border: Border.all(
+              color: widget.isFresh ? AppColors.dobriva : AppColors.zerno,
+            ),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
@@ -287,116 +294,180 @@ class _BidListItemState extends State<BidListItem> {
   Widget _contactWidget(BuildContext context) => Padding(
         padding: const EdgeInsets.only(top: 10),
         child: GestureDetector(
-          onTap: () => _onLaunchPhone(context, _bidItem.contacts?.phone ?? ''),
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.mainGreen.withAlpha((0.08 * 255).round()),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.mainGreen),
-            ),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(children: [
-                readText(
-                    text: context.l.fullName,
-                    style: AppFonts.body1medium.darkGreen),
-                const SizedBox(width: 24),
-                Expanded(
-                    child: readText(
-                  align: TextAlign.end,
-                  text: _bidItem.fermerName ?? '',
-                  style: AppFonts.body1bold.mainGreen,
-                )),
-              ]),
-              Row(children: [
-                readText(
-                    text: context.l.company,
-                    style: AppFonts.body1medium.darkGreen),
-                const SizedBox(width: 24),
-                Expanded(
-                    child: readText(
-                  align: TextAlign.end,
-                  text: _bidItem.fermerCompany ?? '',
-                  style: AppFonts.body1bold.mainGreen,
-                )),
-              ]),
-              Row(children: [
-                readText(
-                    text: context.l.district,
-                    style: AppFonts.body1medium.darkGreen),
-                const SizedBox(width: 24),
-                Expanded(
-                    child: readText(
-                  align: TextAlign.end,
-                  text: _bidItem.contacts?.district ?? '',
-                  style: AppFonts.body1bold.mainGreen,
-                )),
-              ]),
-              if (_bidItem.contacts?.city != null &&
-                  _bidItem.contacts!.city!.isNotEmpty)
-                Row(children: [
-                  readText(
-                      text: context.l.town,
-                      style: AppFonts.body1medium.darkGreen),
-                  const SizedBox(width: 24),
-                  Expanded(
-                      child: readText(
-                    align: TextAlign.end,
-                    text: _bidItem.contacts?.city ?? '',
-                    style: AppFonts.body1bold.mainGreen,
-                  )),
-                ]),
-              if (_bidItem.contacts?.addr != null &&
-                  _bidItem.contacts!.addr!.isNotEmpty)
-                Row(children: [
-                  readText(
-                      text: context.l.address,
-                      style: AppFonts.body1medium.darkGreen),
-                  const Spacer(),
-                  const Icon(Icons.phone, color: AppColors.mainGreen, size: 20),
-                  const SizedBox(width: 10),
-                  readText(
-                    text: _bidItem.contacts?.addr ?? '',
-                    style: AppFonts.body1bold.mainGreen,
-                  )
-                ])
-              else
-                const SizedBox(),
-              Row(children: [
-                readText(
-                    text: context.l.phone,
-                    style: AppFonts.body1medium.darkGreen),
-                const SizedBox(width: 24),
-                Expanded(
-                    child: readText(
-                  align: TextAlign.end,
-                  text: _bidItem.contacts?.phone ?? '',
-                  style: AppFonts.body1bold.mainGreen,
-                )),
-              ]),
-            ]),
-          ),
-        ),
+            onTap: () =>
+                _onLaunchPhone(context, _bidItem.contacts?.phone ?? ''),
+            child: Column(mainAxisSize: MainAxisSize.min, children: [
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.mainGreen.withAlpha((0.08 * 255).round()),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.mainGreen),
+                ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                        readText(
+                            text: context.l.fullName,
+                            style: AppFonts.body1medium.darkGreen),
+                        const SizedBox(width: 24),
+                        Expanded(
+                            child: readText(
+                          align: TextAlign.end,
+                          text: _bidItem.fermerName ?? '',
+                          style: AppFonts.body1bold.mainGreen,
+                        )),
+                      ]),
+                      Row(children: [
+                        readText(
+                            text: context.l.company,
+                            style: AppFonts.body1medium.darkGreen),
+                        const SizedBox(width: 24),
+                        Expanded(
+                            child: readText(
+                          align: TextAlign.end,
+                          text: _bidItem.fermerCompany ?? '',
+                          style: AppFonts.body1bold.mainGreen,
+                        )),
+                      ]),
+                      Row(children: [
+                        readText(
+                            text: context.l.district,
+                            style: AppFonts.body1medium.darkGreen),
+                        const SizedBox(width: 24),
+                        Expanded(
+                            child: readText(
+                          align: TextAlign.end,
+                          text: _bidItem.contacts?.district ?? '',
+                          style: AppFonts.body1bold.mainGreen,
+                        )),
+                      ]),
+                      if (_bidItem.contacts?.city != null &&
+                          _bidItem.contacts!.city!.isNotEmpty)
+                        Row(children: [
+                          readText(
+                              text: context.l.town,
+                              style: AppFonts.body1medium.darkGreen),
+                          const SizedBox(width: 24),
+                          Expanded(
+                              child: readText(
+                            align: TextAlign.end,
+                            text: _bidItem.contacts?.city ?? '',
+                            style: AppFonts.body1bold.mainGreen,
+                          )),
+                        ]),
+                      if (_bidItem.contacts?.addr != null &&
+                          _bidItem.contacts!.addr!.isNotEmpty)
+                        Row(children: [
+                          readText(
+                              text: context.l.address,
+                              style: AppFonts.body1medium.darkGreen),
+                          const SizedBox(width: 24),
+                          Expanded(
+                              child: readText(
+                            align: TextAlign.end,
+                            text: _bidItem.contacts?.addr ?? '',
+                            style: AppFonts.body1bold.mainGreen,
+                          )),
+                        ])
+                      else
+                        const SizedBox(),
+                      Row(children: [
+                        readText(
+                            text: context.l.phone,
+                            style: AppFonts.body1medium.darkGreen),
+                        const SizedBox(width: 24),
+                        Expanded(
+                            child: readText(
+                          align: TextAlign.end,
+                          text: _bidItem.contacts?.phone ?? '',
+                          style: AppFonts.body1bold.mainGreen,
+                        )),
+                      ]),
+                    ]),
+              ),
+              Padding(
+                  padding: EdgeInsetsGeometry.only(top: 10),
+                  child: Row(children: [
+                    Expanded(
+                      child: bStyle(
+                        text: context.l.reviews,
+                        c: context,
+                        colorText: AppColors.darkGreen,
+                        vertical: 15,
+                        border: Border.all(
+                            color: widget.isFresh
+                                ? AppColors.dobriva
+                                : AppColors.zerno,
+                            width: 1),
+                        colorButt: widget.isFresh
+                            ? AppColors.dobriva.withOpacity(0.5)
+                            : AppColors.zerno.withOpacity(0.5),
+                        onPressed: onReview,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: bStyle(
+                        text: context.l.additionally,
+                        c: context,
+                        colorText: AppColors.darkGreen,
+                        vertical: 15,
+                        border: Border.all(
+                            color: widget.isFresh
+                                ? AppColors.dobriva
+                                : AppColors.zerno,
+                            width: 1),
+                        colorButt: widget.isFresh
+                            ? AppColors.dobriva.withOpacity(0.5)
+                            : AppColors.zerno.withOpacity(0.5),
+                        onPressed: () => widget.onPressed(model: _bidItem),
+                      ),
+                    ),
+                  ]))
+            ])),
       );
 
   Widget _contactButton(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(top: 12),
-        child: _isLoading
-            ? const Center(
-                child: CircularProgressIndicator(color: AppColors.mainGreen))
-            : bStyle(
-                text: (_bidItem.contactPrice ?? 0) > 0
-                    ? '${context.l.contacts} · ${_bidItem.contactPrice} ₴'
-                    : context.l.contacts,
-                c: context,
-                colorText: AppColors.darkGreen,
-                vertical: 15,
-                border: Border.all(color: AppColors.darkGreen, width: 1),
-                colorButt: Colors.transparent,
-                onPressed: () => _onContactClick(context)),
-      );
+      padding: const EdgeInsets.only(top: 12),
+      child: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.mainGreen))
+          : Row(children: [
+              Expanded(
+                child: bStyle(
+                    text: (_bidItem.contactPrice ?? 0) > 0
+                        ? '${context.l.contacts} · ${_bidItem.contactPrice} ₴'
+                        : context.l.contacts,
+                    c: context,
+                    colorText: AppColors.white,
+                    vertical: 15,
+                    // border: Border.all(color: AppColors.darkGreen, width: 1),
+                    colorButt:
+                        AppColors.mainGreen.withAlpha((0.7 * 255).round()),
+                    onPressed: () => _onContactClick(context)),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: bStyle(
+                  text: context.l.additionally,
+                  c: context,
+                  colorText: AppColors.darkGreen,
+                  vertical: 15,
+                  border: Border.all(
+                      color:
+                          widget.isFresh ? AppColors.dobriva : AppColors.zerno,
+                      width: 1),
+                  colorButt: widget.isFresh
+                      ? AppColors.dobriva.withOpacity(0.5)
+                      : AppColors.zerno.withOpacity(0.5),
+                  onPressed: () => widget.onPressed(model: _bidItem),
+                ),
+              ),
+            ]));
 
   Widget orderInfo({required String header, required String text}) => Padding(
         padding: const EdgeInsets.only(bottom: 4),

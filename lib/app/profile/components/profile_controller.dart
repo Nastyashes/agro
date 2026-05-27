@@ -29,6 +29,7 @@ class ProfileController extends BaseController {
   Map<String, dynamic> userfield = {};
   @override
   void onInit() {
+    loadRequest(Get.context!);
     modelUser.value = Hive.box('data').get('modelUser');
     super.onInit();
   }
@@ -53,24 +54,23 @@ class ProfileController extends BaseController {
 
   void onQrScan() => Get.toNamed(Routes.scanQrCode);
 
-  void loadRequest(BuildContext context) => loadIfValid(() async {
-        final apiAnswer = await Api().traider.getFreeOrders();
+  Future<void> loadRequest(BuildContext context) async {
+    final apiAnswer = await Api().traider.getFreeOrders();
 
-        if (!context.mounted) return;
+    if (!context.mounted) return;
 
-        setState(() {
-          userfield = Map<String, dynamic>.from(
-            apiAnswer.data['userfield'] ?? {},
-          );
+    userfield = Map<String, dynamic>.from(
+      apiAnswer.data['userfield'] ?? {},
+    );
 
-          log(userfield.toString());
-        });
-      });
+    log(userfield.toString());
+  }
+
   Future<void> disableAds(BuildContext context) async {
     final result = await Api().traider.disableAds();
 
     if (result.data['status'] == '+') {
-      loadRequest(context);
+      await loadRequest(context);
 
       inAppNotification(
         text: result.data['message'],
@@ -93,6 +93,51 @@ class ProfileController extends BaseController {
       });
     } catch (e) {
       log(e.toString(), error: e);
+    }
+  }
+
+  Future<void> initPage(BuildContext context) async {
+    await Future.wait([
+      loadRequest(context),
+      _loadTariff(),
+    ]);
+
+    setState(() {});
+  }
+
+  DateTime? get adsDisabledUntilDate {
+    final raw = userfield['ads_disabled_until'];
+
+    if (raw == null) return null;
+
+    final ts = raw is int ? raw : int.tryParse(raw.toString());
+
+    if (ts == null || ts == 0) return null;
+
+    return DateTime.fromMillisecondsSinceEpoch(ts * 1000);
+  }
+
+  String get adsDisabledUntilText {
+    final date = adsDisabledUntilDate;
+
+    if (date == null) return 'Назавжди';
+
+    return '${date.day.toString().padLeft(2, '0')}.'
+        '${date.month.toString().padLeft(2, '0')}.'
+        '${date.year} '
+        '${date.hour.toString().padLeft(2, '0')}:'
+        '${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _loadTariff() async {
+    try {
+      ApiAnswer apiAnswer = await Api().traider.getTariff();
+
+      tariff = Tariff.fromJson(apiAnswer.data['payload']);
+
+      log('tariff free=${tariff?.isFree}');
+    } catch (e) {
+      log(e.toString());
     }
   }
 

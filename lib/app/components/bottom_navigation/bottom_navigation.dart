@@ -1,6 +1,9 @@
+import 'package:agro/app/home/components/home_controller.dart';
+import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../generated/assets.dart';
 import 'components/butt_bottom_navigation.dart';
@@ -10,6 +13,10 @@ class BottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final homeController = Get.find<HomeController>();
+
+    final isFreeTariff = homeController.tariff?.isPremium != true &&
+        homeController.tariff?.isVip != true;
     return Stack(
       children: [
         Align(
@@ -71,7 +78,7 @@ class BottomNavigation extends StatelessWidget {
                               text: context.l.profile,
                               buttNum: 2,
                               c: context,
-                              isNew: false),
+                              isNew: isFreeTariff),
                         ],
                       ),
                     ),

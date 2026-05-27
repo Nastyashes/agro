@@ -49,9 +49,9 @@ class AuthController extends FormController {
 
         log('apiAnswer.data: ${apiAnswer.data}');
 
-        final bool hasAuthKey = apiAnswer.data['data']?['auth']?['key'] != null;
+        final bool success = apiAnswer.data['status'] == true;
 
-        if (hasAuthKey) {
+        if (success) {
           Get.offAllNamed(Routes.authConfirm);
         } else {
           context.mounted

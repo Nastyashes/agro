@@ -100,6 +100,9 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
         (item.contacts?.city != null && item.contacts!.city!.isNotEmpty)
             ? _row(context.l.town, item.contacts?.city ?? '—')
             : SizedBox(),
+        (item.contacts?.addr != null && item.contacts!.addr!.isNotEmpty)
+            ? _row(context.l.address, item.contacts?.addr ?? '—')
+            : SizedBox(),
         (item.fermerCompany != null && item.fermerCompany!.isNotEmpty)
             ? _row(context.l.company, item.fermerCompany ?? '—')
             : SizedBox(),

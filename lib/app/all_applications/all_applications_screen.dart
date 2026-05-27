@@ -64,6 +64,7 @@ class AllApplicationsScreenState extends State<AllApplicationsScreen> {
                             if (controller.hasFreshBids) ...[
                               for (BidItem item in controller.bidsFresh)
                                 BidListItem(
+                                  isFresh: true,
                                   bidItem: item,
                                   onPressed: ({required model}) =>
                                       controller.onPageBidItem(item: item),

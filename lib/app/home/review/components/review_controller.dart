@@ -4,7 +4,6 @@ import 'package:agro/model/model_review/struct_review.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:agro/model/model_order/model_order.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +19,7 @@ class ReviewController extends FormController {
   late Function(VoidCallback fn) setState;
   late BuildContext c;
   late BuildContext context;
-  late ModelOrder modelOrder;
+  late int orderId;
   late ModelUser modelUser;
   bool loadPage = false;
   late TextEditingController reviewController;
@@ -42,7 +41,7 @@ class ReviewController extends FormController {
 
     await Future.delayed(const Duration(milliseconds: 100));
     if (c.mounted) {
-      modelOrder = ModalRoute.of(c)!.settings.arguments as ModelOrder;
+      orderId = ModalRoute.of(c)!.settings.arguments as int;
       await Future.delayed(const Duration(milliseconds: 100));
       // onLoadInfoUser();
       modelReview = [];
@@ -53,9 +52,8 @@ class ReviewController extends FormController {
   }
 
   void onLoadReview() async => loadIfValid(() async {
-        ApiAnswer apiAnswer =
-            await Api().fermer.viewReview(orderId: modelOrder.id!);
-
+        ApiAnswer apiAnswer = await Api().fermer.viewReview(orderId: orderId);
+        log('apiAnswer.data: ${apiAnswer.data}');
         for (final i in apiAnswer.data['payload']['items']) {
           modelReview.add(structReview(data: i));
         }
@@ -76,11 +74,11 @@ class ReviewController extends FormController {
         }
 
         ApiAnswer apiAnswer = await Api().fermer.sendReviewFermer(
-            orderId: modelOrder.id!,
+            orderId: orderId,
             rating: countStar.round(),
             comment: reviewController.text);
 
-        log(modelOrder.id.toString());
+        log(orderId.toString());
         log(apiAnswer.data.toString());
 
         if (apiAnswer.data['status'].toString() == 'true') {

@@ -128,6 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   )
                                 else if (item is BidItem)
                                   BidListItem(
+                                    isFresh: false,
                                     bidItem: item,
                                     onPressed: ({required BidItem model}) =>
                                         controller.onPageBidItem(item: model),

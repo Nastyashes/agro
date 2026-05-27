@@ -31,9 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
 
     controller.setState = setState;
-
-    controller.loadRequest(context);
-    controller.onTariffInfo();
+    controller.initPage(context);
   }
 
   @override
@@ -112,17 +110,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         padding: const EdgeInsets.only(
                           top: 20,
                         )),
-                    if (controller.shouldShowAds)
+                    if (controller.isAdsDisabled)
                       Padding(
                         padding: const EdgeInsets.all(12),
-                        child: bStyle(
-                          text: 'Вимкнути рекламу (${controller.adsPrice})',
-                          c: context,
-                          colorText: AppColors.white,
-                          vertical: 15,
-                          onPressed: () => controller.disableAds(context),
+                        child: readText(
+                          text:
+                              'Реклама вимкнена до ${controller.adsDisabledUntilText}',
+                          style: AppFonts.body1medium.copyWith(
+                            color: AppColors.mainGreen,
+                          ),
                         ),
-                      ),
+                      )
+                    else if (controller.shouldShowAds)
+                      Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Container(
+                              clipBehavior: Clip.hardEdge,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                              ),
+                              child: Stack(
+                                children: [
+                                  bStyle(
+                                    text: 'Вимкнути рекламу ',
+                                    c: context,
+                                    colorText: AppColors.white,
+                                    vertical: 15,
+                                    onPressed: () =>
+                                        controller.disableAds(context),
+                                  ),
+                                  Positioned(
+                                    left: -7,
+                                    top: -8,
+                                    child: Container(
+                                      height: 70,
+                                      width: 70,
+                                      decoration: const BoxDecoration(
+                                        image: DecorationImage(
+                                          image: AssetImage(Assets.newBadge),
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ))),
                     Padding(
                         padding: const EdgeInsets.only(
                             left: 10, right: 10, top: 0, bottom: 35),
