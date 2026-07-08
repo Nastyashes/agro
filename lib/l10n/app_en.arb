@@ -161,6 +161,38 @@
   "amountTypeBulk": "Bulk liquid",
   "amountTypeSeedUnit": "seed unit",
   "amountTypeHectare": "ha",
+  "call": "Call",
+  "closeBanner": "Close the ad?",
+  "closeBannerDescr": "If you close the ad now, you won't be able to access the farmer's contact information.",
+  "toStay": "Stay",
+  "bookCarrier": "Book a carrier",
+  "forEnd": "Time remaining:",
+  "orderingCarrier": "Booking...",
+  "carrierOrdered": "Carrier booked",
+  "done": "Done",
+  "disableBanner": "Disable ads ",
+
+  "adsDisableOffer": "Tired of ads? You can disable them now for ",
+  "adsDisableLater": "or later in your profile settings",
+  "forever": "Forever",
+
+  "orderAnalysis": "🔬 Order analysis",
+  "orderingAnalysis": "🔬 Ordering analysis...",
+  "analysisOrdered": "✅️ Analysis ordered",
+  "analysisOrderedMessage": "Analysis ordered. Balance: {balance}",
+  "@analysisOrderedMessage": {
+    "placeholders": { "balance": { "type": "String" } }
+  },
+  "insufficientFunds": "Insufficient funds. Balance: {balance}, price: {price}",
+  "@insufficientFunds": {
+    "placeholders": {
+      "balance": { "type": "String" },
+      "price": { "type": "String" }
+    }
+  },
+
+
+
 
   "@save": {},
   "@@locale": "en"

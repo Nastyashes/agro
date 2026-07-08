@@ -1,9 +1,12 @@
 import 'dart:developer';
 
+import 'package:agro/app/components/pop_up/banner_dialog.dart';
 import 'package:agro/app/home/components/home_controller.dart';
+import 'package:agro/app/components/pop_up/inform_pop_up.dart';
 import 'package:agro/app/home/order/components/launch_phone.dart';
 import 'package:agro/generated/assets.dart';
-import 'package:agro/app/home/components/new_block/bids_item_new_model.dart';
+import 'package:agro/model/bids_item_new_model.dart';
+import 'package:agro/model/add_banner/add_banner_model.dart';
 import 'package:agro/model/enums.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/routes/app_pages.dart';
@@ -42,7 +45,8 @@ class BidListItem extends StatefulWidget {
 class _BidListItemState extends State<BidListItem> {
   late BidItem _bidItem;
   bool _isLoading = false;
-
+  bool orderingCarrier = false;
+  bool carrierOrdered = false;
   @override
   void initState() {
     super.initState();
@@ -79,7 +83,11 @@ class _BidListItemState extends State<BidListItem> {
         OrderType.zerno => AppColors.zerno,
       };
   Future<void> _onContactClick(BuildContext context) async {
+    if (_bidItem.isOpened) return;
+
     setState(() => _isLoading = true);
+
+    final String errorTariffMail = context.l.errorTariffMail;
 
     try {
       final controller = Get.find<HomeController>();
@@ -98,22 +106,86 @@ class _BidListItemState extends State<BidListItem> {
       log('isAdsDisabled=$isAdsDisabled');
       log('shouldShowAd=$shouldShowAd');
 
-      if (shouldShowAd) {
-        final interstitial = Interstitial();
+      // 1) якщо реклама не потрібна → одразу відкриваємо контакт
+      if (!shouldShowAd) {
+        await _openContact(context);
+        return;
+      }
 
-        await interstitial.loadRewardedAd(
-          doAfter: () async => await _openContact(context),
-          onFailed: () async => await _openContact(context),
-        );
-      } else {
+      // 2) запит банера (аналог openContactsAd)
+      final OpenContactsAdResponse res = await Api().traider.openContactsAd(
+            orderId: _bidItem.orderId!,
+          );
+
+      log('OPEN Contacts Ad: ${res.toJson()}');
+
+      // 3) fallback якщо API не успішне
+      if (res.status != true) {
+        await _openContact(context);
+        return;
+      }
+
+      final ad = res.adBanner;
+
+      // 4) fallback якщо банера немає
+      if (ad == null) {
+        await _openContact(context);
+        return;
+      }
+
+      // 5) показ реклами
+      final watched = await showAdBannerDialog(
+        context,
+        imageUrl: ad.image,
+        phone: ad.phone,
+        price: controller.adsPrice,
+        onDisableAds: () => controller.disableAds(context),
+      );
+
+      // 6) після перегляду → відкриваємо контакт
+      if (watched == true) {
         await _openContact(context);
       }
     } catch (e) {
       log('contact open failed: $e');
+      inAppNotification(text: errorTariffMail, c: context);
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
+  }
 
-    if (mounted) {
-      setState(() => _isLoading = false);
+  Future<void> onOrderCarrier(BuildContext context) async {
+    if (orderingCarrier || carrierOrdered) return;
+
+    setState(() => orderingCarrier = true);
+
+    try {
+      final ApiAnswer apiAnswer = await Api().traider.orderCarrier();
+      log('orderCarrier: ${apiAnswer.data}');
+
+      final bool status = apiAnswer.data['status'] == true;
+      final String message = apiAnswer.data['message']?.toString() ?? '';
+
+      setState(() {
+        orderingCarrier = false;
+        if (status) carrierOrdered = true;
+      });
+
+      if (context.mounted) {
+        showInformPoUp(
+          context,
+          status ? context.l.done : context.l.error,
+          message,
+        );
+      }
+    } catch (e) {
+      log('onOrderCarrier error: $e');
+      setState(() => orderingCarrier = false);
+      if (context.mounted) {
+        notification(text: context.l.errorTariffMail);
+      }
     }
   }
 
@@ -147,7 +219,7 @@ class _BidListItemState extends State<BidListItem> {
         _bidItem = updated;
       });
 
-      Get.find<HomeController>().updateBidItem(updated);
+      Get.find<HomeController>().updateBidItemSilently(updated);
     } catch (e) {
       log('_openContact error: $e');
     }
@@ -266,6 +338,9 @@ class _BidListItemState extends State<BidListItem> {
                     text:
                         '${_bidItem.amount ?? '—'} ${context.l.amountTypeTon}'),
                 orderInfo(
+                    header: context.l.harvestYear,
+                    text: '${_bidItem.year ?? '—'}'),
+                orderInfo(
                   header: context.l.formOfPayment,
                   text: _bidItem.ordPaymentType == 1
                       ? context.l.paymentFormF1
@@ -283,6 +358,52 @@ class _BidListItemState extends State<BidListItem> {
                   _contactWidget(context)
                 else
                   _contactButton(context),
+
+                if (_bidItem.isOpened)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Stack(
+                        children: [
+                          bStyle(
+                            text: orderingCarrier
+                                ? '⛟ ${context.l.orderingCarrier}'
+                                : carrierOrdered
+                                    ? '✅️ ${context.l.carrierOrdered}'
+                                    : '⛟ ${context.l.bookCarrier}',
+                            c: context,
+                            vertical: 15,
+                            active: !orderingCarrier && !carrierOrdered,
+                            colorButt: !orderingCarrier && !carrierOrdered
+                                ? AppColors.mainGreen
+                                : AppColors.greyGreen,
+                            onPressed: () {
+                              if (orderingCarrier || carrierOrdered) return;
+                              onOrderCarrier(context);
+                            },
+                          ),
+                          Positioned(
+                            left: -7,
+                            top: -8,
+                            child: Container(
+                              height: 70,
+                              width: 70,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(Assets.newBadge),
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

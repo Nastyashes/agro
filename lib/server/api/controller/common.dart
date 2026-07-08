@@ -14,6 +14,7 @@ class Commmon extends Api {
 
     return apiAnswer;
   }
+//Оплатити тариф з балансу 1.0.22
 
   Future<ApiAnswer> tariffPay({required int amount}) async {
     ApiAnswer apiAnswer = ApiAnswer();
@@ -26,6 +27,7 @@ class Commmon extends Api {
     checkAuth(apiAnswer.data);
     return apiAnswer;
   }
+//Поповнити баланс 1.0.22
 
   Future<ApiAnswer> balancePay({required int amount}) async {
     ApiAnswer apiAnswer = ApiAnswer();
@@ -48,6 +50,7 @@ class Commmon extends Api {
     checkAuth(apiAnswer.data);
     return apiAnswer;
   }
+// Отримати баланс 1.0.22
 
   Future<ApiAnswer> getBalance() async {
     ApiAnswer apiAnswer = ApiAnswer();

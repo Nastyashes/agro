@@ -504,4 +504,63 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get amountTypeHectare => 'ha';
+
+  @override
+  String get call => 'Call';
+
+  @override
+  String get closeBanner => 'Close the ad?';
+
+  @override
+  String get closeBannerDescr =>
+      'If you close the ad now, you won\'t be able to access the farmer\'s contact information.';
+
+  @override
+  String get toStay => 'Stay';
+
+  @override
+  String get bookCarrier => 'Book a carrier';
+
+  @override
+  String get forEnd => 'Time remaining:';
+
+  @override
+  String get orderingCarrier => 'Booking...';
+
+  @override
+  String get carrierOrdered => 'Carrier booked';
+
+  @override
+  String get done => 'Done';
+
+  @override
+  String get disableBanner => 'Disable ads ';
+
+  @override
+  String get adsDisableOffer => 'Tired of ads? You can disable them now for ';
+
+  @override
+  String get adsDisableLater => 'or later in your profile settings';
+
+  @override
+  String get forever => 'Forever';
+
+  @override
+  String get orderAnalysis => '🔬 Order analysis';
+
+  @override
+  String get orderingAnalysis => '🔬 Ordering analysis...';
+
+  @override
+  String get analysisOrdered => '✅️ Analysis ordered';
+
+  @override
+  String analysisOrderedMessage(String balance) {
+    return 'Analysis ordered. Balance: $balance';
+  }
+
+  @override
+  String insufficientFunds(String balance, String price) {
+    return 'Insufficient funds. Balance: $balance, price: $price';
+  }
 }

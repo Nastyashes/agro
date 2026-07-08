@@ -159,6 +159,37 @@
   "amountTypeBulk": "Сұйық",
   "amountTypeSeedUnit": "егіс.бір.",
   "amountTypeHectare": "га",
+  "call": "Қоңырау шалу",
+  "closeBanner": "Жарнаманы жабу керек пе?",
+  "closeBannerDescr": "Егер жарнаманы қазір жапсаңыз, фермердің байланыс деректерін аша алмайсыз.",
+  "toStay": "Қалу",
+  "bookCarrier": "Тасымалдаушыға тапсырыс беру",
+  "forEnd": "Аяқталуына дейін:",
+  "orderingCarrier": "Тапсырыс берілуде...",
+  "carrierOrdered": "Тасымалдаушыға тапсырыс берілді",
+  "done": "Дайын",
+  "disableBanner": "Жарнаманы өшіру ",
+
+ "adsDisableOffer": "Жарнамадан шаршадыңыз ба? Оны қазір ",
+  "adsDisableLater": "немесе кейін профиль баптауларында өшіре аласыз",
+  "forever": "Мәңгілікке",
+
+  "orderAnalysis": "🔬 Талдау тапсырыс беру",
+  "orderingAnalysis": "🔬 Талдау тапсырыс берілуде...",
+  "analysisOrdered": "✅️ Талдауға тапсырыс берілді",
+  "analysisOrderedMessage": "Талдауға тапсырыс берілді. Баланс: {balance}",
+  "@analysisOrderedMessage": {
+    "placeholders": { "balance": { "type": "String" } }
+  },
+  "insufficientFunds": "Қаражат жеткіліксіз. Баланс: {balance}, құны: {price}",
+  "@insufficientFunds": {
+    "placeholders": {
+      "balance": { "type": "String" },
+      "price": { "type": "String" }
+    }
+  },
+
+
 
   "@save": {},
   "@@locale": "kk"

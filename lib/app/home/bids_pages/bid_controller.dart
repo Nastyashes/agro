@@ -1,10 +1,14 @@
 import 'dart:developer';
 
+import 'package:agro/app/components/pop_up/banner_dialog.dart';
+import 'package:agro/app/components/pop_up/confirm_pop_up.dart';
 import 'package:agro/app/home/components/home_controller.dart';
+import 'package:agro/app/components/pop_up/inform_pop_up.dart';
 import 'package:agro/app/home/order/components/launch_phone.dart';
 import 'package:agro/app/home/order/components/set_answer.dart.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
-import 'package:agro/app/home/components/new_block/bids_item_new_model.dart';
+import 'package:agro/model/bids_item_new_model.dart';
+import 'package:agro/model/add_banner/add_banner_model.dart';
 import 'package:agro/model/call_result/call_result.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/repository/local_storage_repository.dart';
@@ -21,14 +25,17 @@ class BidItemController extends BaseController {
   late Function(VoidCallback fn) setState;
   late BidItem bidItem;
   bool loadPage = false;
-
-  Tariff? tariff;
+  bool orderingCarrier = false;
+  bool carrierOrdered = false;
+  bool orderingAnalysis = false;
+  bool analysisOrdered = false;
+  // Tariff? tariff;
   CallResult? result;
   bool contactOpened = false;
 
   final _localStorageRepository = LocalStorageRepository();
   final HomeController _homeController = Get.find();
-  final _interstitial = Interstitial();
+  // final _interstitial = Interstitial();
 
   void initPage({
     required BuildContext context,
@@ -37,12 +44,10 @@ class BidItemController extends BaseController {
   }) async {
     setState = set;
     bidItem = item;
-    tariff = _homeController.tariff;
+    // tariff = _homeController.tariff;
 
-    // Якщо контакт вже відкритий — зберігаємо стан
     if (bidItem.isOpened) contactOpened = true;
 
-    // Завантажуємо попередній результат дзвінка
     result =
         await _localStorageRepository.getResult(bidItem.orderId.toString());
 
@@ -57,34 +62,145 @@ class BidItemController extends BaseController {
 
     try {
       final contactPrice = bidItem.contactPrice ?? 0;
-
-      final isPremium = tariff?.isPremium == true || tariff?.isVip == true;
-
-      final isFree = tariff?.isFree == true;
+      final isFree = _homeController.tariff?.isFree == true;
+      //final isFree = tariff?.isFree == true;
 
       final isAdsDisabled =
           _homeController.userfield['is_ads_disabled'] == true;
 
       final shouldShowAd = contactPrice == 0 && isFree && !isAdsDisabled;
 
-      log('contactPrice=$contactPrice');
-      log('isFree=$isFree');
-      log('isAdsDisabled=$isAdsDisabled');
-      log('isPremium=$isPremium');
-      log('shouldShowAd=$shouldShowAd');
+      final adsDisabledUntil = int.tryParse(
+              '${_homeController.userfield['ads_disabled_until'] ?? 0}') ??
+          0;
 
-      if (shouldShowAd) {
-        await _interstitial.loadRewardedAd(
-          doAfter: () async => await _openContact(context),
-          onFailed: () async => await _openContact(context),
-        );
+      String adsPrice = adsDisabledUntil == 0 ? '150 грн' : '300 грн';
+
+      if (!shouldShowAd) {
+        await _openContact(context);
         return;
       }
 
-      await _openContact(context);
+      /// 🔥 тепер це MODEL, а не ApiAnswer
+      final OpenContactsAdResponse res = await Api().traider.openContactsAd(
+            orderId: bidItem.orderId!,
+          );
+
+      log('OPEN Contacts Ad: ${res.toJson()}');
+
+      /// fallback
+      if (res.status != true) {
+        await _openContact(context);
+        return;
+      }
+
+      final ad = res.adBanner;
+
+      /// якщо банера немає
+      if (ad == null) {
+        await _openContact(context);
+        return;
+      }
+
+      final watched = await showAdBannerDialog(
+        context,
+        imageUrl: ad.image,
+        phone: ad.phone,
+        price: adsPrice,
+        onDisableAds: () => _homeController.disableAds(context),
+      );
+
+      if (watched == true) {
+        await _openContact(context);
+      }
     } catch (e) {
       log("contact open failed: $e");
       notification(text: errorTariffMail);
+    }
+  }
+
+  Future<void> onOrderCarrier(BuildContext context) async {
+    if (orderingCarrier || carrierOrdered) return;
+
+    setState(() => orderingCarrier = true);
+
+    try {
+      final ApiAnswer apiAnswer = await Api().traider.orderCarrier();
+      log('orderCarrier: ${apiAnswer.data}');
+
+      final bool status = apiAnswer.data['status'] == true;
+      final String message = apiAnswer.data['message']?.toString() ?? '';
+
+      setState(() {
+        orderingCarrier = false;
+        if (status) carrierOrdered = true;
+      });
+
+      if (context.mounted) {
+        showInformPoUp(
+          context,
+          status ? context.l.done : context.l.error,
+          message,
+        );
+      }
+    } catch (e) {
+      log('onOrderCarrier error: $e');
+      setState(() => orderingCarrier = false);
+      if (context.mounted) {
+        notification(text: context.l.errorTariffMail);
+      }
+    }
+  }
+
+  Future<void> onOrderAnalysis(BuildContext context) async {
+    if (orderingAnalysis || analysisOrdered) return;
+
+    setState(() => orderingAnalysis = true);
+
+    try {
+      final ApiAnswer apiAnswer =
+          await Api().traider.orderAnalysis(orderId: bidItem.orderId!);
+      log('orderAnalysis: ${apiAnswer.data}');
+
+      final String status = apiAnswer.data['status']?.toString() ?? '';
+
+      setState(() => orderingAnalysis = false);
+
+      if (status == '+') {
+        setState(() => analysisOrdered = true);
+        if (context.mounted) {
+          showInformPoUp(
+            context,
+            context.l.done,
+            context.l.analysisOrderedMessage(
+              apiAnswer.data['balance_after']?.toString() ?? '—',
+            ),
+          );
+        }
+      } else if (status == 'insufficient') {
+        if (context.mounted) {
+          showInformPoUp(
+            context,
+            context.l.error,
+            context.l.insufficientFunds(
+              apiAnswer.data['balance']?.toString() ?? '—',
+              apiAnswer.data['price']?.toString() ?? '—',
+            ),
+          );
+        }
+      } else {
+        final String message =
+            apiAnswer.data['message']?.toString() ?? context.l.error;
+        if (context.mounted) {
+          showInformPoUp(context, context.l.error, message);
+        }
+      }
+    } catch (e) {
+      log('onOrderAnalysis error: $e');
+      setState(() => orderingAnalysis = false);
+      if (context.mounted) {
+        notification(text: context.l.errorTariffMail);
+      }
     }
   }
 

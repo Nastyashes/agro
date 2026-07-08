@@ -59,6 +59,7 @@ class BidItem extends Created {
   final String? alias;
   final int? ordPaymentType;
   final int? amount;
+  final int? year;
   final int? orderCreated;
 
   final int? regionOid;
@@ -105,6 +106,7 @@ class BidItem extends Created {
     this.ordPaymentType,
     this.amount,
     this.orderCreated,
+    this.year,
     this.regionOid,
     this.openedDate,
     this.openedPhon,
@@ -157,6 +159,7 @@ class BidItem extends Created {
       alias: alias,
       ordPaymentType: ordPaymentType,
       amount: amount,
+      year: year,
       orderCreated: orderCreated,
       regionOid: regionOid,
       openedDate: openedDate ?? this.openedDate,
@@ -220,6 +223,7 @@ class BidItem extends Created {
       openedDate: json['opened_date'] as String?,
       openedPhon: json['opened_phon'] as String?,
       openedUsid: _parseInt(json['opened_usid']),
+      year: _parseInt(json['year']),
       orderCreatedHum: json['order_created_hum'] as String?,
       dayNumber: _parseInt(json['day_number']),
       dayLabel: json['day_label'] as String?,

@@ -503,4 +503,64 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get amountTypeHectare => 'га';
+
+  @override
+  String get call => 'Подзвонити';
+
+  @override
+  String get closeBanner => 'Закрити рекламу?';
+
+  @override
+  String get closeBannerDescr =>
+      'Якщо закрити рекламу зараз, ви не відкриєте контакти фермера.';
+
+  @override
+  String get toStay => 'Залишитись';
+
+  @override
+  String get bookCarrier => 'Замовити перевізника';
+
+  @override
+  String get forEnd => 'До завершення:';
+
+  @override
+  String get orderingCarrier => 'Замовляємо...';
+
+  @override
+  String get carrierOrdered => 'Перевізника замовлено';
+
+  @override
+  String get done => 'Готово';
+
+  @override
+  String get disableBanner => 'Вимкнути рекламу ';
+
+  @override
+  String get adsDisableOffer =>
+      'Набридла реклама? Ви можете відключити її зараз за ';
+
+  @override
+  String get adsDisableLater => 'або пізніше у налаштуваннях профілю';
+
+  @override
+  String get forever => 'Назавжди';
+
+  @override
+  String get orderAnalysis => '🔬 Замовити аналіз';
+
+  @override
+  String get orderingAnalysis => '🔬 Замовлення аналізу...';
+
+  @override
+  String get analysisOrdered => '✅️ Аналіз замовлено';
+
+  @override
+  String analysisOrderedMessage(String balance) {
+    return 'Аналіз замовлено. Баланс: $balance';
+  }
+
+  @override
+  String insufficientFunds(String balance, String price) {
+    return 'Недостатньо коштів. Баланс: $balance, вартість: $price';
+  }
 }

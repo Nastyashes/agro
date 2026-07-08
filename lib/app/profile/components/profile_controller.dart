@@ -40,9 +40,11 @@ class ProfileController extends BaseController {
 
   bool get shouldShowAds => isFree && !isAdsDisabled;
 
-  int get adsDisabledUntil => userfield['ads_disabled_until'] ?? 0;
-
+  int get adsDisabledUntil =>
+      int.tryParse('${userfield['ads_disabled_until'] ?? 0}') ?? 0;
+      
   String get adsPrice => adsDisabledUntil == 0 ? '150 грн' : '300 грн';
+
   void onSite() => launchUrl(Uri.parse('https://uagro.trade/'));
 
   void onHelp() => launchUrl(Uri.parse('https://t.me/uagro_admin'));
@@ -55,7 +57,7 @@ class ProfileController extends BaseController {
   void onQrScan() => Get.toNamed(Routes.scanQrCode);
 
   Future<void> loadRequest(BuildContext context) async {
-    final apiAnswer = await Api().traider.getFreeOrders();
+    final apiAnswer = await Api().traider.getAllBids();
 
     if (!context.mounted) return;
 

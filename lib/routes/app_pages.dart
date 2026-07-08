@@ -1,5 +1,5 @@
-import 'package:agro/app/home/components/new_block/bid_binding.dart';
-import 'package:agro/app/home/components/new_block/bid_item_screen.dart';
+import 'package:agro/app/home/bids_pages/bid_binding.dart';
+import 'package:agro/app/home/bids_pages/bid_detail_screen.dart';
 import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/app/home/review/review_screen.dart';
 import 'package:agro/app/profile/components/scan_qr_code.dart';

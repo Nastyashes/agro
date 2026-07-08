@@ -3,8 +3,7 @@ import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
-void showConfirmPoUp(BuildContext context, String? title, String? description,
-    final Future<void> Function() onConfirm) {
+void showInformPoUp(BuildContext context, String? title, String? description,) {
   showDialog(
     context: context,
     builder: (context) {
@@ -20,24 +19,20 @@ void showConfirmPoUp(BuildContext context, String? title, String? description,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               /// HEADER
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+              
                   Text(title ?? '', style: AppFonts.body1medium.black),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  )
-                ],
-              ),
+                
+                
 
               const SizedBox(height: 20),
 
-              Text(description ?? '', style: AppFonts.body2medium.black),
+              Text(description ?? '', style: AppFonts.body1medium.black),
+              const SizedBox(height: 20),
 
               /// BUTTON
               Row(
                 children: [
+               
                   Expanded(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -52,32 +47,7 @@ void showConfirmPoUp(BuildContext context, String? title, String? description,
                         ),
                       ),
                       onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        context.l.cancel,
-                        style: AppFonts.body2bold.white,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        disabledBackgroundColor: AppColors.additionalGreen,
-                        backgroundColor: AppColors.mainGreen,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 30,
-                          vertical: 16,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                        onConfirm();
-                      },
+                        Navigator.pop(context);                      },
                       child: Text(
                         context.l.yes,
                         style: AppFonts.body2bold.white,

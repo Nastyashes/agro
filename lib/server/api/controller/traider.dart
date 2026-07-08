@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:agro/model/add_banner/add_banner_model.dart';
 
 import '../api.dart';
 
@@ -15,6 +16,68 @@ class Traider extends Api {
 
     return apiAnswer;
   }
+
+// Отриматирекламний баннер 1.0.23
+
+  Future<OpenContactsAdResponse> openContactsAd({
+    required int orderId,
+  }) async {
+    final request = await dataRequestMultipart(
+      'order.opencontacts',
+      apiUrl: 'apiapp.php',
+      parameter: 'order_id=$orderId',
+    );
+
+    final rawBody = await request.stream.bytesToString();
+
+    // 🔍 тимчасовий лог для діагностики — побачити ЩО саме прийшло від сервера
+    log('RAW BODY (order.opencontacts): $rawBody.  ...............................................................................');
+
+    final jsonData = json.decode(rawBody);
+
+    checkAuth(jsonData);
+
+    return OpenContactsAdResponse.fromJson(jsonData);
+  }
+
+// Замовити аналіз заявки  1.0.23
+
+  Future<ApiAnswer> orderAnalysis({required int orderId}) async {
+    ApiAnswer apiAnswer = ApiAnswer();
+
+    var request = await dataRequestMultipartBody(
+      'uagro.order.analysis',
+      apiUrl: 'api.php',
+      formData: {
+        'order_id': orderId.toString(),
+      },
+    );
+
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+
+    return apiAnswer;
+  }
+
+// Замовити перевізника (Telegram-бот диспетчера) 1.0.23
+
+  Future<ApiAnswer> orderCarrier() async {
+    ApiAnswer apiAnswer = ApiAnswer();
+
+    var request = await dataRequestMultipart(
+      'order.carrier',
+      apiUrl: 'apiapp.php',
+    );
+
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+
+    return apiAnswer;
+  }
+
+//Відкрити повний контакт фермера 1.0.22
 
   Future<ApiAnswer> openBidContact({
     required int orderId,
@@ -41,6 +104,7 @@ class Traider extends Api {
   }
 
 // Укласти угоду (новий ендпоінт)
+
   Future<ApiAnswer> dealNew({required int orderId}) async {
     ApiAnswer apiAnswer = ApiAnswer();
     var request = await dataRequestMultipart(
@@ -51,20 +115,6 @@ class Traider extends Api {
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(await request.stream.bytesToString());
     checkAuth(apiAnswer.data);
-    return apiAnswer;
-  }
-
-  Future<ApiAnswer> getOrderList(
-      {required int page, required int limit, String? search}) async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    log('mode=trader&page=$page&limit=$limit&search=$search&sphere=15');
-    var request = await dataRequestMultipart('order.list',
-        parameter: 'mode=trader&page=$page&limit=$limit&search=$search');
-
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
-
     return apiAnswer;
   }
 
@@ -80,25 +130,20 @@ class Traider extends Api {
     return apiAnswer;
   }
 
-  Future<ApiAnswer> getAllOrders(
-      {required int page, required int limit}) async {
+// Отримати всі заявки 1.0.22
+
+  Future<ApiAnswer> getAllBids({int? limit, int? offset}) async {
     ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('uagro.listorders',
-        apiUrl: "api.php",
-        parameter: 'sphere=0&filters=[]&page=$page&perpage=$limit');
 
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
+    final params = <String>[
+      if (limit != null) 'limit=$limit',
+      if (offset != null) 'offset=$offset',
+    ].join('&');
 
-    return apiAnswer;
-  }
-
-  Future<ApiAnswer> getFreeOrders() async {
-    ApiAnswer apiAnswer = ApiAnswer();
     var request = await dataRequestMultipart(
       'auth.my',
       apiUrl: "api.php",
+      parameter: params.isEmpty ? null : params,
     );
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(await request.stream.bytesToString());
@@ -106,6 +151,8 @@ class Traider extends Api {
 
     return apiAnswer;
   }
+
+//Вимкнення реклами 1.0.22
 
   Future<ApiAnswer> disableAds() async {
     ApiAnswer apiAnswer = ApiAnswer();
@@ -145,18 +192,6 @@ class Traider extends Api {
   Future<ApiAnswer> orderOpenContactFermer({required int orderId}) async {
     ApiAnswer apiAnswer = ApiAnswer();
     var request = await dataRequestMultipart('order.opencontacts',
-        parameter: 'order_id=$orderId');
-
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
-
-    return apiAnswer;
-  }
-
-  Future<ApiAnswer> viewReviewTender({required int orderId}) async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('order.reviews',
         parameter: 'order_id=$orderId');
 
     apiAnswer.code = request.statusCode;
@@ -233,4 +268,53 @@ class Traider extends Api {
     checkAuth(apiAnswer.data);
     return apiAnswer;
   }
+
+  Future<AdBannerModel?> getAdBanner() async {
+    final request = await dataRequestMultipart(
+      'order.list',
+      apiUrl: 'apiapp.php',
+    );
+
+    final jsonData = json.decode(await request.stream.bytesToString());
+
+    checkAuth(jsonData);
+log('Ad banner loaded: $jsonData');
+
+    final banner = jsonData['feed_ad_banner'];
+
+    if (banner == null) {
+      return null;
+    }
+
+    return AdBannerModel.fromJson(banner);
+  }
+/*
+  Future<ApiAnswer> getAllOrders(
+      {required int page, required int limit}) async {
+    ApiAnswer apiAnswer = ApiAnswer();
+    var request = await dataRequestMultipart('uagro.listorders',
+        apiUrl: "api.php",
+        parameter: 'sphere=0&filters=[]&page=$page&perpage=$limit');
+
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+
+    return apiAnswer;
+  }
+*/
+
+  /*
+  Future<ApiAnswer> viewReviewTender({required int orderId}) async {
+    ApiAnswer apiAnswer = ApiAnswer();
+    var request = await dataRequestMultipart('order.reviews',
+        parameter: 'order_id=$orderId');
+
+    apiAnswer.code = request.statusCode;
+    apiAnswer.data = json.decode(await request.stream.bytesToString());
+    checkAuth(apiAnswer.data);
+
+    return apiAnswer;
+  }
+*/
 }

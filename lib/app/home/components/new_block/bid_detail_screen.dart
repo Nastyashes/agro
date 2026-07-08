@@ -1,8 +1,8 @@
 import 'package:agro/app/components/block_page_screen.dart';
 import 'package:agro/app/home/components/home_controller.dart';
-import 'package:agro/app/home/components/new_block/bid_item_controller.dart';
-import 'package:agro/app/home/components/new_block/bids_item_new_model.dart';
-import 'package:agro/app/home/order/components/call_result_info.dart';
+import 'package:agro/app/home/bids_pages/bid_controller.dart';
+import 'package:agro/generated/assets.dart';
+import 'package:agro/model/bids_item_new_model.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/buttons/b_transparent_scalable_button.dart';
@@ -96,21 +96,22 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
         _row(context.l.region, item.regionName ?? '—'),
         (item.contacts?.district != null && item.contacts!.district!.isNotEmpty)
             ? _row(context.l.district, item.contacts?.district ?? '—')
-            : SizedBox(),
+            : const SizedBox(),
         (item.contacts?.city != null && item.contacts!.city!.isNotEmpty)
             ? _row(context.l.town, item.contacts?.city ?? '—')
-            : SizedBox(),
+            : const SizedBox(),
         (item.contacts?.addr != null && item.contacts!.addr!.isNotEmpty)
             ? _row(context.l.address, item.contacts?.addr ?? '—')
-            : SizedBox(),
+            : const SizedBox(),
         (item.fermerCompany != null && item.fermerCompany!.isNotEmpty)
             ? _row(context.l.company, item.fermerCompany ?? '—')
-            : SizedBox(),
+            : const SizedBox(),
         (item.fermerName != null && item.fermerName!.isNotEmpty)
             ? _row(context.l.fullName, item.fermerName ?? '—')
-            : SizedBox(),
+            : const SizedBox(),
         _row(context.l.product, item.productTitle ?? '—'),
         _row(context.l.volume, '${item.amount ?? '—'} т'),
+        _row(context.l.harvestYear, '${item.year ?? '—'}'),
         _row(
           context.l.formOfPayment,
           item.ordPaymentType == 1
@@ -123,21 +124,11 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
             localizeDeliveryType(item.deliveryType ?? '-', context)),
         (item.contacts?.phone != null && item.contacts!.phone!.isNotEmpty)
             ? _row(context.l.phoneNumber, item.contacts?.phone ?? '—')
-            : SizedBox(),
+            : const SizedBox(),
         (item.contacts?.email != null && item.contacts!.email!.isNotEmpty)
             ? _row(context.l.eMail, item.contacts?.email ?? '—')
-            : SizedBox(),
-        /*       _homeController.modelUser.isTraider &&
-                item.contacts != null &&
-                item.contacts!.phone != null
-            ? CallResultInfo(
-                text:
-                    controller.result?.getLabel(context) ?? context.l.establish,
-                textColor: controller.result?.color,
-                onPressed: () => controller.onSetAnswer(context),
-              )
             : const SizedBox(),
-           */
+   
         if (_homeController.modelUser.isTraider) ...[
           _traidersButtons(context)
         ] else ...[
@@ -152,33 +143,6 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
 
     return Column(
       children: [
-        /* --- Блок контакту ---
-        if (contactOpened)
-          Padding(
-            padding: const EdgeInsets.only(top: 10, bottom: 4),
-            child: GestureDetector(
-              onTap: () => controller.onLaunchPhone(context, item.openedPhon!),
-              child: Container(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.mainGreen.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.mainGreen),
-                ),
-                child: Row(children: [
-                  const Icon(Icons.phone, color: AppColors.mainGreen, size: 20),
-                  const SizedBox(width: 10),
-                  readText(
-                    text: item.openedPhon!,
-                    style: AppFonts.body1bold.mainGreen,
-                  ),
-                ]),
-              ),
-            ),
-          ),
-*/
         Padding(
           padding: const EdgeInsets.only(top: 16),
           child: Row(children: [
@@ -214,7 +178,51 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
             ),
           ]),
         ),
-
+  if (item.isOpened)
+        Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Container(
+                      clipBehavior: Clip.hardEdge,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Stack(
+                        children: [ bStyle(
+    text: controller.orderingCarrier
+        ? '⛟ ${context.l.orderingCarrier}'
+        : controller.carrierOrdered
+            ? '✅️ ${context.l.carrierOrdered}'
+            : '⛟ ${context.l.bookCarrier}',
+    c: context,
+    vertical: 15,
+    active: !controller.orderingCarrier && !controller.carrierOrdered,
+    colorButt: !controller.orderingCarrier && !controller.carrierOrdered ?
+     AppColors.red : AppColors.greyGreen,
+    onPressed: () {
+      if (controller.orderingCarrier || controller.carrierOrdered) return;
+      controller.onOrderCarrier(context);
+    },
+  ),
+   Positioned(
+                            left: -7,
+                            top: -8,
+                            child: Container(
+                              height: 70,
+                              width: 70,
+                              decoration: const BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(Assets.newBadge),
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    
+                  
+),
+        ),
         const SizedBox(height: 16),
         // --- Угода (тільки VIP) ---
         //  if (controller.tariff?.isVip == true)

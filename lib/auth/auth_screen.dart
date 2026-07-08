@@ -39,7 +39,7 @@ class _AuthScreenState extends State<AuthScreen> {
           body: SafeArea(
               bottom: false,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.only(left: 20, right: 20, bottom: MediaQuery.of(context).padding.bottom),
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

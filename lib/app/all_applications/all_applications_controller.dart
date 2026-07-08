@@ -1,8 +1,9 @@
 import 'dart:developer';
+import 'package:agro/model/add_banner/add_banner_model.dart';
 import 'package:get/get.dart';
 import 'package:agro/routes/app_pages.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
-import 'package:agro/app/home/components/new_block/bids_item_new_model.dart';
+import 'package:agro/model/bids_item_new_model.dart';
 import 'package:agro/model/model_order/application.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -32,6 +33,7 @@ class AllApplicationsController extends BaseController {
   List<Application> orders = [];
   Tariff? tariff;
   Map<String, dynamic> userfield = {};
+  AdBannerModel? adBanner;
 
   List<BidItem> bids = [];
   List<BidItem> bidsFresh = [];
@@ -55,6 +57,8 @@ class AllApplicationsController extends BaseController {
     orders = [];
     onTariffInfo();
     loadRequest();
+        loadAdBanner();
+
   }
 
   bool get isFree => tariff?.isFree == true;
@@ -64,12 +68,24 @@ class AllApplicationsController extends BaseController {
   bool get shouldShowAds => isFree && !isAdsDisabled;
 
   int get adsDisabledUntil => userfield['ads_disabled_until'] ?? 0;
+
+Future<void> loadAdBanner() async {
+    try {
+      final apiAnswer = await Api().traider.getAdBanner();
+      log('Ad banner loaded: ${apiAnswer?.image}');
+      adBanner = apiAnswer;
+    } catch (_) {
+      adBanner = null;
+    }
+  }
+
+
   void loadRequest() => loadIfValid(() async {
         //    ApiAnswer apiAnswer =
         //        await Api().traider.getAllOrders(page: page, limit: 50);
 
         //    log(apiAnswer.data.toString());
-        ApiAnswer apiFreeAnswer = await Api().traider.getFreeOrders();
+        ApiAnswer apiFreeAnswer = await Api().traider.getAllBids();
         final bidsResponse = BidsResponse.fromJson(apiFreeAnswer.data);
         setState(() {
           if (context.mounted) {
@@ -82,16 +98,12 @@ class AllApplicationsController extends BaseController {
                 apiFreeAnswer.data['userfield'] ?? {},
               );
 
-              log(userfield.toString());
+              //       log(userfield.toString());
             });
-            log('''
-  bids NEW
+            //       log('''
 
- ${apiFreeAnswer.data['bids'].toString()}
-
-
-  bidsFresh NEW  
- ${apiFreeAnswer.data['bids_fresh'].toString()}''');
+            // bidsFresh NEW
+            //${apiFreeAnswer.data['bids_fresh'].toString()}''');
             page++;
           }
         });

@@ -90,7 +90,7 @@ class Api {
     }
 
     log('POST $url');
-    log('FIELDS: ${request.fields}');
+ //   log('FIELDS: ${request.fields}');
 
     return await request.send();
   }
@@ -136,7 +136,7 @@ class ApiAnswer {
 }
 
 void checkAuth(data) {
-  log('data: $data');
+ // log('data: $data');
   try {
     if (data['message'] == 'Unauthorized') {
       Hive.box('data').put('pinCode', null);

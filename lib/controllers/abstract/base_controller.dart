@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:agro/load/load_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -35,12 +37,14 @@ abstract class BaseController extends GetxController {
         asyncFunction: () async => await _load(func),
         loadingWidget: const Center(child: AppCircularProgressIndicator()));
   }
+Future<void> loadIfValid(Future<void> Function() func) async {
+  try {
+    await load(func);
+  } catch (err, stack) {
+    log("LOAD ERROR: $err");
+    log(stack.toString());
 
-  Future<void> loadIfValid(Future<void> Function() func) async {
-    try {
-      await load(func);
-    } catch (err) {
-      updateErrorText(err.toString());
-    }
+    updateErrorText(err.toString());
   }
+}
 }

@@ -142,7 +142,6 @@
   "freshApplications": "Свіжі заявки",
   "noFreshApplications": "Свіжих заявок немає",
   "all": "Всі",
-  
   "deliveryTypeAny": "Будь-який",
   "deliveryTypeEXWG": "EXW (з господарства)",
   "deliveryTypeEXWF": "EXW (з поля)",
@@ -160,6 +159,36 @@
   "amountTypeBulk": "Налив",
   "amountTypeSeedUnit": "пос.од.",
   "amountTypeHectare": "га",
+  "call": "Подзвонити",
+  "closeBanner": "Закрити рекламу?",
+  "closeBannerDescr": "Якщо закрити рекламу зараз, ви не відкриєте контакти фермера.",
+  "toStay": "Залишитись",
+  "bookCarrier": "Замовити перевізника",
+  "forEnd": "До завершення:",
+  "orderingCarrier": "Замовляємо...",
+  "carrierOrdered": "Перевізника замовлено",
+  "done": "Готово",
+  "disableBanner": "Вимкнути рекламу ",
+
+ "adsDisableOffer": "Набридла реклама? Ви можете відключити її зараз за ",
+  "adsDisableLater": "або пізніше у налаштуваннях профілю",
+  "forever": "Назавжди",
+
+  "orderAnalysis": "🔬 Замовити аналіз",
+  "orderingAnalysis": "🔬 Замовлення аналізу...",
+  "analysisOrdered": "✅️ Аналіз замовлено",
+  "analysisOrderedMessage": "Аналіз замовлено. Баланс: {balance}",
+  "@analysisOrderedMessage": {
+    "placeholders": { "balance": { "type": "String" } }
+  },
+  "insufficientFunds": "Недостатньо коштів. Баланс: {balance}, вартість: {price}",
+  "@insufficientFunds": {
+    "placeholders": {
+      "balance": { "type": "String" },
+      "price": { "type": "String" }
+    }
+  },
+
 
 
   "@save": {},

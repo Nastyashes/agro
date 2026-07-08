@@ -502,4 +502,64 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get amountTypeHectare => 'га';
+
+  @override
+  String get call => 'Подзвонити';
+
+  @override
+  String get closeBanner => 'Закрыть рекламу?';
+
+  @override
+  String get closeBannerDescr =>
+      'Если закрыть рекламу сейчас, вы не сможете открыть контакты фермера.';
+
+  @override
+  String get toStay => 'Остаться';
+
+  @override
+  String get bookCarrier => 'Заказать перевозчика';
+
+  @override
+  String get forEnd => 'До окончания:';
+
+  @override
+  String get orderingCarrier => 'Заказываем...';
+
+  @override
+  String get carrierOrdered => 'Перевозчик заказан';
+
+  @override
+  String get done => 'Готово';
+
+  @override
+  String get disableBanner => 'Отключить рекламу ';
+
+  @override
+  String get adsDisableOffer =>
+      'Надоела реклама? Вы можете отключить её сейчас за ';
+
+  @override
+  String get adsDisableLater => 'или позже в настройках профиля';
+
+  @override
+  String get forever => 'Навсегда';
+
+  @override
+  String get orderAnalysis => '🔬 Заказать анализ';
+
+  @override
+  String get orderingAnalysis => '🔬 Заказ анализа...';
+
+  @override
+  String get analysisOrdered => '✅️ Анализ заказан';
+
+  @override
+  String analysisOrderedMessage(String balance) {
+    return 'Анализ заказан. Баланс: $balance';
+  }
+
+  @override
+  String insufficientFunds(String balance, String price) {
+    return 'Недостаточно средств. Баланс: $balance, стоимость: $price';
+  }
 }

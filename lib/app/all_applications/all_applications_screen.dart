@@ -1,12 +1,14 @@
 import 'package:agro/app/all_applications/all_applications_controller.dart';
+import 'package:agro/app/home/banner/banner_in_list.dart';
 
 import 'package:agro/app/home/components/block_order_unified.dart';
-import 'package:agro/app/home/components/new_block/bid_list_item.dart';
+import 'package:agro/app/home/bids_pages/bid_list_item.dart';
 import 'package:agro/model/answer/answer.dart';
-import 'package:agro/app/home/components/new_block/bids_item_new_model.dart';
+import 'package:agro/model/bids_item_new_model.dart';
 import 'package:agro/model/enums.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
+import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -62,18 +64,58 @@ class AllApplicationsScreenState extends State<AllApplicationsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if (controller.hasFreshBids) ...[
-                              for (BidItem item in controller.bidsFresh)
-                                BidListItem(
-                                  isFresh: true,
-                                  bidItem: item,
-                                  onPressed: ({required model}) =>
-                                      controller.onPageBidItem(item: item),
-                                ),
+                              () {
+                                final widgets = <Widget>[];
+                                int counter = 0;
+
+                                for (final item in controller.bidsFresh) {
+                                  widgets.add(
+                                    BidListItem(
+                                      isFresh: true,
+                                      bidItem: item,
+                                      onPressed: ({required model}) =>
+                                          controller.onPageBidItem(item: item),
+                                    ),
+                                  );
+
+                                  counter++;
+
+                                  if (controller.shouldShowAds &&
+                                      counter % 5 == 0) {
+                                    widgets.add(
+                                      BannerItemForList(
+                                        imageUrl: controller.adBanner?.image ??
+                                            'https://uagro.trade/uploads/vipline/6a45509dbb6ba_photo_2026-07-01_20-38-02.jpg',
+                                        phoneNumber:
+                                            controller.adBanner?.phone ??
+                                                '+380774804040',
+                                      ),
+                                    );
+                                  }
+                                }
+
+                                return Column(children: widgets);
+                              }(),
                             ] else
-                              readText(
-                                  text: context.l.noFreshApplications,
-                                  style:
-                                      const TextStyle(color: AppColors.grey)),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: AppColors.dobriva.withOpacity(0.06),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: AppColors.dobriva),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 20),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        context.l.noFreshApplications,
+                                        style: AppFonts.body1medium.black,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                           ],
                         );
                       })))

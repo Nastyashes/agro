@@ -160,6 +160,38 @@
   "amountTypeBulk": "Налив",
   "amountTypeSeedUnit": "пос.ед.",
   "amountTypeHectare": "га",
+  "closeBanner": "Закрыть рекламу?",
+  "closeBannerDescr": "Если закрыть рекламу сейчас, вы не сможете открыть контакты фермера.",
+  "toStay": "Остаться",
+  "bookCarrier": "Заказать перевозчика",
+  "forEnd": "До окончания:",
+  "orderingCarrier": "Заказываем...",
+  "carrierOrdered": "Перевозчик заказан",
+  "done": "Готово",
+  "disableBanner": "Отключить рекламу ",
+
+ "adsDisableOffer": "Надоела реклама? Вы можете отключить её сейчас за ",
+  "adsDisableLater": "или позже в настройках профиля",
+  "forever": "Навсегда",
+
+
+  "orderAnalysis": "🔬 Заказать анализ",
+  "orderingAnalysis": "🔬 Заказ анализа...",
+  "analysisOrdered": "✅️ Анализ заказан",
+  "analysisOrderedMessage": "Анализ заказан. Баланс: {balance}",
+  "@analysisOrderedMessage": {
+    "placeholders": { "balance": { "type": "String" } }
+  },
+  "insufficientFunds": "Недостаточно средств. Баланс: {balance}, стоимость: {price}",
+  "@insufficientFunds": {
+    "placeholders": {
+      "balance": { "type": "String" },
+      "price": { "type": "String" }
+    }
+  },
+
+
+
 
     "@save": {},
     "@@locale": "ru"

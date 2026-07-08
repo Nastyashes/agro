@@ -1061,6 +1061,114 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'га'**
   String get amountTypeHectare;
+
+  /// No description provided for @call.
+  ///
+  /// In uk, this message translates to:
+  /// **'Подзвонити'**
+  String get call;
+
+  /// No description provided for @closeBanner.
+  ///
+  /// In uk, this message translates to:
+  /// **'Закрити рекламу?'**
+  String get closeBanner;
+
+  /// No description provided for @closeBannerDescr.
+  ///
+  /// In uk, this message translates to:
+  /// **'Якщо закрити рекламу зараз, ви не відкриєте контакти фермера.'**
+  String get closeBannerDescr;
+
+  /// No description provided for @toStay.
+  ///
+  /// In uk, this message translates to:
+  /// **'Залишитись'**
+  String get toStay;
+
+  /// No description provided for @bookCarrier.
+  ///
+  /// In uk, this message translates to:
+  /// **'Замовити перевізника'**
+  String get bookCarrier;
+
+  /// No description provided for @forEnd.
+  ///
+  /// In uk, this message translates to:
+  /// **'До завершення:'**
+  String get forEnd;
+
+  /// No description provided for @orderingCarrier.
+  ///
+  /// In uk, this message translates to:
+  /// **'Замовляємо...'**
+  String get orderingCarrier;
+
+  /// No description provided for @carrierOrdered.
+  ///
+  /// In uk, this message translates to:
+  /// **'Перевізника замовлено'**
+  String get carrierOrdered;
+
+  /// No description provided for @done.
+  ///
+  /// In uk, this message translates to:
+  /// **'Готово'**
+  String get done;
+
+  /// No description provided for @disableBanner.
+  ///
+  /// In uk, this message translates to:
+  /// **'Вимкнути рекламу '**
+  String get disableBanner;
+
+  /// No description provided for @adsDisableOffer.
+  ///
+  /// In uk, this message translates to:
+  /// **'Набридла реклама? Ви можете відключити її зараз за '**
+  String get adsDisableOffer;
+
+  /// No description provided for @adsDisableLater.
+  ///
+  /// In uk, this message translates to:
+  /// **'або пізніше у налаштуваннях профілю'**
+  String get adsDisableLater;
+
+  /// No description provided for @forever.
+  ///
+  /// In uk, this message translates to:
+  /// **'Назавжди'**
+  String get forever;
+
+  /// No description provided for @orderAnalysis.
+  ///
+  /// In uk, this message translates to:
+  /// **'🔬 Замовити аналіз'**
+  String get orderAnalysis;
+
+  /// No description provided for @orderingAnalysis.
+  ///
+  /// In uk, this message translates to:
+  /// **'🔬 Замовлення аналізу...'**
+  String get orderingAnalysis;
+
+  /// No description provided for @analysisOrdered.
+  ///
+  /// In uk, this message translates to:
+  /// **'✅️ Аналіз замовлено'**
+  String get analysisOrdered;
+
+  /// No description provided for @analysisOrderedMessage.
+  ///
+  /// In uk, this message translates to:
+  /// **'Аналіз замовлено. Баланс: {balance}'**
+  String analysisOrderedMessage(String balance);
+
+  /// No description provided for @insufficientFunds.
+  ///
+  /// In uk, this message translates to:
+  /// **'Недостатньо коштів. Баланс: {balance}, вартість: {price}'**
+  String insufficientFunds(String balance, String price);
 }
 
 class _AppLocalizationsDelegate

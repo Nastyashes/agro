@@ -24,7 +24,7 @@ class BottomNavigation extends StatelessWidget {
           child: SafeArea(
             top: false,
             child: Padding(
-              padding: const EdgeInsets.only(bottom: 60),
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 60),
               child: Container(
                 height: 3,
                 decoration: BoxDecoration(

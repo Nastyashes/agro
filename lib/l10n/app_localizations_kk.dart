@@ -505,4 +505,64 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get amountTypeHectare => 'га';
+
+  @override
+  String get call => 'Қоңырау шалу';
+
+  @override
+  String get closeBanner => 'Жарнаманы жабу керек пе?';
+
+  @override
+  String get closeBannerDescr =>
+      'Егер жарнаманы қазір жапсаңыз, фермердің байланыс деректерін аша алмайсыз.';
+
+  @override
+  String get toStay => 'Қалу';
+
+  @override
+  String get bookCarrier => 'Тасымалдаушыға тапсырыс беру';
+
+  @override
+  String get forEnd => 'Аяқталуына дейін:';
+
+  @override
+  String get orderingCarrier => 'Тапсырыс берілуде...';
+
+  @override
+  String get carrierOrdered => 'Тасымалдаушыға тапсырыс берілді';
+
+  @override
+  String get done => 'Дайын';
+
+  @override
+  String get disableBanner => 'Жарнаманы өшіру ';
+
+  @override
+  String get adsDisableOffer => 'Жарнамадан шаршадыңыз ба? Оны қазір ';
+
+  @override
+  String get adsDisableLater =>
+      'немесе кейін профиль баптауларында өшіре аласыз';
+
+  @override
+  String get forever => 'Мәңгілікке';
+
+  @override
+  String get orderAnalysis => '🔬 Талдау тапсырыс беру';
+
+  @override
+  String get orderingAnalysis => '🔬 Талдау тапсырыс берілуде...';
+
+  @override
+  String get analysisOrdered => '✅️ Талдауға тапсырыс берілді';
+
+  @override
+  String analysisOrderedMessage(String balance) {
+    return 'Талдауға тапсырыс берілді. Баланс: $balance';
+  }
+
+  @override
+  String insufficientFunds(String balance, String price) {
+    return 'Қаражат жеткіліксіз. Баланс: $balance, құны: $price';
+  }
 }

@@ -132,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Stack(
                                 children: [
                                   bStyle(
-                                    text: 'Вимкнути рекламу ',
+                                    text: "${context.l.disableBanner} (${controller.adsPrice})",
                                     c: context,
                                     colorText: AppColors.white,
                                     vertical: 15,

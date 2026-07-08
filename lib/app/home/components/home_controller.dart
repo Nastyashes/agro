@@ -1,10 +1,12 @@
 import 'dart:developer';
 
-import 'package:agro/app/home/components/new_block/bids_item_new_model.dart';
+import 'package:agro/model/bids_item_new_model.dart';
 import 'package:agro/app/home/order/components/add_price.dart';
 import 'package:agro/app/home/order/components/launch_phone.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
+import 'package:agro/model/add_banner/add_banner_model.dart';
 import 'package:agro/model/answer/answer.dart';
+import 'package:agro/model/feed_item.dart';
 import 'package:agro/model/message/created.dart';
 import 'package:agro/model/message/message.dart';
 import 'package:agro/model/model_order/model_contact.dart';
@@ -48,6 +50,23 @@ class HomeController extends BaseController {
   Tariff? tariff;
   int? balance;
   Map<String, dynamic> userfield = {};
+  int bidsOffset = 0;
+  static const int bidsLimit = 20;
+  int? bidsTotal;
+  int? bidsFreshTotal;
+  AdBannerModel? adBanner;
+  bool get isFree => tariff?.isFree == true;
+
+  bool get isAdsDisabled => userfield['is_ads_disabled'] == true;
+
+  bool get shouldShowAds => isFree && !isAdsDisabled;
+
+  int get adsDisabledUntil =>
+      int.tryParse('${userfield['ads_disabled_until'] ?? 0}') ?? 0;
+
+  String get adsPrice => adsDisabledUntil == 0 ? '150 грн' : '300 грн';
+
+  bool get hasMoreBids => bidsTotal == null || bids.length < bidsTotal!;
 
   @override
   void onInit() {
@@ -69,16 +88,10 @@ class HomeController extends BaseController {
     modelOrder = [];
     onTariffInfo();
     onBalanceInfo();
+    loadAdBanner();
     loadRequest();
   }
 
-  bool get isFree => tariff?.isFree == true;
-
-  bool get isAdsDisabled => userfield['is_ads_disabled'] == true;
-
-  bool get shouldShowAds => isFree && !isAdsDisabled;
-
-  int get adsDisabledUntil => userfield['ads_disabled_until'] ?? 0;
   void fermerCreateOrder(String message) => loadIfValid(() async {
         ApiAnswer apiAnswer = await Api().fermer.createOrder();
 
@@ -102,33 +115,95 @@ class HomeController extends BaseController {
   void onSearch() {
     page = 1;
     modelOrder = [];
+    bidsOffset = 0; // додати
+    bids = []; // додати
     loadRequest();
   }
 
-  void loadRequest() => loadIfValid(() async {
+  Future<void> disableAds(BuildContext context) async {
+    final result = await Api().traider.disableAds();
+
+    if (result.data['status'] == '+') {
+      await loadRequest();
+
+      inAppNotification(
+        text: result.data['message'],
+        c: context,
+      );
+    } else {
+      inAppNotification(
+        text: result.data['message'],
+        c: context,
+      );
+    }
+  }
+
+  Future<void> loadAdBanner() async {
+    try {
+      final apiAnswer = await Api().traider.getAdBanner();
+      log('Ad banner loaded: ${apiAnswer?.image}');
+      adBanner = apiAnswer;
+    } catch (_) {
+      adBanner = null;
+    }
+  }
+
+  Future<void> loadRequest() => loadIfValid(() async {
+        log('⚪ loadRequest() CALLED | role=${modelUser.role} bidsOffset=$bidsOffset bidsLimit=$bidsLimit page=$page');
+
         await onMessages();
-        late ApiAnswer apiAnswer;
 
         if (modelUser.role == 'distrib') {
-          ApiAnswer apiFreeAnswer = await Api().traider.getFreeOrders();
-          final bidsResponse = BidsResponse.fromJson(apiFreeAnswer.data);
-          log(apiFreeAnswer.data['bids'].toString());
+          log('⚪ getAllBids() REQUEST | limit=$bidsLimit offset=$bidsOffset');
+
+          ApiAnswer apiFreeAnswer = await Api().traider.getAllBids(
+                limit: bidsLimit,
+                offset: bidsOffset,
+              );
+
+          //    log('⚪ getAllBids() RAW RESPONSE: ${apiFreeAnswer.data}');
+
+          BidsResponse bidsResponse;
+          try {
+            bidsResponse = BidsResponse.fromJson(apiFreeAnswer.data);
+          } catch (e, s) {
+            log('🔴 PARSER ERROR: $e\n$s');
+            return;
+          }
+
+          log('⚪ getAllBids() PARSED | новых bids=${bidsResponse.bids.length} '
+              //       'bids_total(raw)=${apiFreeAnswer.data['bids_total']} '
+              //      'bids_fresh_total(raw)=${apiFreeAnswer.data['bids_fresh_total']}'
+              );
+
           setState(() {
             userfield = Map<String, dynamic>.from(
               apiFreeAnswer.data['userfield'] ?? {},
             );
+            bidsTotal =
+                int.tryParse('${apiFreeAnswer.data['bids_total'] ?? ''}');
+            bidsFreshTotal =
+                int.tryParse('${apiFreeAnswer.data['bids_fresh_total'] ?? ''}');
 
-            log(userfield.toString());
+            if (bidsOffset == 0) {
+              bids = bidsResponse.bids;
+            } else {
+              bids.addAll(bidsResponse.bids);
+            }
+            bidsOffset += bidsResponse.bids.length;
           });
-          bids = bidsResponse.bids;
+
+          log('⚪ AFTER UPDATE | bidsOffset=$bidsOffset bidsTotal=$bidsTotal '
+              'bids.length=${bids.length} hasMoreBids=$hasMoreBids');
+
           await onCombineListWithBids();
           return;
-        } else {
-          apiAnswer = await Api().fermer.getOrderList(
-              page: page, limit: 15, search: searchController.text);
         }
 
-        log(apiAnswer.data.toString());
+        ApiAnswer apiAnswer = await Api()
+            .fermer
+            .getOrderList(page: page, limit: 15, search: searchController.text);
+
         callResults = await localStorageRepository.getAll();
         setState(() {
           if (context.mounted) {
@@ -140,9 +215,9 @@ class HomeController extends BaseController {
             }
           }
         });
-        //   log('modelOrder.length: ${modelOrder.length}');
         await onCombineList();
       });
+
   Future<void> onCombineListWithBids() async {
     final List<Created> list = [];
     final splitedMessage =
@@ -151,11 +226,33 @@ class HomeController extends BaseController {
 
     final List<Created> tale = [];
     tale.addAll(bids);
-    tale.addAll(splitedMessage.unmatched);
-    tale.sort((a, b) => (b.createdAt?.millisecondsSinceEpoch ?? 0)
-        .compareTo(a.createdAt?.millisecondsSinceEpoch ?? 0));
+
+    // Межа: найстаріший вже завантажений bid (за віком ордера).
+    // Поки не всі bids довантажені — не показуємо messages старіші за цю межу,
+    // бо там ще МОЖУТЬ бути bids, яких ми просто ще не отримали з бекенду.
+    final oldestLoadedBidTimestamp = bids.isEmpty
+        ? null
+        : bids
+            .map((b) => b.orderCreatedAt?.millisecondsSinceEpoch ?? 0)
+            .reduce((a, b) => a < b ? a : b);
+
+    final visibleMessages = (hasMoreBids && oldestLoadedBidTimestamp != null)
+        ? splitedMessage.unmatched.where((m) =>
+            (m.createdAt?.millisecondsSinceEpoch ?? 0) >=
+            oldestLoadedBidTimestamp)
+        : splitedMessage.unmatched; // всі bids вже завантажені — показуємо все
+
+    tale.addAll(visibleMessages);
+    tale.sort((a, b) => _sortTimestamp(b).compareTo(_sortTimestamp(a)));
     list.addAll(tale);
     setState(() => combinedList = list);
+  }
+
+  int _sortTimestamp(Created item) {
+    if (item is BidItem) {
+      return item.orderCreatedAt?.millisecondsSinceEpoch ?? 0;
+    }
+    return item.createdAt?.millisecondsSinceEpoch ?? 0;
   }
 
   void updateBid(BidItem updatedBid) {
@@ -192,9 +289,47 @@ class HomeController extends BaseController {
     });
   }
 
-  void onLoadData() {
-    loadRequest();
-    controllerLoading.loadComplete();
+  void onLoadData() async {
+    log('🟢 onLoadData() STARTED | hasMoreBids=$hasMoreBids bidsOffset=$bidsOffset bidsTotal=$bidsTotal bids.length=${bids.length}');
+
+    if (modelUser.role == 'distrib' && !hasMoreBids) {
+      log('🟡 onLoadData() -> loadNoData() (hasMoreBids=false)');
+      controllerLoading.loadNoData();
+      return;
+    }
+
+    try {
+      await loadRequest();
+      log('🟢 onLoadData() SUCCESS | bidsOffset=$bidsOffset bidsTotal=$bidsTotal bids.length=${bids.length}');
+      controllerLoading.loadComplete();
+    } catch (e, s) {
+      log('🔴 onLoadData() FAILED: $e\n$s');
+      controllerLoading.loadFailed();
+    }
+
+    log('🟢 onLoadData() FINISHED');
+  }
+
+  void onRefresh() async {
+    log('🔵 onRefresh() STARTED | bidsOffset=$bidsOffset bidsTotal=$bidsTotal bids.length=${bids.length}');
+
+    setState(() {
+      page = 0;
+      bidsOffset = 0;
+      bids = [];
+      modelOrder = [];
+    });
+    try {
+      await loadRequest();
+      log('🔵 onRefresh() SUCCESS | bidsOffset=$bidsOffset bidsTotal=$bidsTotal bids.length=${bids.length}');
+
+      controllerLoading.refreshCompleted();
+    } catch (e, s) {
+      log('🔴 onRefresh() FAILED: $e\n$s');
+
+      controllerLoading.refreshFailed();
+    }
+    log('🔵 onRefresh() FINISHED');
   }
 
   Future<void> onPayBalance(int? paySum, BuildContext context) async {
@@ -332,6 +467,20 @@ class HomeController extends BaseController {
     setState(() {});
   }
 
+// HomeController
+  void updateBidItemSilently(BidItem updated) {
+    final index = bids.indexWhere((e) => e.orderId == updated.orderId);
+    if (index != -1) bids[index] = updated;
+
+    final combinedIndex = combinedList.indexWhere(
+      (e) => e is BidItem && e.orderId == updated.orderId,
+    );
+    if (combinedIndex != -1) combinedList[combinedIndex] = updated;
+
+    // НЕ викликаємо setState — весь список не перебудовується,
+    // BidListItem вже сам показав контакти локально
+  }
+
   onContactOpened(ModelOrder order) {
     modelOrder.firstWhere((element) => element.id == order.id).request = true;
     setState(() {});
@@ -347,16 +496,6 @@ class HomeController extends BaseController {
     log("read message ${message.id}");
     await onMessages();
     onCombineList();
-  }
-
-  void onRefresh() {
-    setState(() {
-      page = 0;
-      bids = [];
-      modelOrder = [];
-    });
-    loadRequest();
-    controllerLoading.refreshCompleted();
   }
 
   void onTariffInfo() async {
@@ -403,6 +542,80 @@ class HomeController extends BaseController {
     } catch (e) {
       log(e.toString(), error: e);
     }
+  }
+
+  List<FeedItem> getFeed() {
+    final result = <FeedItem>[];
+
+    final source = _getFilteredSource();
+
+    int bidCounter = 0;
+
+    for (final item in source) {
+      if (item is ModelOrder) {
+        result.add(
+          FeedOrderItem(
+            item,
+            callResults.firstWhereOrNull(
+              (e) => e.orderId == item.id.toString(),
+            ),
+          ),
+        );
+      }
+
+      if (item is Message) {
+        result.add(FeedMessageItem(item));
+      }
+
+      if (item is BidItem) {
+        result.add(FeedBidItem(item));
+
+        bidCounter++;
+
+        // ✅ ONLY ADS RULE
+        if (shouldShowAds && bidCounter % 5 == 0) {
+          result.add(
+            FeedBannerItem(
+              adBanner ??
+                  const AdBannerModel(
+                    image:  'https://uagro.trade/uploads/vipline/6a45509dbb6ba_photo_2026-07-01_20-38-02.jpg',
+                    phone: '+380774804040',
+                  ),
+            ),
+          );
+        }
+      }
+    }
+
+    return result;
+  }
+
+  List<Created> _getFilteredSource() {
+    final q = searchController.text.trim().toLowerCase();
+
+    if (q.isEmpty) return combinedList;
+
+    return combinedList.where((item) {
+      if (item is BidItem) {
+        final title = (item.productTitle ?? '').toLowerCase();
+        final region = (item.regionName ?? '').toLowerCase();
+
+        return title.contains(q) || region.contains(q);
+      }
+
+      if (item is ModelOrder) {
+        final title = (item.title ?? '').toLowerCase();
+
+        return title.contains(q);
+      }
+
+      if (item is Message) {
+        // 🔥 важливо: прибираємо messages з search
+        return false;
+      }
+
+      return false;
+    }).toList();
   }
 
   Future<void> launchMap(
