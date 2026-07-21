@@ -38,6 +38,14 @@ class AllApplicationsController extends BaseController {
   List<BidItem> bids = [];
   List<BidItem> bidsFresh = [];
 
+  // 🔽 пагінація для bidsFresh
+  int bidsFreshOffset = 0;
+  static const int bidsFreshLimit = 20;
+  int? bidsFreshTotal;
+
+  bool get hasMoreBidsFresh =>
+      bidsFreshTotal == null || bidsFresh.length < bidsFreshTotal!;
+
   @override
   void onInit() {
     controllerLoading = RefreshController();
@@ -55,21 +63,19 @@ class AllApplicationsController extends BaseController {
     setState(() => page = 1);
     await Future.delayed(const Duration(milliseconds: 100));
     orders = [];
+    bidsFreshOffset = 0;
+    bidsFresh = [];
     onTariffInfo();
     loadRequest();
-        loadAdBanner();
-
+    loadAdBanner();
   }
 
   bool get isFree => tariff?.isFree == true;
-
   bool get isAdsDisabled => userfield['is_ads_disabled'] == true;
-
   bool get shouldShowAds => isFree && !isAdsDisabled;
-
   int get adsDisabledUntil => userfield['ads_disabled_until'] ?? 0;
 
-Future<void> loadAdBanner() async {
+  Future<void> loadAdBanner() async {
     try {
       final apiAnswer = await Api().traider.getAdBanner();
       log('Ad banner loaded: ${apiAnswer?.image}');
@@ -79,35 +85,35 @@ Future<void> loadAdBanner() async {
     }
   }
 
-
   void loadRequest() => loadIfValid(() async {
-        //    ApiAnswer apiAnswer =
-        //        await Api().traider.getAllOrders(page: page, limit: 50);
+        ApiAnswer apiFreeAnswer = await Api().traider.getAllBids(
+              limit: bidsFreshLimit,
+              offset: bidsFreshOffset,
+            );
 
-        //    log(apiAnswer.data.toString());
-        ApiAnswer apiFreeAnswer = await Api().traider.getAllBids();
         final bidsResponse = BidsResponse.fromJson(apiFreeAnswer.data);
+
         setState(() {
           if (context.mounted) {
-            //     orders.addAll(parseApplications(apiAnswer.data['orders']));
             bids = bidsResponse.bids;
-            bidsFresh = bidsResponse.bidsFresh;
 
-            setState(() {
-              userfield = Map<String, dynamic>.from(
-                apiFreeAnswer.data['userfield'] ?? {},
-              );
+            if (bidsFreshOffset == 0) {
+              bidsFresh = bidsResponse.bidsFresh;
+            } else {
+              bidsFresh.addAll(bidsResponse.bidsFresh);
+            }
+            bidsFreshOffset += bidsResponse.bidsFresh.length;
 
-              //       log(userfield.toString());
-            });
-            //       log('''
+            userfield = Map<String, dynamic>.from(
+              apiFreeAnswer.data['userfield'] ?? {},
+            );
 
-            // bidsFresh NEW
-            //${apiFreeAnswer.data['bids_fresh'].toString()}''');
+            bidsFreshTotal = int.tryParse(
+                '${apiFreeAnswer.data['bids_fresh_total'] ?? ''}');
+
             page++;
           }
         });
-        //   log('modelOrder.length: ${orders.length}');
       });
 
   void onLaunchPhone(BuildContext context, ModelContact contact) =>
@@ -124,16 +130,23 @@ Future<void> loadAdBanner() async {
   void onSearch() {
     page = 1;
     orders = [];
+    bidsFreshOffset = 0;
+    bidsFresh = [];
     loadRequest();
   }
 
   void onLoadData() {
+    if (!hasMoreBidsFresh) {
+      controllerLoading.loadNoData();
+      return;
+    }
     loadRequest();
     controllerLoading.loadComplete();
   }
 
   void onRefresh() {
     setState(() {
+      bidsFreshOffset = 0;
       bids = [];
       bidsFresh = [];
     });

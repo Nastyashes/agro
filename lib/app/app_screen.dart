@@ -33,33 +33,38 @@ class _AppScreenState extends State<AppScreen> {
   @override
   Widget build(BuildContext c) {
     return ValidThemes(
+        child: SafeArea(
+      top: false,
+      bottom: true,
       child: Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: Colors.white,
           body: Stack(
             children: [
-              SafeArea(
-                top: false,
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: MediaQuery.of(c).viewInsets.bottom > 50 ? 0 : 60),
-                  child: Column(
-                    children: [
-                      if (c.watch<BottomMenuNotifier>().activeButtMenu == 0) ...[
-                        const Expanded(child: HomeScreen())
-                      ] else if (c.watch<BottomMenuNotifier>().activeButtMenu == 1) ...[
-                        const Expanded(child: HelpScreen())
-                      ] else if (c.watch<BottomMenuNotifier>().activeButtMenu == 2) ...[
-                        const Expanded(child: ProfileScreen())
-                      ] else if (c.watch<BottomMenuNotifier>().activeButtMenu == 3) ...[
-                        const Expanded(child: AllApplicationsScreen())
-                      ]
-                    ],
-                  ),
+              Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(c).viewInsets.bottom > 50 ? 0 : 60),
+                child: Column(
+                  children: [
+                    if (c.watch<BottomMenuNotifier>().activeButtMenu == 0) ...[
+                      const Expanded(child: HomeScreen())
+                    ] else if (c.watch<BottomMenuNotifier>().activeButtMenu ==
+                        1) ...[
+                      const Expanded(child: HelpScreen())
+                    ] else if (c.watch<BottomMenuNotifier>().activeButtMenu ==
+                        2) ...[
+                      const Expanded(child: ProfileScreen())
+                    ] else if (c.watch<BottomMenuNotifier>().activeButtMenu ==
+                        3) ...[
+                      const Expanded(child: AllApplicationsScreen())
+                    ]
+                  ],
                 ),
               ),
-              const Align(alignment: Alignment.bottomCenter, child: BottomNavigation())
+              const Align(
+                  alignment: Alignment.bottomCenter, child: BottomNavigation())
             ],
           )),
-    );
+    ));
   }
 }

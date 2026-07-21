@@ -74,7 +74,7 @@ class BidItemController extends BaseController {
               '${_homeController.userfield['ads_disabled_until'] ?? 0}') ??
           0;
 
-      String adsPrice = adsDisabledUntil == 0 ? '150 грн' : '300 грн';
+      String adsPrice = adsDisabledUntil == 0 ? '150 грн' : '150 грн';
 
       if (!shouldShowAd) {
         await _openContact(context);
@@ -90,7 +90,7 @@ class BidItemController extends BaseController {
 
       /// fallback
       if (res.status != true) {
-        await _openContact(context);
+    //    await _openContact(context);
         return;
       }
 
@@ -112,6 +112,10 @@ class BidItemController extends BaseController {
 
       if (watched == true) {
         await _openContact(context);
+  // await Api().traider.openContactsAdWatched(
+  //          orderId: bidItem.orderId!,
+ //         );
+
       }
     } catch (e) {
       log("contact open failed: $e");

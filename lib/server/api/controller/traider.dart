@@ -30,9 +30,6 @@ class Traider extends Api {
 
     final rawBody = await request.stream.bytesToString();
 
-    // 🔍 тимчасовий лог для діагностики — побачити ЩО саме прийшло від сервера
-    log('RAW BODY (order.opencontacts): $rawBody.  ...............................................................................');
-
     final jsonData = json.decode(rawBody);
 
     checkAuth(jsonData);
@@ -316,5 +313,23 @@ log('Ad banner loaded: $jsonData');
 
     return apiAnswer;
   }
+
+  Future<OpenContactsAdResponse> openContactsAdWatched({
+  required int orderId,
+}) async {
+  final request = await dataRequestMultipart(
+    'order.opencontacts',
+    apiUrl: 'apiapp.php',
+    parameter: 'order_id=$orderId&ad_watched=1',
+  );
+
+  final rawBody = await request.stream.bytesToString();
+  log('RAW BODY (order.opencontacts ad_watched): $rawBody');
+
+  final jsonData = json.decode(rawBody);
+  checkAuth(jsonData);
+
+  return OpenContactsAdResponse.fromJson(jsonData);
+}
 */
 }

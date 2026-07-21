@@ -4,7 +4,7 @@ description: A new Flutter project.
 
 publish_to: 'none'
 
-version: 1.0.23+26
+version: 1.0.25+28
 
 environment:
   sdk: '>=3.0.0-290.3.beta <4.0.0'
@@ -65,7 +65,7 @@ dependencies:
   url_launcher: ^6.1.11
   http: ^1.0.0
   intl: ^0.20.2
-  google_mobile_ads: ^5.1.0
+  google_mobile_ads: ^6.0.0
 
   #visibility
   visibility_detector: ^0.4.0+2

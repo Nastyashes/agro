@@ -64,7 +64,7 @@ class HomeController extends BaseController {
   int get adsDisabledUntil =>
       int.tryParse('${userfield['ads_disabled_until'] ?? 0}') ?? 0;
 
-  String get adsPrice => adsDisabledUntil == 0 ? '150 грн' : '300 грн';
+  String get adsPrice => adsDisabledUntil == 0 ? '150 грн' : '150 грн';
 
   bool get hasMoreBids => bidsTotal == null || bids.length < bidsTotal!;
 
