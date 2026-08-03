@@ -1,9 +1,9 @@
 import 'dart:developer';
-import 'package:agro/model/add_banner/add_banner_model.dart';
+import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:get/get.dart';
 import 'package:agro/routes/app_pages.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
-import 'package:agro/model/bids_item_new_model.dart';
+import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/model/model_order/application.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';

@@ -1,20 +1,19 @@
 import 'dart:developer';
 
 import 'package:agro/app/components/pop_up/banner_dialog.dart';
-import 'package:agro/app/components/pop_up/confirm_pop_up.dart';
 import 'package:agro/app/home/components/home_controller.dart';
 import 'package:agro/app/components/pop_up/inform_pop_up.dart';
 import 'package:agro/app/home/order/components/launch_phone.dart';
 import 'package:agro/app/home/order/components/set_answer.dart.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
-import 'package:agro/model/bids_item_new_model.dart';
-import 'package:agro/model/add_banner/add_banner_model.dart';
+import 'package:agro/model/new_models_bids/bids_contacts_model.dart';
+import 'package:agro/model/new_models_bids/bids_item_model.dart';
+import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:agro/model/call_result/call_result.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/repository/local_storage_repository.dart';
 import 'package:agro/routes/app_pages.dart';
 import 'package:agro/server/api/api.dart';
-import 'package:agro/ui/adds.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/cupertino.dart';

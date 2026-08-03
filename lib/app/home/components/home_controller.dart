@@ -1,12 +1,13 @@
+import 'dart:async';
 import 'dart:developer';
 
-import 'package:agro/model/bids_item_new_model.dart';
+import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/app/home/order/components/add_price.dart';
 import 'package:agro/app/home/order/components/launch_phone.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
-import 'package:agro/model/add_banner/add_banner_model.dart';
+import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:agro/model/answer/answer.dart';
-import 'package:agro/model/feed_item.dart';
+import 'package:agro/model/new_models_bids/feed_item_model.dart';
 import 'package:agro/model/message/created.dart';
 import 'package:agro/model/message/message.dart';
 import 'package:agro/model/model_order/model_contact.dart';
@@ -41,6 +42,8 @@ class HomeController extends BaseController {
   String? messHeader;
   final localStorageRepository = LocalStorageRepository();
   final _interstitial = Interstitial();
+    Timer? _searchDebounce;
+  int _searchRequestId = 0;
   int page = 1;
   List<BidItem> bids = [];
   List<ModelOrder> modelOrder = [];
@@ -112,14 +115,25 @@ class HomeController extends BaseController {
           context: context,
           builder: (c) => LaunchPhone(contact: contact.userPhone));
 
-  void onSearch() {
-    page = 1;
-    modelOrder = [];
-    bidsOffset = 0; // додати
-    bids = []; // додати
-    loadRequest();
+
+ void onSearch() {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 400), () {
+      page = 1;
+      modelOrder = [];
+      bidsOffset = 0;
+      bids = [];
+      loadRequest();
+    });
   }
 
+  @override
+  void onClose() {
+    _searchDebounce?.cancel();
+    super.onClose();
+  }
+
+  
   Future<void> disableAds(BuildContext context) async {
     final result = await Api().traider.disableAds();
 
@@ -153,52 +167,50 @@ class HomeController extends BaseController {
 
         await onMessages();
 
-        if (modelUser.role == 'distrib') {
-          log('⚪ getAllBids() REQUEST | limit=$bidsLimit offset=$bidsOffset');
+      if (modelUser.role == 'distrib') {
+  log('⚪ searchBids() REQUEST | search="${searchController.text}" limit=$bidsLimit offset=$bidsOffset');
 
-          ApiAnswer apiFreeAnswer = await Api().traider.getAllBids(
-                limit: bidsLimit,
-                offset: bidsOffset,
-              );
+  ApiAnswer apiFreeAnswer = await Api().traider.searchBids(
+        search: searchController.text,
+        limit: bidsLimit,
+        offset: bidsOffset,
+      );
 
-          //    log('⚪ getAllBids() RAW RESPONSE: ${apiFreeAnswer.data}');
+  if (apiFreeAnswer.data['status'] == '-') {
+    log('🔴 searchBids() ERROR: ${apiFreeAnswer.data['error']}');
+    if (context.mounted) {
+      notification(text: context.l.somethingWentWrong);
+    }
+    return;
+  }
 
-          BidsResponse bidsResponse;
-          try {
-            bidsResponse = BidsResponse.fromJson(apiFreeAnswer.data);
-          } catch (e, s) {
-            log('🔴 PARSER ERROR: $e\n$s');
-            return;
-          }
+  BidsResponse bidsResponse;
+  try {
+    bidsResponse = BidsResponse.fromJson(apiFreeAnswer.data);
+  } catch (e, s) {
+    log('🔴 PARSER ERROR: $e\n$s');
+    return;
+  }
 
-          log('⚪ getAllBids() PARSED | новых bids=${bidsResponse.bids.length} '
-              //       'bids_total(raw)=${apiFreeAnswer.data['bids_total']} '
-              //      'bids_fresh_total(raw)=${apiFreeAnswer.data['bids_fresh_total']}'
-              );
+  setState(() {
+    userfield = Map<String, dynamic>.from(
+      apiFreeAnswer.data['userfield'] ?? {},
+    );
+    bidsTotal = int.tryParse('${apiFreeAnswer.data['bids_total'] ?? ''}');
+    bidsFreshTotal =
+        int.tryParse('${apiFreeAnswer.data['bids_fresh_total'] ?? ''}');
 
-          setState(() {
-            userfield = Map<String, dynamic>.from(
-              apiFreeAnswer.data['userfield'] ?? {},
-            );
-            bidsTotal =
-                int.tryParse('${apiFreeAnswer.data['bids_total'] ?? ''}');
-            bidsFreshTotal =
-                int.tryParse('${apiFreeAnswer.data['bids_fresh_total'] ?? ''}');
+    if (bidsOffset == 0) {
+      bids = bidsResponse.bids;
+    } else {
+      bids.addAll(bidsResponse.bids);
+    }
+    bidsOffset += bidsResponse.bids.length;
+  });
 
-            if (bidsOffset == 0) {
-              bids = bidsResponse.bids;
-            } else {
-              bids.addAll(bidsResponse.bids);
-            }
-            bidsOffset += bidsResponse.bids.length;
-          });
-
-          log('⚪ AFTER UPDATE | bidsOffset=$bidsOffset bidsTotal=$bidsTotal '
-              'bids.length=${bids.length} hasMoreBids=$hasMoreBids');
-
-          await onCombineListWithBids();
-          return;
-        }
+  await onCombineListWithBids();
+  return;
+}
 
         ApiAnswer apiAnswer = await Api()
             .fermer
@@ -591,33 +603,13 @@ class HomeController extends BaseController {
   }
 
   List<Created> _getFilteredSource() {
-    final q = searchController.text.trim().toLowerCase();
+  final q = searchController.text.trim();
+  if (q.isEmpty) return combinedList;
 
-    if (q.isEmpty) return combinedList;
-
-    return combinedList.where((item) {
-      if (item is BidItem) {
-        final title = (item.productTitle ?? '').toLowerCase();
-        final region = (item.regionName ?? '').toLowerCase();
-
-        return title.contains(q) || region.contains(q);
-      }
-
-      if (item is ModelOrder) {
-        final title = (item.title ?? '').toLowerCase();
-
-        return title.contains(q);
-      }
-
-      if (item is Message) {
-        // 🔥 важливо: прибираємо messages з search
-        return false;
-      }
-
-      return false;
-    }).toList();
-  }
-
+  // bids вже відфільтровані на бекенді (auth.bids.search),
+  // тут лишається тільки прибрати messages зі стрічки під час пошуку
+  return combinedList.where((item) => item is! Message).toList();
+}
   Future<void> launchMap(
       BuildContext context, ModelContact contact, String id) async {
     if (tariff?.isPremium == true || tariff?.isVip == true) {

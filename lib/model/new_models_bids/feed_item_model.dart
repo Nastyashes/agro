@@ -1,5 +1,5 @@
-import 'package:agro/model/bids_item_new_model.dart';
-import 'package:agro/model/add_banner/add_banner_model.dart';
+import 'package:agro/model/new_models_bids/bids_item_model.dart';
+import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:agro/model/answer/answer.dart';
 import 'package:agro/model/message/message.dart';
 import 'package:agro/model/model_order/model_order.dart';

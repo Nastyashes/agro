@@ -2,7 +2,7 @@ import 'package:agro/app/components/block_page_screen.dart';
 import 'package:agro/app/home/components/home_controller.dart';
 import 'package:agro/app/home/bids_pages/bid_controller.dart';
 import 'package:agro/generated/assets.dart';
-import 'package:agro/model/bids_item_new_model.dart';
+import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/ui/buttons/b_style.dart';
 import 'package:agro/ui/buttons/b_transparent_scalable_button.dart';

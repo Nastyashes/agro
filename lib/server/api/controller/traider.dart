@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'package:agro/model/add_banner/add_banner_model.dart';
+import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 
 import '../api.dart';
 
@@ -197,6 +197,38 @@ class Traider extends Api {
 
     return apiAnswer;
   }
+
+// Пошук / список заявок 1.0.26 (auth.bids.search)
+
+Future<ApiAnswer> searchBids({
+  String? search,
+  int? limit,
+  int? offset,
+}) async {
+  ApiAnswer apiAnswer = ApiAnswer();
+
+  final trimmedSearch = search?.trim();
+
+  final params = <String>[
+    if (trimmedSearch != null && trimmedSearch.isNotEmpty)
+      'search=${Uri.encodeComponent(trimmedSearch)}',
+    if (limit != null) 'limit=$limit',
+    if (offset != null) 'offset=$offset',
+  ].join('&');
+
+  var request = await dataRequestMultipart(
+    'auth.bids.search',
+    apiUrl: 'api.php',
+    parameter: params.isEmpty ? null : params,
+  );
+
+  apiAnswer.code = request.statusCode;
+  apiAnswer.data = json.decode(await request.stream.bytesToString());
+  checkAuth(apiAnswer.data);
+
+  return apiAnswer;
+}
+
 
   Future<ApiAnswer> addPrice(
       {required int orderId,

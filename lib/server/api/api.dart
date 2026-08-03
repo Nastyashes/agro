@@ -116,7 +116,10 @@ class Api {
         request.fields[key] = value;
       });
     }
-    log(url);
+   log('''
+
+
+url: $url''');
 
     return await request.send();
   }
