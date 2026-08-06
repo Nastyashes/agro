@@ -545,6 +545,20 @@ class AppLocalizationsRu extends AppLocalizations {
   String get forever => 'Навсегда';
 
   @override
+  String get failedOpenContactRetry =>
+      'Не удалось открыть контакт. Попробуйте еще раз.';
+
+  @override
+  String get insufficientBalance => 'Недостаточно средств на балансе';
+
+  @override
+  String get failedOpenContact => 'Не удалось открыть контакт';
+
+  @override
+  String get connectionErrorRetry =>
+      'Ошибка соединения. Проверьте интернет и попробуйте еще раз.';
+
+  @override
   String get orderAnalysis => '🔬 Заказать анализ';
 
   @override

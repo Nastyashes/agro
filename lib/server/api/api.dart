@@ -53,7 +53,7 @@ class Api {
           ..body = body ?? json.encode({}))
         .send();
 
-    log('${getUrl()}$path${parameter ?? ''}');
+    log('GET url: ${getUrl()}$path${parameter ?? ''}');
 
     return request;
   }
@@ -89,12 +89,11 @@ class Api {
       request.fields.addAll(formData);
     }
 
-    log('POST $url');
- //   log('FIELDS: ${request.fields}');
+    // 🔥 повний URL + метод + всі поля, як реально пішло на бекенд
+    log('POST url: $url | fields: ${request.fields}');
 
     return await request.send();
   }
-
   Future<StreamedResponse> dataRequestMultipart(method,
       {String? parameter,
       String apiUrl = "apiapp.php",
@@ -146,6 +145,7 @@ void checkAuth(data) {
       Hive.box('data').clear();
 
       Get.offAllNamed(Routes.auth);
+      
     }
   } catch (_) {}
 }

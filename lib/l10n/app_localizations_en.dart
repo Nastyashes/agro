@@ -546,6 +546,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get forever => 'Forever';
 
   @override
+  String get failedOpenContactRetry =>
+      'Failed to open the contact. Please try again.';
+
+  @override
+  String get insufficientBalance => 'Insufficient balance';
+
+  @override
+  String get failedOpenContact => 'Failed to open the contact';
+
+  @override
+  String get connectionErrorRetry =>
+      'Connection error. Check your internet connection and try again.';
+
+  @override
   String get orderAnalysis => '🔬 Order analysis';
 
   @override

@@ -173,7 +173,10 @@
  "adsDisableOffer": "Надоела реклама? Вы можете отключить её сейчас за ",
   "adsDisableLater": "или позже в настройках профиля",
   "forever": "Навсегда",
-
+"failedOpenContactRetry": "Не удалось открыть контакт. Попробуйте еще раз.",
+  "insufficientBalance": "Недостаточно средств на балансе",
+  "failedOpenContact": "Не удалось открыть контакт",
+  "connectionErrorRetry": "Ошибка соединения. Проверьте интернет и попробуйте еще раз.",
 
   "orderAnalysis": "🔬 Заказать анализ",
   "orderingAnalysis": "🔬 Заказ анализа...",

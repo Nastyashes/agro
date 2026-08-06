@@ -548,6 +548,20 @@ class AppLocalizationsKk extends AppLocalizations {
   String get forever => 'Мәңгілікке';
 
   @override
+  String get failedOpenContactRetry =>
+      'Контактты ашу мүмкін болмады. Қайтадан көріңіз.';
+
+  @override
+  String get insufficientBalance => 'Баланста қаражат жеткіліксіз';
+
+  @override
+  String get failedOpenContact => 'Контактты ашу мүмкін болмады';
+
+  @override
+  String get connectionErrorRetry =>
+      'Қосылу қатесі. Интернет байланысын тексеріп, қайтадан көріңіз.';
+
+  @override
   String get orderAnalysis => '🔬 Талдау тапсырыс беру';
 
   @override

@@ -85,7 +85,8 @@ class AllApplicationsController extends BaseController {
     }
   }
 
-  void loadRequest() => loadIfValid(() async {
+ Future<void> loadRequest() => loadIfValid(() async {
+      try {
         ApiAnswer apiFreeAnswer = await Api().traider.getAllBids(
               limit: bidsFreshLimit,
               offset: bidsFreshOffset,
@@ -114,8 +115,14 @@ class AllApplicationsController extends BaseController {
             page++;
           }
         });
-      });
-
+      } catch (e, s) {
+        log('🔴 loadRequest FAILED: $e\n$s');
+        if (context.mounted) {
+          notification(text: context.l.somethingWentWrong);
+        }
+        rethrow; // 🔥 прокидуємо далі, щоб onLoadData/onRefresh отримали loadFailed()
+      }
+    });
   void onLaunchPhone(BuildContext context, ModelContact contact) =>
       showCupertinoModalBottomSheet(
           topRadius: const Radius.circular(30),

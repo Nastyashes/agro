@@ -175,6 +175,10 @@
   "adsDisableOffer": "Tired of ads? You can disable them now for ",
   "adsDisableLater": "or later in your profile settings",
   "forever": "Forever",
+  "failedOpenContactRetry": "Failed to open the contact. Please try again.",
+  "insufficientBalance": "Insufficient balance",
+  "failedOpenContact": "Failed to open the contact",
+  "connectionErrorRetry": "Connection error. Check your internet connection and try again.",
 
   "orderAnalysis": "🔬 Order analysis",
   "orderingAnalysis": "🔬 Ordering analysis...",

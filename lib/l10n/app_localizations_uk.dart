@@ -546,6 +546,20 @@ class AppLocalizationsUk extends AppLocalizations {
   String get forever => 'Назавжди';
 
   @override
+  String get failedOpenContactRetry =>
+      'Не вдалося відкрити контакт. Спробуйте ще раз.';
+
+  @override
+  String get insufficientBalance => 'Недостатньо коштів на балансі';
+
+  @override
+  String get failedOpenContact => 'Не вдалося відкрити контакт';
+
+  @override
+  String get connectionErrorRetry =>
+      'Помилка з\'єднання. Перевірте інтернет і спробуйте ще раз.';
+
+  @override
   String get orderAnalysis => '🔬 Замовити аналіз';
 
   @override

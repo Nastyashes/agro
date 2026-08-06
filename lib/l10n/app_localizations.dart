@@ -1140,6 +1140,30 @@ abstract class AppLocalizations {
   /// **'Назавжди'**
   String get forever;
 
+  /// No description provided for @failedOpenContactRetry.
+  ///
+  /// In uk, this message translates to:
+  /// **'Не вдалося відкрити контакт. Спробуйте ще раз.'**
+  String get failedOpenContactRetry;
+
+  /// No description provided for @insufficientBalance.
+  ///
+  /// In uk, this message translates to:
+  /// **'Недостатньо коштів на балансі'**
+  String get insufficientBalance;
+
+  /// No description provided for @failedOpenContact.
+  ///
+  /// In uk, this message translates to:
+  /// **'Не вдалося відкрити контакт'**
+  String get failedOpenContact;
+
+  /// No description provided for @connectionErrorRetry.
+  ///
+  /// In uk, this message translates to:
+  /// **'Помилка з\'єднання. Перевірте інтернет і спробуйте ще раз.'**
+  String get connectionErrorRetry;
+
   /// No description provided for @orderAnalysis.
   ///
   /// In uk, this message translates to:

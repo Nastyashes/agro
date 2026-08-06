@@ -307,7 +307,7 @@ Future<ApiAnswer> searchBids({
     final jsonData = json.decode(await request.stream.bytesToString());
 
     checkAuth(jsonData);
-log('Ad banner loaded: $jsonData');
+log('Get Ad banner loaded: $jsonData');
 
     final banner = jsonData['feed_ad_banner'];
 

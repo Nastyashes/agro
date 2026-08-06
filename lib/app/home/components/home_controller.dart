@@ -163,12 +163,12 @@ class HomeController extends BaseController {
   }
 
   Future<void> loadRequest() => loadIfValid(() async {
-        log('⚪ loadRequest() CALLED | role=${modelUser.role} bidsOffset=$bidsOffset bidsLimit=$bidsLimit page=$page');
+     //   log('⚪ loadRequest() CALLED | role=${modelUser.role} bidsOffset=$bidsOffset bidsLimit=$bidsLimit page=$page');
 
         await onMessages();
 
       if (modelUser.role == 'distrib') {
-  log('⚪ searchBids() REQUEST | search="${searchController.text}" limit=$bidsLimit offset=$bidsOffset');
+ // log('⚪ searchBids() REQUEST | search="${searchController.text}" limit=$bidsLimit offset=$bidsOffset');
 
   ApiAnswer apiFreeAnswer = await Api().traider.searchBids(
         search: searchController.text,
@@ -302,17 +302,17 @@ class HomeController extends BaseController {
   }
 
   void onLoadData() async {
-    log('🟢 onLoadData() STARTED | hasMoreBids=$hasMoreBids bidsOffset=$bidsOffset bidsTotal=$bidsTotal bids.length=${bids.length}');
+ //  log('🟢 onLoadData() STARTED | hasMoreBids=$hasMoreBids bidsOffset=$bidsOffset bidsTotal=$bidsTotal bids.length=${bids.length}');
 
     if (modelUser.role == 'distrib' && !hasMoreBids) {
-      log('🟡 onLoadData() -> loadNoData() (hasMoreBids=false)');
+ //     log('🟡 onLoadData() -> loadNoData() (hasMoreBids=false)');
       controllerLoading.loadNoData();
       return;
     }
 
     try {
       await loadRequest();
-      log('🟢 onLoadData() SUCCESS | bidsOffset=$bidsOffset bidsTotal=$bidsTotal bids.length=${bids.length}');
+    //  log('🟢 onLoadData() SUCCESS | bidsOffset=$bidsOffset bidsTotal=$bidsTotal bids.length=${bids.length}');
       controllerLoading.loadComplete();
     } catch (e, s) {
       log('🔴 onLoadData() FAILED: $e\n$s');

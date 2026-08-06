@@ -173,7 +173,10 @@
  "adsDisableOffer": "Набридла реклама? Ви можете відключити її зараз за ",
   "adsDisableLater": "або пізніше у налаштуваннях профілю",
   "forever": "Назавжди",
-
+  "failedOpenContactRetry": "Не вдалося відкрити контакт. Спробуйте ще раз.",
+  "insufficientBalance": "Недостатньо коштів на балансі",
+  "failedOpenContact": "Не вдалося відкрити контакт",
+  "connectionErrorRetry": "Помилка з'єднання. Перевірте інтернет і спробуйте ще раз.",
   "orderAnalysis": "🔬 Замовити аналіз",
   "orderingAnalysis": "🔬 Замовлення аналізу...",
   "analysisOrdered": "✅️ Аналіз замовлено",
