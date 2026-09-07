@@ -165,7 +165,10 @@ class HomeController extends BaseController {
   Future<void> loadRequest() => loadIfValid(() async {
      //   log('⚪ loadRequest() CALLED | role=${modelUser.role} bidsOffset=$bidsOffset bidsLimit=$bidsLimit page=$page');
 
-        await onMessages();
+        if (bidsOffset == 0) {
+      await onMessages();
+    }
+
 
       if (modelUser.role == 'distrib') {
  // log('⚪ searchBids() REQUEST | search="${searchController.text}" limit=$bidsLimit offset=$bidsOffset');
@@ -229,36 +232,54 @@ class HomeController extends BaseController {
         });
         await onCombineList();
       });
+Future<void> onCombineListWithBids() async {
+  final List<Created> list = [];
+  final splitedMessage =
+      messages.splitMatch((element) => (element.readed ?? 0) == 0);
+  list.addAll(splitedMessage.matched); // непрочитані — завжди зверху
 
-  Future<void> onCombineListWithBids() async {
-    final List<Created> list = [];
-    final splitedMessage =
-        messages.splitMatch((element) => (element.readed ?? 0) == 0);
-    list.addAll(splitedMessage.matched);
+  // Межа: найстаріший вже завантажений bid (за віком ордера).
+  // Поки не всі bids довантажені — не показуємо прочитані messages старіші за цю межу,
+  // бо там ще МОЖУТЬ бути bids, яких ми просто ще не отримали з бекенду.
+  final oldestLoadedBidTimestamp = bids.isEmpty
+      ? null
+      : bids
+          .map((b) => b.orderCreatedAt?.millisecondsSinceEpoch ?? 0)
+          .reduce((a, b) => a < b ? a : b);
 
-    final List<Created> tale = [];
-    tale.addAll(bids);
+  final visibleReadMessages =
+      (hasMoreBids && oldestLoadedBidTimestamp != null)
+          ? splitedMessage.unmatched
+              .where((m) =>
+                  (m.createdAt?.millisecondsSinceEpoch ?? 0) >=
+                  oldestLoadedBidTimestamp)
+              .toList()
+          : splitedMessage.unmatched.toList();
 
-    // Межа: найстаріший вже завантажений bid (за віком ордера).
-    // Поки не всі bids довантажені — не показуємо messages старіші за цю межу,
-    // бо там ще МОЖУТЬ бути bids, яких ми просто ще не отримали з бекенду.
-    final oldestLoadedBidTimestamp = bids.isEmpty
-        ? null
-        : bids
-            .map((b) => b.orderCreatedAt?.millisecondsSinceEpoch ?? 0)
-            .reduce((a, b) => a < b ? a : b);
+  visibleReadMessages
+      .sort((a, b) => _sortTimestamp(b).compareTo(_sortTimestamp(a)));
 
-    final visibleMessages = (hasMoreBids && oldestLoadedBidTimestamp != null)
-        ? splitedMessage.unmatched.where((m) =>
-            (m.createdAt?.millisecondsSinceEpoch ?? 0) >=
-            oldestLoadedBidTimestamp)
-        : splitedMessage.unmatched; // всі bids вже завантажені — показуємо все
-
-    tale.addAll(visibleMessages);
-    tale.sort((a, b) => _sortTimestamp(b).compareTo(_sortTimestamp(a)));
-    list.addAll(tale);
-    setState(() => combinedList = list);
+  // Merge: bids лишаються у порядку, який дав бекенд (не пересортовуємо!),
+  // read messages вставляються між ними за своєю датою.
+  final List<Created> tale = [];
+  int mIndex = 0;
+  for (final bid in bids) {
+    final bidTs = _sortTimestamp(bid);
+    while (mIndex < visibleReadMessages.length &&
+        _sortTimestamp(visibleReadMessages[mIndex]) >= bidTs) {
+      tale.add(visibleReadMessages[mIndex]);
+      mIndex++;
+    }
+    tale.add(bid);
   }
+  while (mIndex < visibleReadMessages.length) {
+    tale.add(visibleReadMessages[mIndex]);
+    mIndex++;
+  }
+
+  list.addAll(tale);
+  setState(() => combinedList = list);
+}
 
   int _sortTimestamp(Created item) {
     if (item is BidItem) {
@@ -544,18 +565,26 @@ class HomeController extends BaseController {
     }
   }
 
-  Future<void> onMessages() async {
-    try {
-      ApiAnswer apiAnswer = await Api().traider.getMessages();
-      messages.clear();
-      for (final i in apiAnswer.data) {
-        messages.add(Message.fromJson(i));
-      }
-    } catch (e) {
-      log(e.toString(), error: e);
-    }
-  }
+bool _isLoadingMessages = false;
 
+
+Future<void> onMessages() async {
+  if (_isLoadingMessages) return;
+  _isLoadingMessages = true;
+  try {
+    ApiAnswer apiAnswer = await Api().traider.getMessages();
+    final List<Message> loaded = [
+      for (final i in apiAnswer.data) Message.fromJson(i),
+    ];
+    messages
+      ..clear()
+      ..addAll(loaded);
+  } catch (e) {
+    log(e.toString(), error: e);
+  } finally {
+    _isLoadingMessages = false;
+  }
+}
   List<FeedItem> getFeed() {
     final result = <FeedItem>[];
 
