@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:agro/auth/country/country_screen.dart';
+import 'package:agro/controllers/app_controller.dart';
+import 'package:agro/controllers/main_controler.dart';
 import 'package:agro/firebase_options.dart';
 import 'package:agro/l10n/app_localizations.dart';
 import 'package:agro/model/answer/answer.dart';
@@ -9,7 +10,6 @@ import 'package:agro/model/call_result/call_result.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -17,31 +17,44 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:in_app_notification/in_app_notification.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
+import 'package:agro/load/start_screen.dart';
 import 'package:agro/routes/app_pages.dart';
 import 'package:agro/vars/model_notifier/user_notifier/user_notifier.dart';
 
 import 'config/config.dart';
-import 'load/load_screen.dart';
 import 'model/model_user/model_user.dart';
 import 'vars/model_notifier/bottom_menu_notifier/bottom_menu_notifier.dart';
 
-bool startActive = false;
-
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  unawaited(MobileAds.instance.initialize());
+    WidgetsFlutterBinding.ensureInitialized();
+
+  unawaited(
+    MobileAds.instance.initialize(),
+  );
+
+  Get.put<AppController>(
+    AppController(),
+    permanent: true,
+  );
+
+  Get.put<MainController>(
+    MainController(),
+    permanent: true,
+  );
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
-        statusBarColor: Color(0xff14175B),
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Color(0xff14175B),
-        systemNavigationBarIconBrightness: Brightness.light),
+      statusBarColor: Color(0xff14175B),
+      statusBarBrightness: Brightness.light,
+      systemNavigationBarColor: Color(0xff14175B),
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
   );
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
 
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -114,52 +127,9 @@ class MyApp extends StatelessWidget {
           ],
           debugShowCheckedModeBanner: false,
           getPages: AppPages.pages(context: context),
+          defaultTransition: Transition.fadeIn,
           transitionDuration: const Duration(milliseconds: 200),
-          home: const Material(child: MyStart())),
+          home: const StartScreen()),
     ));
-  }
-}
-
-class MyStart extends HookWidget {
-  const MyStart({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final future = useMemoized(() {});
-    return FutureBuilder<String>(
-        future: future,
-        builder: (c, snapshot) {
-          if (!startActive) load(c);
-          startActive = true;
-          return const LoadScreen();
-        });
-  }
-
-  Future load(BuildContext c) async {
-    await Future.delayed(const Duration(milliseconds: 100));
-
-    if (c.mounted) {
-      var box = Hive.box('data');
-      String? selectedCountry = box.get('selectedCountry');
-      String? locale = AppLocalizations.of(c)?.localeName;
-      await box.put('language', locale);
-      log("Locale: $locale");
-      log("Selected country: $selectedCountry");
-
-      ModelUser? modelUser = Hive.box('data').get('modelUser');
-
-      if (selectedCountry == null ||
-          modelUser == null ||
-          modelUser.token == null) {
-        // Route to country selection if no country is selected or user is not authenticated
-        Get.offAll(() => const CountryScreen());
-      } else {
-        if (modelUser.token != null) {
-          Get.offAllNamed(Routes.app);
-        } else {
-          Get.offAllNamed(Routes.auth);
-        }
-      }
-    }
   }
 }

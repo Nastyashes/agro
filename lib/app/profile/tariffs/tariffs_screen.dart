@@ -1,4 +1,4 @@
-import 'package:agro/app/components/block_page_screen.dart';
+import 'package:agro/ui/app_components/block_page_screen.dart';
 import 'package:agro/app/profile/tariffs/tariff_item.dart';
 import 'package:agro/app/profile/tariffs/tariffs_controller.dart';
 import 'package:agro/model/tariff/model_tariff.dart';

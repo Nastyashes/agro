@@ -184,6 +184,10 @@
   "@analysisOrderedMessage": {
     "placeholders": { "balance": { "type": "String" } }
   },
+  "myPrice": "Моя ціна",
+  "deals": "Угоди",
+  "infoMessages": "Інформаційні повідомлення",
+  "logOutOfAccount": "Вийти з акаунту",
   "insufficientFunds": "Недостатньо коштів. Баланс: {balance}, вартість: {price}",
   "@insufficientFunds": {
     "placeholders": {
@@ -191,6 +195,76 @@
       "price": { "type": "String" }
     }
   },
+  "myCombinations": "Мої комбінації",
+  "createCombination": "Створити",
+  "createCombinationTitle": "Створити комбінацію",
+  "selectCrop": "Оберіть культуру",
+  "moreCrops": "Більше",
+  "selectRegion": "Виберіть область",
+  "enterPricePerTon": "Вкажіть ціну за тонну",
+  "paymentForm": "Форма оплати",
+  "promoCodeOptional": "Промокод (необов'язково)",
+  "teamNumber": "Номер команди",
+  "confirm": "Підтвердити",
+  "reservations": "Бронювання",
+  "queuePosition": "Позиція в черзі",
+  "perTon": "за тонну",
+  "validFrom": "від",
+  "validTo": "до",
+  "validLabel": "Діє",
+  "delete": "Видалити",
+  "deleteCombinationTitle": "Видалити комбінацію?",
+  "deleteCombinationBody": "Оплата не повертається. Якщо є оплачена черга, наступне бронювання буде активовано автоматично.",
+  "paymentNotRefundable": "Оплата не повертається.",
+  "combinationOccupied": "Ця комбінація вже зайнята до {date}. Ви можете оплатити наступне місце в черзі. Оплата не повертається.",
+  "@combinationOccupied": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "confirmChargeBody": "Буде списано {amount} грн. Оплата не повертається.",
+  "@confirmChargeBody": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "actionActivate": "Активація комбінації",
+  "actionReserve": "Бронювання місця в черзі",
+  "selectedPhone": "Вибраний номер",
+  "editCombination": "Редагувати комбінацію",
+  "edit": "Редагувати",
+  "willTakeEffect": "Почне діяти",
+  "saveChanges": "Зберегти",
+  "myPriceEmpty": "Ви ще не створили жодної комбінації \"Моя ціна\". Натисніть на кнопку \"Додати комбінацію\", щоб почати",
+  "contactPerson": "Контактна особа",
+  "addCombine": "Додати комбінацію",
+  "emptyReservations": "Немає бронювань",
+  "emptyDeals": "Немає угод",
+  "myPriceFeatureDisabled": "Функція «Моя ціна» зараз недоступна.",
+  "traderAccountRequired": "Функція доступна лише для трейдера.",
+  "myPriceErrorGeneric": "Не вдалося виконати запит. Спробуйте ще раз.",
+  "myPriceImplementationError": "Помилка запиту. Спробуйте пізніше.",
+  "promoUnavailable": "Промокод недоступний. Можна продовжити без нього.",
+  "matchSelectedNumberRequired": "Угоду може підтвердити лише вибраний номер команди.",
+  "contactRequiredBeforeDeal": "Спочатку відкрийте контакт фермера.",
+  "confirmDealTitle": "Укласти угоду?",
+  "confirmDealBody": "Укласти угоду за цією заявкою? Буде списано {amount} грн. Оплата не повертається.",
+  "@confirmDealBody": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "productLabel": "Продукт",
+  "priceLabel": "Ціна",
+  "chargedAmount": "До сплати",
+  "menu": "Меню",
+  "notifications": "Сповіщення",
+  "emptyInformMessages": "Ще немає повідомлень від UAGRO",
+  "adsDisabledUntil": "Реклама вимкнена до {date}",
+  "@adsDisabledUntil": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "selectCountry": "Оберіть країну",
+  "countryUkraine": "Україна",
+  "countryKazakhstan": "Қазақстан",
+  "ok": "Ок",
+  "uahShort": "грн",
+  "tonShort": "т",
+  "secondsShort": "с",
 
 
 

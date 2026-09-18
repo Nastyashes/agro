@@ -1,3 +1,4 @@
+import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
@@ -5,19 +6,19 @@ String localizeDeliveryType(String? value, BuildContext context) {
   final l = context.l;
   switch (value ?? '') {
     case '':
-    case 'ALL':
+    case AppConstants.deliveryAll:
       return l.deliveryTypeAny;
-    case 'EXWG':
+    case AppConstants.deliveryExwg:
       return l.deliveryTypeEXWG;
-    case 'EXWF':
+    case AppConstants.deliveryExwf:
       return l.deliveryTypeEXWF;
-    case 'EXWE':
+    case AppConstants.deliveryExwe:
       return l.deliveryTypeEXWE;
-    case 'CPT':
+    case AppConstants.deliveryCpt:
       return l.deliveryTypeCPT;
-    case 'CPTP':
+    case AppConstants.deliveryCptp:
       return l.deliveryTypeCPTP;
-    case 'CPTE':
+    case AppConstants.deliveryCpte:
       return l.deliveryTypeCPTE;
     default:
       return value!;
@@ -27,16 +28,16 @@ String localizeDeliveryType(String? value, BuildContext context) {
 String localizePaymentType(String? value, BuildContext context) {
   final l = context.l;
   switch (value ?? '') {
-    case '1ф/2ф':
+    case AppConstants.paymentApi1f2f:
       return l.paymentType1f2f;
-    case '1ф Безгот':
+    case AppConstants.paymentApi1fNonCash:
       return l.paymentType1fNonCash;
-    case '2ф Готiвка':
+    case AppConstants.paymentApi2fCash:
       return l.paymentType2fCash;
-    case '3ф (б/г без ПДВ)':
+    case AppConstants.paymentApi3fNonCashVatFree:
       return l.paymentType3fNonCashVatFree;
     default:
-      return value ?? '—';
+      return value ?? AppConstants.emDash;
   }
 }
 
@@ -44,17 +45,17 @@ String localizeAmountType(String? value, BuildContext context) {
   final l = context.l;
   switch (value ?? '') {
     case '':
-    case 'tonn':
+    case AppConstants.amountApiTonn:
       return l.amountTypeTon;
-    case 'b500':
+    case AppConstants.amountApiBigBag500:
       return l.amountTypeBigBag500;
-    case 'b050':
+    case AppConstants.amountApiBag50:
       return l.amountTypeBag50;
-    case 'b000':
+    case AppConstants.amountApiBulk:
       return l.amountTypeBulk;
-    case 'poso':
+    case AppConstants.amountApiSeedUnit:
       return l.amountTypeSeedUnit;
-    case 'gekt':
+    case AppConstants.amountApiHectare:
       return l.amountTypeHectare;
     default:
       return value!;

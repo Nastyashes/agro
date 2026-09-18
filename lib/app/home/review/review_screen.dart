@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../model/model_review/model_review.dart';
-import '../../components/block_page_screen.dart';
+import 'package:agro/ui/app_components/block_page_screen.dart';
 
 class ReviewScreen extends StatefulWidget {
   const ReviewScreen({super.key});

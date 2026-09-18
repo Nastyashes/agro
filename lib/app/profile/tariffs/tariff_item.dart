@@ -3,6 +3,7 @@ import 'package:agro/model/tariff/model_tariff.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -17,7 +18,7 @@ class TariffItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 final isByPiece =
-    (modelTariff.name?.toUpperCase() == 'ПОШТУЧНО');
+    (modelTariff.name?.toUpperCase() == AppConstants.tariffByPieceName);
         return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -74,7 +75,7 @@ final isByPiece =
           const SizedBox(height: 60),
           modelTariff.priceOld != 0
              ?
-              Text('${modelTariff.priceOld} грн',
+              Text(context.uahAmount(modelTariff.priceOld),
                   style: AppFonts.tariffPrice
                       .withColor(AppColors.grey3)
                       .copyWith(
@@ -83,7 +84,7 @@ final isByPiece =
           Stack(
             alignment: Alignment.topRight,
             children: [
-              Text('${isByPiece ? 'від' : ''} ${modelTariff.price} ${modelTariff.currency}',
+              Text('${isByPiece ? '${context.l.validFrom} ' : ''}${modelTariff.price} ${modelTariff.currency}',
                   style: AppFonts.tariffPrice.withColor(modelTariff.color)),
               Padding(
                 padding: const EdgeInsets.only(top: 40),

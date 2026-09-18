@@ -1,5 +1,5 @@
 import 'package:agro/generated/assets.dart';
-import 'package:agro/ui/buttons/b_style.dart';
+import 'package:agro/ui/buttons/button_styles.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/vars/helper.dart';
@@ -59,7 +59,6 @@ class LaunchPhone extends StatelessWidget {
           bStyle(
               padding: const EdgeInsets.only(left: 15, right: 15, top: 20),
               text: context.l.close,
-              size: 23,
               c: context,
               colorText: Colors.black,
               vertical: 15,

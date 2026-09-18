@@ -576,7 +576,205 @@ class AppLocalizationsKk extends AppLocalizations {
   }
 
   @override
+  String get myPrice => 'Менің бағам';
+
+  @override
+  String get deals => 'Мәмілелер';
+
+  @override
+  String get infoMessages => 'Ақпараттық хабарламалар';
+
+  @override
+  String get logOutOfAccount => 'Аккаунттан шығу';
+
+  @override
   String insufficientFunds(String balance, String price) {
     return 'Қаражат жеткіліксіз. Баланс: $balance, құны: $price';
   }
+
+  @override
+  String get myCombinations => 'Менің комбинациям';
+
+  @override
+  String get createCombination => 'Жасау';
+
+  @override
+  String get createCombinationTitle => 'Комбинация жасау';
+
+  @override
+  String get selectCrop => 'Дақылды таңдаңыз';
+
+  @override
+  String get moreCrops => 'Көбірек';
+
+  @override
+  String get selectRegion => 'Облысты таңдаңыз';
+
+  @override
+  String get enterPricePerTon => 'Тонна бағасын көрсетіңіз';
+
+  @override
+  String get paymentForm => 'Төлем нысаны';
+
+  @override
+  String get promoCodeOptional => 'Промокод (міндетті емес)';
+
+  @override
+  String get teamNumber => 'Команда нөмірі';
+
+  @override
+  String get confirm => 'Растау';
+
+  @override
+  String get reservations => 'Брондаулар';
+
+  @override
+  String get queuePosition => 'Кезектегі орын';
+
+  @override
+  String get perTon => 'тоннасына';
+
+  @override
+  String get validFrom => 'бастап';
+
+  @override
+  String get validTo => 'дейін';
+
+  @override
+  String get validLabel => 'Жарамды';
+
+  @override
+  String get delete => 'Жою';
+
+  @override
+  String get deleteCombinationTitle => 'Комбинацияны жою керек пе?';
+
+  @override
+  String get deleteCombinationBody =>
+      'Төлем қайтарылмайды. Төленген кезек болса, келесі брондау автоматты түрде іске қосылады.';
+
+  @override
+  String get paymentNotRefundable => 'Төлем қайтарылмайды.';
+
+  @override
+  String combinationOccupied(String date) {
+    return 'Бұл комбинация $date дейін бос емес. Кезектегі келесі орынды төлей аласыз. Төлем қайтарылмайды.';
+  }
+
+  @override
+  String confirmChargeBody(String amount) {
+    return '$amount грн списалады. Төлем қайтарылмайды.';
+  }
+
+  @override
+  String get actionActivate => 'Комбинацияны іске қосу';
+
+  @override
+  String get actionReserve => 'Кезекті брондау';
+
+  @override
+  String get selectedPhone => 'Таңдалған нөмір';
+
+  @override
+  String get editCombination => 'Комбинацияны өзгерту';
+
+  @override
+  String get edit => 'Редагувати';
+
+  @override
+  String get willTakeEffect => 'Күшіне енеді';
+
+  @override
+  String get saveChanges => 'Сақтау';
+
+  @override
+  String get myPriceEmpty =>
+      'Сіз әлі бірде-бір \"Менің бағам\" комбинациясын жасаған жоқсыз. Бастау үшін \"Комбинация қосу\" түймесін басыңыз';
+
+  @override
+  String get contactPerson => 'Байланыс тұлғасы';
+
+  @override
+  String get addCombine => 'Комбинация қосу';
+
+  @override
+  String get emptyReservations => 'Брондаулар жоқ';
+
+  @override
+  String get emptyDeals => 'Мәмілелер жоқ';
+
+  @override
+  String get myPriceFeatureDisabled => '«Менің бағам» қазір қолжетімді емес.';
+
+  @override
+  String get traderAccountRequired => 'Функция тек трейдерге қолжетімді.';
+
+  @override
+  String get myPriceErrorGeneric => 'Сұрау орындалмады. Қайталап көріңіз.';
+
+  @override
+  String get myPriceImplementationError => 'Сұрау қатесі. Кейінірек көріңіз.';
+
+  @override
+  String get promoUnavailable =>
+      'Промокод қолжетімді емес. Онсыз жалғастыруға болады.';
+
+  @override
+  String get matchSelectedNumberRequired =>
+      'Мәмілені тек таңдалған команда нөмірі растай алады.';
+
+  @override
+  String get contactRequiredBeforeDeal => 'Алдымен фермер контактісін ашыңыз.';
+
+  @override
+  String get confirmDealTitle => 'Мәміле жасау керек пе?';
+
+  @override
+  String confirmDealBody(String amount) {
+    return 'Осы өтінім бойынша мәміле жасау керек пе? $amount грн списалады. Төлем қайтарылмайды.';
+  }
+
+  @override
+  String get productLabel => 'Өнім';
+
+  @override
+  String get priceLabel => 'Баға';
+
+  @override
+  String get chargedAmount => 'Төлем сомасы';
+
+  @override
+  String get menu => 'Мәзір';
+
+  @override
+  String get notifications => 'Хабарландырулар';
+
+  @override
+  String get emptyInformMessages => 'UAGRO хабарламалары әлі жоқ';
+
+  @override
+  String adsDisabledUntil(String date) {
+    return 'Жарнама $date дейін өшірілген';
+  }
+
+  @override
+  String get selectCountry => 'Елді таңдаңыз';
+
+  @override
+  String get countryUkraine => 'Украина';
+
+  @override
+  String get countryKazakhstan => 'Қазақстан';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get uahShort => 'грн';
+
+  @override
+  String get tonShort => 'т';
+
+  @override
+  String get secondsShort => 'с';
 }

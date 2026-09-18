@@ -8,7 +8,7 @@ import 'package:agro/server/api/api.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../controllers/abstract/from_controller.dart';
+import 'package:agro/controllers/abstract/from_controller.dart';
 import '../../../../controllers/app_input_controller.dart';
 import '../../../../model/model_review/model_review.dart';
 import '../../../../ui/local_notification/local_notification.dart';
@@ -58,7 +58,7 @@ class ReviewController extends FormController {
           modelReview.add(structReview(data: i));
         }
         setState(() {});
-      }, c: c);
+      },);
 
   void onAddReviewPage() => showCupertinoModalBottomSheet(
       topRadius: const Radius.circular(30),
@@ -95,7 +95,7 @@ class ReviewController extends FormController {
             inAppNotification(text: errorAddingReview, c: c);
           }
         }
-      }, c: c);
+      },);
 
   void onChangeStar(
           {required double val, required Function(VoidCallback fn) set}) =>

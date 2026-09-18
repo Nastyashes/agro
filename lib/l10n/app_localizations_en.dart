@@ -574,7 +574,206 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get myPrice => 'My price';
+
+  @override
+  String get deals => 'Deals';
+
+  @override
+  String get infoMessages => 'Information messages';
+
+  @override
+  String get logOutOfAccount => 'Log out of account';
+
+  @override
   String insufficientFunds(String balance, String price) {
     return 'Insufficient funds. Balance: $balance, price: $price';
   }
+
+  @override
+  String get myCombinations => 'My combinations';
+
+  @override
+  String get createCombination => 'Create';
+
+  @override
+  String get createCombinationTitle => 'Create combination';
+
+  @override
+  String get selectCrop => 'Select crop';
+
+  @override
+  String get moreCrops => 'More';
+
+  @override
+  String get selectRegion => 'Select region';
+
+  @override
+  String get enterPricePerTon => 'Enter price per ton';
+
+  @override
+  String get paymentForm => 'Payment form';
+
+  @override
+  String get promoCodeOptional => 'Promo code (optional)';
+
+  @override
+  String get teamNumber => 'Team number';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get reservations => 'Reservations';
+
+  @override
+  String get queuePosition => 'Queue position';
+
+  @override
+  String get perTon => 'per ton';
+
+  @override
+  String get validFrom => 'from';
+
+  @override
+  String get validTo => 'to';
+
+  @override
+  String get validLabel => 'Valid';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteCombinationTitle => 'Delete combination?';
+
+  @override
+  String get deleteCombinationBody =>
+      'Payment is not refunded. If there is a paid queue, the next reservation will be activated automatically.';
+
+  @override
+  String get paymentNotRefundable => 'Payment is not refunded.';
+
+  @override
+  String combinationOccupied(String date) {
+    return 'This combination is taken until $date. You can pay for the next place in the queue. Payment is not refunded.';
+  }
+
+  @override
+  String confirmChargeBody(String amount) {
+    return '$amount UAH will be charged. Payment is not refunded.';
+  }
+
+  @override
+  String get actionActivate => 'Combination activation';
+
+  @override
+  String get actionReserve => 'Queue reservation';
+
+  @override
+  String get selectedPhone => 'Selected number';
+
+  @override
+  String get editCombination => 'Edit combination';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get willTakeEffect => 'Will take effect';
+
+  @override
+  String get saveChanges => 'Save';
+
+  @override
+  String get myPriceEmpty =>
+      'You haven\'t created any \"My Price\" combinations yet. Tap \"Add combination\" to get started';
+
+  @override
+  String get contactPerson => 'Contact person';
+
+  @override
+  String get addCombine => 'Add combination';
+
+  @override
+  String get emptyReservations => 'No reservations';
+
+  @override
+  String get emptyDeals => 'No deals';
+
+  @override
+  String get myPriceFeatureDisabled => 'My Price is currently unavailable.';
+
+  @override
+  String get traderAccountRequired =>
+      'This feature is available to traders only.';
+
+  @override
+  String get myPriceErrorGeneric => 'The request failed. Please try again.';
+
+  @override
+  String get myPriceImplementationError => 'Request error. Please try later.';
+
+  @override
+  String get promoUnavailable =>
+      'Promo code is unavailable. You can continue without it.';
+
+  @override
+  String get matchSelectedNumberRequired =>
+      'Only the selected team number can confirm the deal.';
+
+  @override
+  String get contactRequiredBeforeDeal => 'Open the farmer contact first.';
+
+  @override
+  String get confirmDealTitle => 'Confirm deal?';
+
+  @override
+  String confirmDealBody(String amount) {
+    return 'Confirm a deal for this order? $amount UAH will be charged. Payment is not refunded.';
+  }
+
+  @override
+  String get productLabel => 'Product';
+
+  @override
+  String get priceLabel => 'Price';
+
+  @override
+  String get chargedAmount => 'Amount due';
+
+  @override
+  String get menu => 'Menu';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get emptyInformMessages => 'No messages from UAGRO yet';
+
+  @override
+  String adsDisabledUntil(String date) {
+    return 'Ads disabled until $date';
+  }
+
+  @override
+  String get selectCountry => 'Select country';
+
+  @override
+  String get countryUkraine => 'Ukraine';
+
+  @override
+  String get countryKazakhstan => 'Kazakhstan';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get uahShort => 'UAH';
+
+  @override
+  String get tonShort => 't';
+
+  @override
+  String get secondsShort => 's';
 }

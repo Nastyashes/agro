@@ -184,6 +184,10 @@
   "@analysisOrderedMessage": {
     "placeholders": { "balance": { "type": "String" } }
   },
+  "myPrice": "Менің бағам",
+  "deals": "Мәмілелер",
+  "infoMessages": "Ақпараттық хабарламалар",
+  "logOutOfAccount": "Аккаунттан шығу",
   "insufficientFunds": "Қаражат жеткіліксіз. Баланс: {balance}, құны: {price}",
   "@insufficientFunds": {
     "placeholders": {
@@ -191,7 +195,75 @@
       "price": { "type": "String" }
     }
   },
-
+  "myCombinations": "Менің комбинациям",
+  "createCombination": "Жасау",
+  "createCombinationTitle": "Комбинация жасау",
+  "selectCrop": "Дақылды таңдаңыз",
+  "moreCrops": "Көбірек",
+  "selectRegion": "Облысты таңдаңыз",
+  "enterPricePerTon": "Тонна бағасын көрсетіңіз",
+  "paymentForm": "Төлем нысаны",
+  "promoCodeOptional": "Промокод (міндетті емес)",
+  "teamNumber": "Команда нөмірі",
+  "confirm": "Растау",
+  "reservations": "Брондаулар",
+  "queuePosition": "Кезектегі орын",
+  "perTon": "тоннасына",
+  "validFrom": "бастап",
+  "validTo": "дейін",
+  "validLabel": "Жарамды",
+  "delete": "Жою",
+  "deleteCombinationTitle": "Комбинацияны жою керек пе?",
+  "deleteCombinationBody": "Төлем қайтарылмайды. Төленген кезек болса, келесі брондау автоматты түрде іске қосылады.",
+  "paymentNotRefundable": "Төлем қайтарылмайды.",
+  "combinationOccupied": "Бұл комбинация {date} дейін бос емес. Кезектегі келесі орынды төлей аласыз. Төлем қайтарылмайды.",
+  "@combinationOccupied": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "confirmChargeBody": "{amount} грн списалады. Төлем қайтарылмайды.",
+  "@confirmChargeBody": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "actionActivate": "Комбинацияны іске қосу",
+  "actionReserve": "Кезекті брондау",
+  "selectedPhone": "Таңдалған нөмір",
+  "editCombination": "Комбинацияны өзгерту",
+  "saveChanges": "Сақтау",
+  "myPriceEmpty": "Сіз әлі бірде-бір \"Менің бағам\" комбинациясын жасаған жоқсыз. Бастау үшін \"Комбинация қосу\" түймесін басыңыз",
+  "contactPerson": "Байланыс тұлғасы",
+  "addCombine": "Комбинация қосу",
+  "emptyReservations": "Брондаулар жоқ",
+  "emptyDeals": "Мәмілелер жоқ",
+  "myPriceFeatureDisabled": "«Менің бағам» қазір қолжетімді емес.",
+  "traderAccountRequired": "Функция тек трейдерге қолжетімді.",
+  "myPriceErrorGeneric": "Сұрау орындалмады. Қайталап көріңіз.",
+  "myPriceImplementationError": "Сұрау қатесі. Кейінірек көріңіз.",
+  "promoUnavailable": "Промокод қолжетімді емес. Онсыз жалғастыруға болады.",
+  "matchSelectedNumberRequired": "Мәмілені тек таңдалған команда нөмірі растай алады.",
+  "contactRequiredBeforeDeal": "Алдымен фермер контактісін ашыңыз.",
+  "confirmDealTitle": "Мәміле жасау керек пе?",
+  "confirmDealBody": "Осы өтінім бойынша мәміле жасау керек пе? {amount} грн списалады. Төлем қайтарылмайды.",
+  "@confirmDealBody": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "productLabel": "Өнім",
+  "priceLabel": "Баға",
+  "chargedAmount": "Төлем сомасы",
+  "menu": "Мәзір",
+  "notifications": "Хабарландырулар",
+  "emptyInformMessages": "UAGRO хабарламалары әлі жоқ",
+  "adsDisabledUntil": "Жарнама {date} дейін өшірілген",
+  "@adsDisabledUntil": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "selectCountry": "Елді таңдаңыз",
+  "countryUkraine": "Украина",
+  "countryKazakhstan": "Қазақстан",
+  "ok": "OK",
+  "uahShort": "грн",
+  "tonShort": "т",
+  "secondsShort": "с",
+ "willTakeEffect": "Күшіне енеді",
 
 
   "@save": {},

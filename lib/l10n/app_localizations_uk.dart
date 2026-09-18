@@ -574,7 +574,206 @@ class AppLocalizationsUk extends AppLocalizations {
   }
 
   @override
+  String get myPrice => 'Моя ціна';
+
+  @override
+  String get deals => 'Угоди';
+
+  @override
+  String get infoMessages => 'Інформаційні повідомлення';
+
+  @override
+  String get logOutOfAccount => 'Вийти з акаунту';
+
+  @override
   String insufficientFunds(String balance, String price) {
     return 'Недостатньо коштів. Баланс: $balance, вартість: $price';
   }
+
+  @override
+  String get myCombinations => 'Мої комбінації';
+
+  @override
+  String get createCombination => 'Створити';
+
+  @override
+  String get createCombinationTitle => 'Створити комбінацію';
+
+  @override
+  String get selectCrop => 'Оберіть культуру';
+
+  @override
+  String get moreCrops => 'Більше';
+
+  @override
+  String get selectRegion => 'Виберіть область';
+
+  @override
+  String get enterPricePerTon => 'Вкажіть ціну за тонну';
+
+  @override
+  String get paymentForm => 'Форма оплати';
+
+  @override
+  String get promoCodeOptional => 'Промокод (необов\'язково)';
+
+  @override
+  String get teamNumber => 'Номер команди';
+
+  @override
+  String get confirm => 'Підтвердити';
+
+  @override
+  String get reservations => 'Бронювання';
+
+  @override
+  String get queuePosition => 'Позиція в черзі';
+
+  @override
+  String get perTon => 'за тонну';
+
+  @override
+  String get validFrom => 'від';
+
+  @override
+  String get validTo => 'до';
+
+  @override
+  String get validLabel => 'Діє';
+
+  @override
+  String get delete => 'Видалити';
+
+  @override
+  String get deleteCombinationTitle => 'Видалити комбінацію?';
+
+  @override
+  String get deleteCombinationBody =>
+      'Оплата не повертається. Якщо є оплачена черга, наступне бронювання буде активовано автоматично.';
+
+  @override
+  String get paymentNotRefundable => 'Оплата не повертається.';
+
+  @override
+  String combinationOccupied(String date) {
+    return 'Ця комбінація вже зайнята до $date. Ви можете оплатити наступне місце в черзі. Оплата не повертається.';
+  }
+
+  @override
+  String confirmChargeBody(String amount) {
+    return 'Буде списано $amount грн. Оплата не повертається.';
+  }
+
+  @override
+  String get actionActivate => 'Активація комбінації';
+
+  @override
+  String get actionReserve => 'Бронювання місця в черзі';
+
+  @override
+  String get selectedPhone => 'Вибраний номер';
+
+  @override
+  String get editCombination => 'Редагувати комбінацію';
+
+  @override
+  String get edit => 'Редагувати';
+
+  @override
+  String get willTakeEffect => 'Почне діяти';
+
+  @override
+  String get saveChanges => 'Зберегти';
+
+  @override
+  String get myPriceEmpty =>
+      'Ви ще не створили жодної комбінації \"Моя ціна\". Натисніть на кнопку \"Додати комбінацію\", щоб почати';
+
+  @override
+  String get contactPerson => 'Контактна особа';
+
+  @override
+  String get addCombine => 'Додати комбінацію';
+
+  @override
+  String get emptyReservations => 'Немає бронювань';
+
+  @override
+  String get emptyDeals => 'Немає угод';
+
+  @override
+  String get myPriceFeatureDisabled => 'Функція «Моя ціна» зараз недоступна.';
+
+  @override
+  String get traderAccountRequired => 'Функція доступна лише для трейдера.';
+
+  @override
+  String get myPriceErrorGeneric =>
+      'Не вдалося виконати запит. Спробуйте ще раз.';
+
+  @override
+  String get myPriceImplementationError => 'Помилка запиту. Спробуйте пізніше.';
+
+  @override
+  String get promoUnavailable =>
+      'Промокод недоступний. Можна продовжити без нього.';
+
+  @override
+  String get matchSelectedNumberRequired =>
+      'Угоду може підтвердити лише вибраний номер команди.';
+
+  @override
+  String get contactRequiredBeforeDeal => 'Спочатку відкрийте контакт фермера.';
+
+  @override
+  String get confirmDealTitle => 'Укласти угоду?';
+
+  @override
+  String confirmDealBody(String amount) {
+    return 'Укласти угоду за цією заявкою? Буде списано $amount грн. Оплата не повертається.';
+  }
+
+  @override
+  String get productLabel => 'Продукт';
+
+  @override
+  String get priceLabel => 'Ціна';
+
+  @override
+  String get chargedAmount => 'До сплати';
+
+  @override
+  String get menu => 'Меню';
+
+  @override
+  String get notifications => 'Сповіщення';
+
+  @override
+  String get emptyInformMessages => 'Ще немає повідомлень від UAGRO';
+
+  @override
+  String adsDisabledUntil(String date) {
+    return 'Реклама вимкнена до $date';
+  }
+
+  @override
+  String get selectCountry => 'Оберіть країну';
+
+  @override
+  String get countryUkraine => 'Україна';
+
+  @override
+  String get countryKazakhstan => 'Қазақстан';
+
+  @override
+  String get ok => 'Ок';
+
+  @override
+  String get uahShort => 'грн';
+
+  @override
+  String get tonShort => 'т';
+
+  @override
+  String get secondsShort => 'с';
 }

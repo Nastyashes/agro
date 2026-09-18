@@ -3,6 +3,7 @@ import 'package:agro/ui/theme/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_notification/in_app_notification.dart';
 import '../text/read_text.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:get/get.dart';
 
 Widget localNotification({required String text, double? size}) => Padding(
@@ -68,6 +69,6 @@ void showConfirmDialog(
         onConfirm();
       },
       onCancel: () {},
-      textCancel: "Відмінити",
-      textConfirm: 'Ок');
+      textCancel: Get.context!.l.cancel,
+      textConfirm: Get.context!.l.ok);
 }

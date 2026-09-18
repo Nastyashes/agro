@@ -11,12 +11,12 @@ import 'package:http/http.dart';
 import '../../routes/app_pages.dart';
 import 'controller/auth.dart';
 import 'controller/fermer.dart';
+import 'controller/my_price.dart';
 import 'controller/traider.dart';
 
 int numRequestSend = 0;
 
 class Api {
-  //   'Authorization': 'Bearer ${Hive.box('data').get('modelUser') != null ? Hive.box('data').get('modelUser').token : ''}',
   Map<String, String> headers() =>
       {'Content-Type': 'application/json', 'Accept': 'application/json'};
 
@@ -37,8 +37,6 @@ class Api {
     var box = Hive.box('data');
     return box.get('language') ?? 'en';
   }
-
-  //final url = 'https://uagro.trade/apiapp.php';
 
   Future<StreamedResponse> dataRequest(path,
       {String req = 'POST',
@@ -89,11 +87,11 @@ class Api {
       request.fields.addAll(formData);
     }
 
-    // 🔥 повний URL + метод + всі поля, як реально пішло на бекенд
-    log('POST url: $url | fields: ${request.fields}');
+    log('POST url: $url | fields: ${_safeLogFields(request.fields)}');
 
     return await request.send();
   }
+
   Future<StreamedResponse> dataRequestMultipart(method,
       {String? parameter,
       String apiUrl = "apiapp.php",
@@ -115,10 +113,7 @@ class Api {
         request.fields[key] = value;
       });
     }
-   log('''
-
-
-url: $url''');
+    log('POST url: ${_maskSensitiveUrl(url)}');
 
     return await request.send();
   }
@@ -129,7 +124,27 @@ url: $url''');
 
   Traider get traider => Traider();
 
+  MyPriceApi get myPrice => MyPriceApi();
+
   Commmon get common => Commmon();
+}
+
+Map<String, String> _safeLogFields(Map<String, String> fields) {
+  final copy = Map<String, String>.from(fields);
+  for (final key in ['key', 'device_token']) {
+    final value = copy[key];
+    if (value != null && value.isNotEmpty) {
+      copy[key] = '***';
+    }
+  }
+  return copy;
+}
+
+String _maskSensitiveUrl(String url) {
+  return url.replaceAllMapped(
+    RegExp(r'(key|device_token)=([^&]+)'),
+    (match) => '${match[1]}=***',
+  );
 }
 
 class ApiAnswer {
@@ -138,14 +153,12 @@ class ApiAnswer {
 }
 
 void checkAuth(data) {
- // log('data: $data');
   try {
     if (data['message'] == 'Unauthorized') {
       Hive.box('data').put('pinCode', null);
       Hive.box('data').clear();
 
       Get.offAllNamed(Routes.auth);
-      
     }
   } catch (_) {}
 }

@@ -1188,11 +1188,383 @@ abstract class AppLocalizations {
   /// **'Аналіз замовлено. Баланс: {balance}'**
   String analysisOrderedMessage(String balance);
 
+  /// No description provided for @myPrice.
+  ///
+  /// In uk, this message translates to:
+  /// **'Моя ціна'**
+  String get myPrice;
+
+  /// No description provided for @deals.
+  ///
+  /// In uk, this message translates to:
+  /// **'Угоди'**
+  String get deals;
+
+  /// No description provided for @infoMessages.
+  ///
+  /// In uk, this message translates to:
+  /// **'Інформаційні повідомлення'**
+  String get infoMessages;
+
+  /// No description provided for @logOutOfAccount.
+  ///
+  /// In uk, this message translates to:
+  /// **'Вийти з акаунту'**
+  String get logOutOfAccount;
+
   /// No description provided for @insufficientFunds.
   ///
   /// In uk, this message translates to:
   /// **'Недостатньо коштів. Баланс: {balance}, вартість: {price}'**
   String insufficientFunds(String balance, String price);
+
+  /// No description provided for @myCombinations.
+  ///
+  /// In uk, this message translates to:
+  /// **'Мої комбінації'**
+  String get myCombinations;
+
+  /// No description provided for @createCombination.
+  ///
+  /// In uk, this message translates to:
+  /// **'Створити'**
+  String get createCombination;
+
+  /// No description provided for @createCombinationTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Створити комбінацію'**
+  String get createCombinationTitle;
+
+  /// No description provided for @selectCrop.
+  ///
+  /// In uk, this message translates to:
+  /// **'Оберіть культуру'**
+  String get selectCrop;
+
+  /// No description provided for @moreCrops.
+  ///
+  /// In uk, this message translates to:
+  /// **'Більше'**
+  String get moreCrops;
+
+  /// No description provided for @selectRegion.
+  ///
+  /// In uk, this message translates to:
+  /// **'Виберіть область'**
+  String get selectRegion;
+
+  /// No description provided for @enterPricePerTon.
+  ///
+  /// In uk, this message translates to:
+  /// **'Вкажіть ціну за тонну'**
+  String get enterPricePerTon;
+
+  /// No description provided for @paymentForm.
+  ///
+  /// In uk, this message translates to:
+  /// **'Форма оплати'**
+  String get paymentForm;
+
+  /// No description provided for @promoCodeOptional.
+  ///
+  /// In uk, this message translates to:
+  /// **'Промокод (необов\'язково)'**
+  String get promoCodeOptional;
+
+  /// No description provided for @teamNumber.
+  ///
+  /// In uk, this message translates to:
+  /// **'Номер команди'**
+  String get teamNumber;
+
+  /// No description provided for @confirm.
+  ///
+  /// In uk, this message translates to:
+  /// **'Підтвердити'**
+  String get confirm;
+
+  /// No description provided for @reservations.
+  ///
+  /// In uk, this message translates to:
+  /// **'Бронювання'**
+  String get reservations;
+
+  /// No description provided for @queuePosition.
+  ///
+  /// In uk, this message translates to:
+  /// **'Позиція в черзі'**
+  String get queuePosition;
+
+  /// No description provided for @perTon.
+  ///
+  /// In uk, this message translates to:
+  /// **'за тонну'**
+  String get perTon;
+
+  /// No description provided for @validFrom.
+  ///
+  /// In uk, this message translates to:
+  /// **'від'**
+  String get validFrom;
+
+  /// No description provided for @validTo.
+  ///
+  /// In uk, this message translates to:
+  /// **'до'**
+  String get validTo;
+
+  /// No description provided for @validLabel.
+  ///
+  /// In uk, this message translates to:
+  /// **'Діє'**
+  String get validLabel;
+
+  /// No description provided for @delete.
+  ///
+  /// In uk, this message translates to:
+  /// **'Видалити'**
+  String get delete;
+
+  /// No description provided for @deleteCombinationTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Видалити комбінацію?'**
+  String get deleteCombinationTitle;
+
+  /// No description provided for @deleteCombinationBody.
+  ///
+  /// In uk, this message translates to:
+  /// **'Оплата не повертається. Якщо є оплачена черга, наступне бронювання буде активовано автоматично.'**
+  String get deleteCombinationBody;
+
+  /// No description provided for @paymentNotRefundable.
+  ///
+  /// In uk, this message translates to:
+  /// **'Оплата не повертається.'**
+  String get paymentNotRefundable;
+
+  /// No description provided for @combinationOccupied.
+  ///
+  /// In uk, this message translates to:
+  /// **'Ця комбінація вже зайнята до {date}. Ви можете оплатити наступне місце в черзі. Оплата не повертається.'**
+  String combinationOccupied(String date);
+
+  /// No description provided for @confirmChargeBody.
+  ///
+  /// In uk, this message translates to:
+  /// **'Буде списано {amount} грн. Оплата не повертається.'**
+  String confirmChargeBody(String amount);
+
+  /// No description provided for @actionActivate.
+  ///
+  /// In uk, this message translates to:
+  /// **'Активація комбінації'**
+  String get actionActivate;
+
+  /// No description provided for @actionReserve.
+  ///
+  /// In uk, this message translates to:
+  /// **'Бронювання місця в черзі'**
+  String get actionReserve;
+
+  /// No description provided for @selectedPhone.
+  ///
+  /// In uk, this message translates to:
+  /// **'Вибраний номер'**
+  String get selectedPhone;
+
+  /// No description provided for @editCombination.
+  ///
+  /// In uk, this message translates to:
+  /// **'Редагувати комбінацію'**
+  String get editCombination;
+
+  /// No description provided for @edit.
+  ///
+  /// In uk, this message translates to:
+  /// **'Редагувати'**
+  String get edit;
+
+  /// No description provided for @willTakeEffect.
+  ///
+  /// In uk, this message translates to:
+  /// **'Почне діяти'**
+  String get willTakeEffect;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In uk, this message translates to:
+  /// **'Зберегти'**
+  String get saveChanges;
+
+  /// No description provided for @myPriceEmpty.
+  ///
+  /// In uk, this message translates to:
+  /// **'Ви ще не створили жодної комбінації \"Моя ціна\". Натисніть на кнопку \"Додати комбінацію\", щоб почати'**
+  String get myPriceEmpty;
+
+  /// No description provided for @contactPerson.
+  ///
+  /// In uk, this message translates to:
+  /// **'Контактна особа'**
+  String get contactPerson;
+
+  /// No description provided for @addCombine.
+  ///
+  /// In uk, this message translates to:
+  /// **'Додати комбінацію'**
+  String get addCombine;
+
+  /// No description provided for @emptyReservations.
+  ///
+  /// In uk, this message translates to:
+  /// **'Немає бронювань'**
+  String get emptyReservations;
+
+  /// No description provided for @emptyDeals.
+  ///
+  /// In uk, this message translates to:
+  /// **'Немає угод'**
+  String get emptyDeals;
+
+  /// No description provided for @myPriceFeatureDisabled.
+  ///
+  /// In uk, this message translates to:
+  /// **'Функція «Моя ціна» зараз недоступна.'**
+  String get myPriceFeatureDisabled;
+
+  /// No description provided for @traderAccountRequired.
+  ///
+  /// In uk, this message translates to:
+  /// **'Функція доступна лише для трейдера.'**
+  String get traderAccountRequired;
+
+  /// No description provided for @myPriceErrorGeneric.
+  ///
+  /// In uk, this message translates to:
+  /// **'Не вдалося виконати запит. Спробуйте ще раз.'**
+  String get myPriceErrorGeneric;
+
+  /// No description provided for @myPriceImplementationError.
+  ///
+  /// In uk, this message translates to:
+  /// **'Помилка запиту. Спробуйте пізніше.'**
+  String get myPriceImplementationError;
+
+  /// No description provided for @promoUnavailable.
+  ///
+  /// In uk, this message translates to:
+  /// **'Промокод недоступний. Можна продовжити без нього.'**
+  String get promoUnavailable;
+
+  /// No description provided for @matchSelectedNumberRequired.
+  ///
+  /// In uk, this message translates to:
+  /// **'Угоду може підтвердити лише вибраний номер команди.'**
+  String get matchSelectedNumberRequired;
+
+  /// No description provided for @contactRequiredBeforeDeal.
+  ///
+  /// In uk, this message translates to:
+  /// **'Спочатку відкрийте контакт фермера.'**
+  String get contactRequiredBeforeDeal;
+
+  /// No description provided for @confirmDealTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Укласти угоду?'**
+  String get confirmDealTitle;
+
+  /// No description provided for @confirmDealBody.
+  ///
+  /// In uk, this message translates to:
+  /// **'Укласти угоду за цією заявкою? Буде списано {amount} грн. Оплата не повертається.'**
+  String confirmDealBody(String amount);
+
+  /// No description provided for @productLabel.
+  ///
+  /// In uk, this message translates to:
+  /// **'Продукт'**
+  String get productLabel;
+
+  /// No description provided for @priceLabel.
+  ///
+  /// In uk, this message translates to:
+  /// **'Ціна'**
+  String get priceLabel;
+
+  /// No description provided for @chargedAmount.
+  ///
+  /// In uk, this message translates to:
+  /// **'До сплати'**
+  String get chargedAmount;
+
+  /// No description provided for @menu.
+  ///
+  /// In uk, this message translates to:
+  /// **'Меню'**
+  String get menu;
+
+  /// No description provided for @notifications.
+  ///
+  /// In uk, this message translates to:
+  /// **'Сповіщення'**
+  String get notifications;
+
+  /// No description provided for @emptyInformMessages.
+  ///
+  /// In uk, this message translates to:
+  /// **'Ще немає повідомлень від UAGRO'**
+  String get emptyInformMessages;
+
+  /// No description provided for @adsDisabledUntil.
+  ///
+  /// In uk, this message translates to:
+  /// **'Реклама вимкнена до {date}'**
+  String adsDisabledUntil(String date);
+
+  /// No description provided for @selectCountry.
+  ///
+  /// In uk, this message translates to:
+  /// **'Оберіть країну'**
+  String get selectCountry;
+
+  /// No description provided for @countryUkraine.
+  ///
+  /// In uk, this message translates to:
+  /// **'Україна'**
+  String get countryUkraine;
+
+  /// No description provided for @countryKazakhstan.
+  ///
+  /// In uk, this message translates to:
+  /// **'Қазақстан'**
+  String get countryKazakhstan;
+
+  /// No description provided for @ok.
+  ///
+  /// In uk, this message translates to:
+  /// **'Ок'**
+  String get ok;
+
+  /// No description provided for @uahShort.
+  ///
+  /// In uk, this message translates to:
+  /// **'грн'**
+  String get uahShort;
+
+  /// No description provided for @tonShort.
+  ///
+  /// In uk, this message translates to:
+  /// **'т'**
+  String get tonShort;
+
+  /// No description provided for @secondsShort.
+  ///
+  /// In uk, this message translates to:
+  /// **'с'**
+  String get secondsShort;
 }
 
 class _AppLocalizationsDelegate

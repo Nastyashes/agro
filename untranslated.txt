@@ -4,7 +4,8 @@
   ],
 
   "kk": [
-    "nomber"
+    "nomber",
+    "edit"
   ],
 
   "ru": [

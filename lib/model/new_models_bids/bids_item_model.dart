@@ -1,4 +1,6 @@
 import 'package:agro/model/message/created.dart';
+import 'package:agro/model/my_price/my_price_order_meta.dart';
+import 'package:agro/model/my_price/my_price_parse.dart';
 import 'package:agro/model/new_models_bids/bids_contacts_model.dart';
 
 
@@ -46,6 +48,7 @@ class BidItem extends Created {
   final String? fermerEmail;
   final int? fermerRegionId;
   final BidContacts? contacts;
+  final MyPriceOrderMeta? myPrice;
 
   BidItem({
     this.regionName,
@@ -88,6 +91,7 @@ class BidItem extends Created {
     this.fermerEmail,
     this.fermerRegionId,
     this.contacts,
+    this.myPrice,
   });
 
   BidItem copyWith({
@@ -101,6 +105,7 @@ class BidItem extends Created {
     String? fermerEmail,
     int? fermerRegionId,
     BidContacts? contacts,
+    MyPriceOrderMeta? myPrice,
   }) {
     return BidItem(
       id: id,
@@ -143,6 +148,7 @@ class BidItem extends Created {
       fermerEmail: fermerEmail ?? this.fermerEmail,
       fermerRegionId: fermerRegionId ?? this.fermerRegionId,
       contacts: contacts ?? this.contacts,
+      myPrice: myPrice ?? this.myPrice,
     );
   }
 
@@ -159,6 +165,8 @@ class BidItem extends Created {
     if (contactsRaw != null && contactsRaw is Map<String, dynamic>) {
       contacts = BidContacts.fromJson(contactsRaw);
     }
+
+    final myPriceRaw = parseMyPriceMap(json['my_price']);
 
     return BidItem(
       regionName: regionName,
@@ -201,7 +209,25 @@ class BidItem extends Created {
       fermerEmail: json['fermer_email'] as String?,
       fermerRegionId: _parseInt(json['fermer_region_id']),
       contacts: contacts,
+      myPrice: MyPriceOrderMeta.fromJson(myPriceRaw),
     );
+  }
+
+  static BidItem? fromOrderView(dynamic json) {
+    final map = parseMyPriceMap(json);
+    if (map == null) return null;
+
+    final payload = parseMyPriceMap(map['payload']) ?? map;
+    final source = Map<String, dynamic>.from(payload);
+    if (map['my_price'] != null && source['my_price'] == null) {
+      source['my_price'] = map['my_price'];
+    }
+    if (!source.containsKey('order_id') &&
+        !source.containsKey('id') &&
+        !source.containsKey('product_title')) {
+      return null;
+    }
+    return BidItem.fromJson(source);
   }
 
   static int? _parseInt(dynamic value) {

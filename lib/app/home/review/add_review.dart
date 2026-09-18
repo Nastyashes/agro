@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:get/get.dart';
 
-import '../../../../ui/buttons/b_style.dart';
+import '../../../ui/buttons/button_styles.dart';
 import '../../../../ui/text_field/text_field.dart';
 import 'components/review_controller.dart';
 
@@ -81,8 +81,6 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
             bStyle(
                 padding: const EdgeInsets.only(left: 15, right: 15, top: 20),
                 text: context.l.addReview,
-                size: 23,
-                // active: controll,
                 c: context,
                 colorText: Colors.white,
                 vertical: 15,

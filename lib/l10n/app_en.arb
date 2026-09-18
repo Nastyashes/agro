@@ -187,6 +187,10 @@
   "@analysisOrderedMessage": {
     "placeholders": { "balance": { "type": "String" } }
   },
+  "myPrice": "My price",
+  "deals": "Deals",
+  "infoMessages": "Information messages",
+  "logOutOfAccount": "Log out of account",
   "insufficientFunds": "Insufficient funds. Balance: {balance}, price: {price}",
   "@insufficientFunds": {
     "placeholders": {
@@ -194,9 +198,77 @@
       "price": { "type": "String" }
     }
   },
+  "myCombinations": "My combinations",
+  "createCombination": "Create",
+  "createCombinationTitle": "Create combination",
+  "selectCrop": "Select crop",
+  "moreCrops": "More",
+  "selectRegion": "Select region",
+  "enterPricePerTon": "Enter price per ton",
+  "paymentForm": "Payment form",
+  "promoCodeOptional": "Promo code (optional)",
+  "teamNumber": "Team number",
+  "confirm": "Confirm",
+  "reservations": "Reservations",
+  "queuePosition": "Queue position",
+  "perTon": "per ton",
+  "validFrom": "from",
+  "validTo": "to",
+  "validLabel": "Valid",
+  "delete": "Delete",
+  "deleteCombinationTitle": "Delete combination?",
+  "deleteCombinationBody": "Payment is not refunded. If there is a paid queue, the next reservation will be activated automatically.",
+  "paymentNotRefundable": "Payment is not refunded.",
+  "combinationOccupied": "This combination is taken until {date}. You can pay for the next place in the queue. Payment is not refunded.",
+  "@combinationOccupied": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "confirmChargeBody": "{amount} UAH will be charged. Payment is not refunded.",
+  "@confirmChargeBody": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "actionActivate": "Combination activation",
+  "actionReserve": "Queue reservation",
+  "selectedPhone": "Selected number",
+  "editCombination": "Edit combination",
+    "edit": "Edit",
+"willTakeEffect": "Will take effect",
+  "saveChanges": "Save",
 
-
-
+  "myPriceEmpty": "You haven't created any \"My Price\" combinations yet. Tap \"Add combination\" to get started",
+  "contactPerson": "Contact person",
+  "addCombine": "Add combination",
+    "emptyReservations": "No reservations",
+  "emptyDeals": "No deals",
+  "myPriceFeatureDisabled": "My Price is currently unavailable.",
+  "traderAccountRequired": "This feature is available to traders only.",
+  "myPriceErrorGeneric": "The request failed. Please try again.",
+  "myPriceImplementationError": "Request error. Please try later.",
+  "promoUnavailable": "Promo code is unavailable. You can continue without it.",
+  "matchSelectedNumberRequired": "Only the selected team number can confirm the deal.",
+  "contactRequiredBeforeDeal": "Open the farmer contact first.",
+  "confirmDealTitle": "Confirm deal?",
+  "confirmDealBody": "Confirm a deal for this order? {amount} UAH will be charged. Payment is not refunded.",
+  "@confirmDealBody": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "productLabel": "Product",
+  "priceLabel": "Price",
+  "chargedAmount": "Amount due",
+  "menu": "Menu",
+  "notifications": "Notifications",
+  "emptyInformMessages": "No messages from UAGRO yet",
+  "adsDisabledUntil": "Ads disabled until {date}",
+  "@adsDisabledUntil": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "selectCountry": "Select country",
+  "countryUkraine": "Ukraine",
+  "countryKazakhstan": "Kazakhstan",
+  "ok": "OK",
+  "uahShort": "UAH",
+  "tonShort": "t",
+  "secondsShort": "s",
 
   "@save": {},
   "@@locale": "en"

@@ -12,7 +12,8 @@ class AppFonts {
       fontSize: 18, fontWeight: FontWeight.w500, color: AppColors.black);
   static TextStyle title1 = GoogleFonts.nunito(
       fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.black);
-
+  static TextStyle title3 = GoogleFonts.nunito(
+      fontSize: 28, fontWeight: FontWeight.w500, color: AppColors.black);
   static TextStyle title2 = GoogleFonts.nunito(
       fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.black);
 
@@ -32,6 +33,11 @@ class AppFonts {
 
   static TextStyle body3medium = GoogleFonts.nunito(
       fontSize: 16, fontWeight: FontWeight.w500, color: AppColors.black);
+static TextStyle body4semibold = GoogleFonts.inter(
+  height: 1.4,
+      fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.black);
+static TextStyle body4medium = GoogleFonts.inter(  height: 1.4,
+      fontSize: 18, fontWeight: FontWeight.w500, color: AppColors.black);
 
   static TextStyle body3bold = GoogleFonts.nunito(
       fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.black);
@@ -48,6 +54,8 @@ extension CopyWithStyles on TextStyle {
   TextStyle get yellow => copyWith(color: AppColors.yellow);
 
   TextStyle get mainGreen => copyWith(color: AppColors.mainGreen);
+    TextStyle get inactiveGreen => copyWith(color: AppColors.mainGreen.withValues(alpha: 0.3));
+
   TextStyle get greyGreen => copyWith(color: AppColors.greyGreen);
   TextStyle get additionalGreen => copyWith(color: AppColors.additionalGreen);
   TextStyle get darkGreen => copyWith(color: AppColors.darkGreen);

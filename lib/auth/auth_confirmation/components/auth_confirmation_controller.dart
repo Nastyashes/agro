@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:agro/model/model_user/struct_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../controllers/abstract/from_controller.dart';
+import 'package:agro/controllers/abstract/from_controller.dart';
 import '../../../controllers/app_input_controller.dart';
 import '../../../routes/app_pages.dart';
 import '../../../server/api/api.dart';
@@ -47,5 +47,5 @@ class AuthConfirmationController extends FormController {
         } else {
           setState(() => errorCode = apiAnswer.data['message']);
         }
-      }, c: c);
+      }, );
 }

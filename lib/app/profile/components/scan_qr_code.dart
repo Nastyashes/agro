@@ -69,7 +69,7 @@ class QRScannerScreen extends StatelessWidget {
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('OK'),
+                            child: Text(context.l.ok),
                           ),
                         ],
                       ),

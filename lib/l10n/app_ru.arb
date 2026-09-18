@@ -185,6 +185,10 @@
   "@analysisOrderedMessage": {
     "placeholders": { "balance": { "type": "String" } }
   },
+  "myPrice": "Моя цена",
+  "deals": "Сделки",
+  "infoMessages": "Информационные сообщения",
+  "logOutOfAccount": "Выйти из аккаунта",
   "insufficientFunds": "Недостаточно средств. Баланс: {balance}, стоимость: {price}",
   "@insufficientFunds": {
     "placeholders": {
@@ -192,6 +196,77 @@
       "price": { "type": "String" }
     }
   },
+  "myCombinations": "Мои комбинации",
+  "createCombination": "Создать",
+  "createCombinationTitle": "Создать комбинацию",
+  "selectCrop": "Выберите культуру",
+  "moreCrops": "Ещё",
+  "selectRegion": "Выберите область",
+  "enterPricePerTon": "Укажите цену за тонну",
+  "paymentForm": "Форма оплаты",
+  "promoCodeOptional": "Промокод (необязательно)",
+  "teamNumber": "Номер команды",
+  "confirm": "Подтвердить",
+  "reservations": "Бронирования",
+  "queuePosition": "Позиция в очереди",
+  "perTon": "за тонну",
+  "validFrom": "от",
+  "validTo": "до",
+  "validLabel": "Действует",
+  "delete": "Удалить",
+  "deleteCombinationTitle": "Удалить комбинацию?",
+  "deleteCombinationBody": "Оплата не возвращается. Если есть оплаченная очередь, следующее бронирование будет активировано автоматически.",
+  "paymentNotRefundable": "Оплата не возвращается.",
+  "combinationOccupied": "Эта комбинация уже занята до {date}. Вы можете оплатить следующее место в очереди. Оплата не возвращается.",
+  "@combinationOccupied": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "confirmChargeBody": "Будет списано {amount} грн. Оплата не возвращается.",
+  "@confirmChargeBody": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "actionActivate": "Активация комбинации",
+  "actionReserve": "Бронирование места в очереди",
+  "selectedPhone": "Выбранный номер",
+  "editCombination": "Редактировать комбинацию",
+    "edit": "Редактировать",
+"willTakeEffect": "Начнет действовать",
+  "saveChanges": "Сохранить",
+
+  "myPriceEmpty": "Вы еще не создали ни одной комбинации \"Моя цена\". Нажмите кнопку \"Добавить комбинацию\", чтобы начать",
+  "contactPerson": "Контактное лицо",
+  "addCombine": "Добавить комбинацию",
+  "emptyReservations": "Нет бронирований",
+  "emptyDeals": "Нет сделок",
+  "myPriceFeatureDisabled": "Функция «Моя цена» сейчас недоступна.",
+  "traderAccountRequired": "Функция доступна только трейдеру.",
+  "myPriceErrorGeneric": "Не удалось выполнить запрос. Попробуйте ещё раз.",
+  "myPriceImplementationError": "Ошибка запроса. Попробуйте позже.",
+  "promoUnavailable": "Промокод недоступен. Можно продолжить без него.",
+  "matchSelectedNumberRequired": "Сделку может подтвердить только выбранный номер команды.",
+  "contactRequiredBeforeDeal": "Сначала откройте контакт фермера.",
+  "confirmDealTitle": "Заключить сделку?",
+  "confirmDealBody": "Заключить сделку по этой заявке? Будет списано {amount} грн. Оплата не возвращается.",
+  "@confirmDealBody": {
+    "placeholders": { "amount": { "type": "String" } }
+  },
+  "productLabel": "Продукт",
+  "priceLabel": "Цена",
+  "chargedAmount": "К оплате",
+  "menu": "Меню",
+  "notifications": "Уведомления",
+  "emptyInformMessages": "Пока нет сообщений от UAGRO",
+  "adsDisabledUntil": "Реклама отключена до {date}",
+  "@adsDisabledUntil": {
+    "placeholders": { "date": { "type": "String" } }
+  },
+  "selectCountry": "Выберите страну",
+  "countryUkraine": "Украина",
+  "countryKazakhstan": "Казахстан",
+  "ok": "Ок",
+  "uahShort": "грн",
+  "tonShort": "т",
+  "secondsShort": "с",
 
 
 

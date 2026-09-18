@@ -1,8 +1,10 @@
 import 'package:agro/generated/assets.dart';
 import 'package:agro/model/model_user/model_user.dart';
-import 'package:agro/ui/buttons/b_style.dart';
+import 'package:agro/ui/app_components/app_background.dart';
+import 'package:agro/ui/buttons/button_styles.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
@@ -29,7 +31,9 @@ class CountryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
+      body: Stack(
+        children: [
+          const AppBackground(), Center(
         child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.start,
@@ -43,7 +47,7 @@ class CountryScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Text(
-                  'Select Country',
+                  context.l.selectCountry,
                   style: AppFonts.title1.darkGreen,
                 ),
               ),
@@ -51,7 +55,7 @@ class CountryScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: bStyle(
-                    text: item.label,
+                    text: item.label(context),
                     c: context,
                     colorText: AppColors.additionalGreen,
                     vertical: 15,
@@ -65,15 +69,20 @@ class CountryScreen extends StatelessWidget {
               ]
             ]),
       ),
-    );
+    ]));
   }
 }
 
 enum Country {
-  ukraine(label: "Україна"),
-  kazakh(label: "Қазақстан");
+  ukraine,
+  kazakh;
 
-  final String label;
-
-  const Country({required this.label});
+  String label(BuildContext context) {
+    switch (this) {
+      case Country.ukraine:
+        return context.l.countryUkraine;
+      case Country.kazakh:
+        return context.l.countryKazakhstan;
+    }
+  }
 }

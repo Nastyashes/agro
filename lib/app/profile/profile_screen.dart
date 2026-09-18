@@ -1,7 +1,7 @@
 import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/tariff/tariff.dart';
-import 'package:agro/ui/buttons/b_style.dart';
+import 'package:agro/ui/buttons/button_styles.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
@@ -114,8 +114,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Padding(
                         padding: const EdgeInsets.all(12),
                         child: readText(
-                          text:
-                              'Реклама вимкнена до ${controller.adsDisabledUntilText}',
+                          text: context.l
+                              .adsDisabledUntil(controller.adsDisabledUntilText),
                           style: AppFonts.body1medium.copyWith(
                             color: AppColors.mainGreen,
                           ),
@@ -132,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               child: Stack(
                                 children: [
                                   bStyle(
-                                    text: "${context.l.disableBanner} (${controller.adsPrice})",
+                                    text: "${context.l.disableBanner} (${context.uahAmount(controller.adsPrice)})",
                                     c: context,
                                     colorText: AppColors.white,
                                     vertical: 15,

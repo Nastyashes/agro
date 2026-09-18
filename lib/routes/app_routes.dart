@@ -12,5 +12,10 @@ abstract class Routes {
   static const scanQrCode = "/scanQrCode";
   static const profile = "/profile";
   static const country = "/country";
+  static const myPrice = '/myPrice';
+  static const myPriceCreate = '/myPriceCreate';
+  static const myPriceEdit = '/myPriceEdit';
+  static const myPriceDeals = '/myPriceDeals';
   static const bidItemScreen = "/bidItemScreen";
+  static const informMessages = "/informMessages";
 }

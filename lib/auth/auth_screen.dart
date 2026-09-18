@@ -1,3 +1,4 @@
+import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/helper.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:agro/ui/buttons/b_style.dart';
+import 'package:agro/ui/buttons/button_styles.dart';
 import 'package:agro/ui/text/read_text.dart';
 
 import '../generated/assets.dart';
@@ -36,7 +37,9 @@ class _AuthScreenState extends State<AuthScreen> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: AppColors.white,
-          body: SafeArea(
+          body: Stack(
+        children: [
+          const AppBackground(), SafeArea(
               bottom: false,
               child: Padding(
                 padding: EdgeInsets.only(left: 20, right: 20, bottom: MediaQuery.of(context).padding.bottom),
@@ -92,6 +95,6 @@ class _AuthScreenState extends State<AuthScreen> {
                               align: TextAlign.center))
                     ]),
               )),
-        ));
+     ]) ));
   }
 }

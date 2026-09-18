@@ -1,3 +1,4 @@
+import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/helper.dart';
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:agro/ui/buttons/b_style.dart';
+import 'package:agro/ui/buttons/button_styles.dart';
 import 'package:agro/ui/text/read_text.dart';
 import 'package:pinput/pinput.dart';
 
@@ -58,7 +59,9 @@ class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           backgroundColor: AppColors.white,
-          body: SafeArea(
+          body: Stack(
+        children: [
+          const AppBackground(), SafeArea(
             bottom: false,
             child: Stack(
               alignment: Alignment.topCenter,
@@ -151,6 +154,6 @@ class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
               ],
             ),
           ),
-        ));
+       ] )));
   }
 }

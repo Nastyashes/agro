@@ -8,7 +8,7 @@ import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../controllers/abstract/from_controller.dart';
+import 'package:agro/controllers/abstract/from_controller.dart';
 import '../../../routes/app_pages.dart';
 import '../../controllers/app_input_controller.dart';
 
@@ -58,5 +58,5 @@ class AuthController extends FormController {
               ? notification(text: context.l.numberNoRegistered)
               : {};
         }
-      }, c: c);
+      },);
 }
