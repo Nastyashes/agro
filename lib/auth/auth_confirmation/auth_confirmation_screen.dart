@@ -37,10 +37,10 @@ class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
         height: 60,
         padding: EdgeInsets.zero,
         textStyle: const TextStyle(
-            fontSize: 24, color: AppColors.black, fontWeight: FontWeight.w600),
+            fontSize: 24, color: AppColors.white, fontWeight: FontWeight.w600),
         decoration: BoxDecoration(
-            border: Border.all(width: 1, color: Colors.transparent),
-            color: AppColors.grey1,
+            border: Border.all(width: 1, color: AppColors.backgroundGradient3),
+            color: AppColors.backgroundGradient1,
             borderRadius: BorderRadius.circular(10)));
 
     final focusPinTheme = PinTheme(
@@ -48,17 +48,17 @@ class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
         height: 60,
         padding: EdgeInsets.zero,
         textStyle: const TextStyle(
-            fontSize: 24, color: AppColors.black, fontWeight: FontWeight.w600),
+            fontSize: 24, color: AppColors.white, fontWeight: FontWeight.w600),
         decoration: BoxDecoration(
             border: Border.all(width: 2, color: AppColors.mainGreen),
-            color: AppColors.white,
+            color: AppColors.backgroundGradient2,
             borderRadius: BorderRadius.circular(10)));
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: AppColors.white,
+          backgroundColor: AppColors.backgroundGradient1,
           body: Stack(
         children: [
           const AppBackground(), SafeArea(
@@ -75,11 +75,11 @@ class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
                             padding:
                                 const EdgeInsets.only(top: 120, bottom: 120),
                             child: Center(
-                                child: SvgPicture.asset(Assets.pictureLogo,
+                                child: Image.asset(Assets.pictureLogo,
                                     width: MediaQuery.of(c).size.width / 1.2))),
                         readText(
                             text: context.l.enterCode,
-                            style: AppFonts.title2,
+                            style: AppFonts.title2.white,
                             padding:
                                 const EdgeInsets.only(bottom: 10, left: 7)),
                         readText(
@@ -92,6 +92,7 @@ class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
                             child: ClipRRect(
                                 borderRadius: BorderRadius.circular(10),
                                 child: Pinput(
+                                  
                                     controller: controller.codeController,
                                     scrollPadding: EdgeInsets.zero,
                                     defaultPinTheme: defaultPinTheme,
@@ -124,7 +125,7 @@ class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
                             child: Center(
                                 child: readText(
                                     text: context.l.changeNumber,
-                                    style: AppFonts.body1semibold.mainGreen,
+                                    style: AppFonts.body1semibold.grey3,
                                     padding: const EdgeInsets.only(top: 20)))),
                         const Spacer(),
                         Row(

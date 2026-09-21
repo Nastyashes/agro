@@ -234,6 +234,18 @@ abstract class AppLocalizations {
   /// **'Заявка №'**
   String get applicationNo;
 
+  /// No description provided for @bidDetails.
+  ///
+  /// In uk, this message translates to:
+  /// **'Деталі заявки'**
+  String get bidDetails;
+
+  /// No description provided for @menuItemNew.
+  ///
+  /// In uk, this message translates to:
+  /// **' (Нове)'**
+  String get menuItemNew;
+
   /// No description provided for @from.
   ///
   /// In uk, this message translates to:
@@ -1415,6 +1427,12 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Додати комбінацію'**
   String get addCombine;
+
+  /// No description provided for @logistician.
+  ///
+  /// In uk, this message translates to:
+  /// **'Логіст'**
+  String get logistician;
 
   /// No description provided for @emptyReservations.
   ///

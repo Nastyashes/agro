@@ -11,12 +11,12 @@ Widget appBarBack( String title) {
                     children: [
                       IconButton(
                         onPressed: Get.back,
-                        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.darkGreen,),
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.white,),
                       ),
                       Expanded(
                         child: Text(
                         title,
-                          style: AppFonts.title2.black,
+                          style: AppFonts.title2.white,
                         ),
                       ),
                     ],

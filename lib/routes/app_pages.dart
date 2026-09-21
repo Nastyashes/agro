@@ -1,7 +1,7 @@
-import 'package:agro/app/home/bids_pages/bid_binding.dart';
-import 'package:agro/app/home/bids_pages/bid_detail_screen.dart';
-import 'package:agro/app/home/review/components/review_binding.dart';
-import 'package:agro/app/home/review/review_screen.dart';
+import 'package:agro/app/bid_detail/bid_binding.dart';
+import 'package:agro/app/bid_detail/bid_detail_screen.dart';
+import 'package:agro/app/review/components/review_binding.dart';
+import 'package:agro/app/review/review_screen.dart';
 import 'package:agro/app/inform_messages/inform_messages_screen.dart';
 import 'package:agro/app/my_price/create_my_price_screen.dart';
 import 'package:agro/app/my_price/edit_my_price_screen.dart';

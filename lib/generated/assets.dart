@@ -48,7 +48,9 @@ class Assets {
   static const String componentsArrowRight =
       'picture/components/arrow_right.svg';
   static const String componentsBack = 'picture/components/back.svg';
-  static const String pictureLogo = 'picture/logo.svg';
+  static const String pictureLogo = 'picture/logo.png';
+  static const String bgZerno = 'picture/background_app.png';
+  static const String drawerBg = 'picture/drawer_bg.png';
   static const String startBg = 'picture/start/bg.png';
   static const String profile = 'picture/app/account/profile.svg';
   static const String zerno = 'picture/components/zerno.svg';

@@ -78,6 +78,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get applicationNo => 'Application No.';
 
   @override
+  String get bidDetails => 'Application details';
+
+  @override
+  String get menuItemNew => ' (New)';
+
+  @override
   String get from => 'from:';
 
   @override
@@ -694,6 +700,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addCombine => 'Add combination';
+
+  @override
+  String get logistician => 'Logistic';
 
   @override
   String get emptyReservations => 'No reservations';

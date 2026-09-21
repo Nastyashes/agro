@@ -225,7 +225,6 @@ Future<ApiAnswer> searchBids({
   apiAnswer.code = request.statusCode;
   apiAnswer.data = json.decode(await request.stream.bytesToString());
   checkAuth(apiAnswer.data);
-
   return apiAnswer;
 }
 

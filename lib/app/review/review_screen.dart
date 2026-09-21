@@ -1,12 +1,12 @@
-import 'package:agro/app/home/review/components/block_review.dart';
-import 'package:agro/app/home/review/components/review_controller.dart';
+import 'package:agro/app/review/components/block_review.dart';
+import 'package:agro/app/review/components/review_controller.dart';
 import 'package:agro/ui/buttons/b_transparent_scalable_button.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-import '../../../model/model_review/model_review.dart';
+import '../../model/model_review/model_review.dart';
 import 'package:agro/ui/app_components/block_page_screen.dart';
 
 class ReviewScreen extends StatefulWidget {

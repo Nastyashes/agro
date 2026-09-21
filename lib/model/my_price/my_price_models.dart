@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:agro/model/my_price/my_price_parse.dart';
 import 'package:intl/intl.dart';
 
@@ -104,6 +106,7 @@ class MyPriceEntry {
 
   bool get isActive => status == 'active';
   bool get isQueued => status == 'queued';
+  bool get isDeleted => status == 'deleted';
 
   String formatDate(int? seconds) {
     if (seconds == null) return '—';
@@ -214,6 +217,12 @@ class MyPriceOverview {
 
   factory MyPriceOverview.fromJson(dynamic json) {
     final map = parseMyPriceMap(json) ?? <String, dynamic>{};
+    log(
+      'MyPriceOverview.fromJson keys=${map.keys.toList()} '
+      'rawCombinations=${map['combinations']} '
+      'rawReservations=${map['reservations']} '
+      'rawSlots=${map['slots']}',
+    );
     final settings = MyPriceSettings.fromJson(parseMyPriceMap(map['settings']));
     final combinations = parseMyPriceMapList(map['combinations'])
         .map(MyPriceEntry.fromJson)

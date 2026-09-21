@@ -30,6 +30,9 @@ class NewHomeController extends BaseController {
   final MainController mainController = Get.find<MainController>();
 
   late final TextEditingController searchController;
+  late final FocusNode searchFocusNode;
+
+  bool isSearchOpen = false;
 
   late final RefreshController allRefreshController;
   late final RefreshController freshRefreshController;
@@ -93,6 +96,7 @@ class NewHomeController extends BaseController {
   @override
   void onInit() {
     searchController = AppInputController();
+    searchFocusNode = FocusNode();
 
     allRefreshController = RefreshController();
     freshRefreshController = RefreshController();
@@ -174,6 +178,8 @@ class NewHomeController extends BaseController {
         offset: _bidsOffset,
       );
 
+      log('NewHomeController loadAllBids bids: ${apiAnswer.data['bids']}');
+
       if (apiAnswer.data['status'] == '-') {
         throw Exception(
           apiAnswer.data['error']?.toString() ??
@@ -246,6 +252,10 @@ class NewHomeController extends BaseController {
         offset: _freshOffset,
       );
 
+      log(
+        'NewHomeController loadFreshBids bids: ${apiAnswer.data['bids_fresh']}',
+      );
+
       final response = BidsResponse.fromJson(apiAnswer.data);
 
       final newItems = response.bidsFresh;
@@ -285,6 +295,34 @@ class NewHomeController extends BaseController {
   // =========================
   // SEARCH
   // =========================
+
+  void toggleSearch() {
+    final opening = !isSearchOpen;
+
+    setState(() {
+      isSearchOpen = opening;
+
+      if (opening && isFree) {
+        selectedTab = NewHomeTab.all;
+      }
+    });
+
+    if (opening) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (searchFocusNode.canRequestFocus) {
+          searchFocusNode.requestFocus();
+        }
+      });
+      return;
+    }
+
+    searchFocusNode.unfocus();
+
+    if (searchController.text.isNotEmpty) {
+      searchController.clear();
+      onSearch();
+    }
+  }
 
   void onSearch() {
     _searchDebounce?.cancel();
@@ -459,6 +497,7 @@ class NewHomeController extends BaseController {
     _searchDebounce?.cancel();
 
     searchController.dispose();
+    searchFocusNode.dispose();
 
     allRefreshController.dispose();
     freshRefreshController.dispose();

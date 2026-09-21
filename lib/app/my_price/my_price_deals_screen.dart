@@ -5,7 +5,7 @@ import 'package:agro/routes/app_pages.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/app_components/appbar_with_back.dart';
-import 'package:agro/ui/empty_list_widget.dart';
+import 'package:agro/ui/app_components/empty_list_widget.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/helper.dart';
@@ -138,7 +138,7 @@ class _MyPriceDealsScreenState extends State<MyPriceDealsScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.85),
+          color: AppColors.backgroundGradient1.withValues(alpha: 0.85),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -146,7 +146,7 @@ class _MyPriceDealsScreenState extends State<MyPriceDealsScreen> {
           children: [
             Text(
               item.orderTitle ?? item.productTitle ?? '#${item.orderId}',
-              style: AppFonts.body1bold.black,
+              style: AppFonts.body1bold.white,
             ),
             const SizedBox(height: 8),
             Text(
@@ -156,7 +156,7 @@ class _MyPriceDealsScreenState extends State<MyPriceDealsScreen> {
                 if (item.chargedAmount != null)
                   '${item.chargedAmount} ${context.l.uahShort}',
               ].whereType<String>().join(' · '),
-              style: AppFonts.body3medium.grey4,
+              style: AppFonts.body3medium.white,
             ),
           ],
         ),

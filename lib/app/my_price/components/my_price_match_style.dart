@@ -6,9 +6,9 @@ Color matchCardColor(MyPriceOrderMeta? meta, Color fallback) {
   if (meta == null || !meta.matched) return fallback;
   switch (meta.tone) {
     case 'agreed':
-      return const Color(0xFFB8E8C8);
+      return const Color.fromARGB(52, 0, 255, 166);
     case 'declined':
-      return const Color(0xFFFFD0C8);
+      return const Color.fromARGB(81, 255, 65, 112);
     default:
       return fallback;
   }
@@ -18,9 +18,9 @@ Color matchBorderColor(MyPriceOrderMeta? meta, Color fallback) {
   if (meta == null || !meta.matched) return fallback;
   switch (meta.tone) {
     case 'agreed':
-      return AppColors.mainGreen;
+      return AppColors.matchCardBorderAgreed;
     case 'declined':
-      return AppColors.red;
+      return AppColors.matchCardBorderDeclined;
     default:
       return fallback;
   }

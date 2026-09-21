@@ -1,3 +1,4 @@
+import 'package:agro/ui/app_components/appbar_with_back.dart';
 import 'package:agro/ui/app_components/block_page_screen.dart';
 import 'package:agro/app/profile/tariffs/tariff_item.dart';
 import 'package:agro/app/profile/tariffs/tariffs_controller.dart';
@@ -38,44 +39,39 @@ class TariffsScreenState extends State<TariffsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlockPageScreen(
-        headerSize: 20,
-        headerColor: AppColors.black,
-        topbarColor: AppColors.white,
-        header: context.l.tariffs,
-        isBack: true,
-        theme:
-            SystemUiOverlayStyle.dark.copyWith(statusBarColor: AppColors.white),
-        onPressedReturn: () {
-          tariffsController.onBack(context);
-        },
-        child: Column(
-          children: [
-            Expanded(
-                child: PageView(
-                    controller: _pageViewController,
-                    onPageChanged: (int page) {
-                      tariffsController.onPageChanged(page);
-                    },
-                    children: [
-                  ...tariffsController.tariffs.asMap().entries.map((entry) {
-                    int index = entry.key;
-                    ModelTariff item = entry.value;
-                    return TariffItem(
-                      modelTariff: item,
-                      isMyTariff:
-                          getMyLabelVisible(index, tariffsController.tariff),
-                    );
-                  }).toList(),
-                ])),
-            const SizedBox(height: 10),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _buildPageIndicator(),
-            ),
-            const SizedBox(height: 20),
-            /*      SizedBox(
+    return SafeArea(
+        child: Scaffold(
+            backgroundColor: AppColors.backgroundGradient1,
+            body: Column(
+              children: [
+                appBarBack(
+                  context.l.tariffs,
+                ),
+                Expanded(
+                    child: PageView(
+                        controller: _pageViewController,
+                        onPageChanged: (int page) {
+                          tariffsController.onPageChanged(page);
+                        },
+                        children: [
+                      ...tariffsController.tariffs.asMap().entries.map((entry) {
+                        int index = entry.key;
+                        ModelTariff item = entry.value;
+                        return TariffItem(
+                          modelTariff: item,
+                          isMyTariff: getMyLabelVisible(
+                              index, tariffsController.tariff),
+                        );
+                      }).toList(),
+                    ])),
+                const SizedBox(height: 10),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: _buildPageIndicator(),
+                ),
+                const SizedBox(height: 20),
+                /*      SizedBox(
                 height: 60,
                 child: tariffsController.buyButtonVisible
                     ? bStyle(
@@ -91,9 +87,9 @@ class TariffsScreenState extends State<TariffsScreen>
                         })
                     : const SizedBox()),
                     */
-            const SizedBox(height: 30)
-          ],
-        ));
+                const SizedBox(height: 30)
+              ],
+            )));
   }
 
   Widget _indicator(bool isActive) {

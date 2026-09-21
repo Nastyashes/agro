@@ -1,12 +1,12 @@
 import 'dart:developer';
 
+import 'package:agro/app/bid_detail/components/launch_phone.dart';
+import 'package:agro/ui/app_components/bids_card_row.dart';
 import 'package:agro/ui/pop_up/banner_dialog.dart';
 import 'package:agro/ui/pop_up/inform_pop_up.dart';
-import 'package:agro/app/home/order/components/launch_phone.dart';
 import 'package:agro/app/my_price/components/my_price_match_style.dart';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/controllers/main_controler.dart';
-import 'package:agro/generated/assets.dart';
 import 'package:agro/model/enums.dart';
 import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:agro/model/new_models_bids/bids_contacts_model.dart';
@@ -24,7 +24,6 @@ import 'package:agro/vars/helper.dart';
 import 'package:agro/vars/trade_localizers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -83,14 +82,6 @@ class _BidListItemState extends State<BidListItem> {
         13 => OrderType.seeds,
         14 => OrderType.oil,
         _ => OrderType.unknown,
-      };
-
-  String? get _iconAsset => switch (_typeOrder) {
-        OrderType.dobriva => Assets.dobriva,
-        OrderType.oil => Assets.oil,
-        OrderType.seeds => Assets.seeds,
-        OrderType.zerno => Assets.zerno,
-        OrderType.unknown => null,
       };
 
   // =========================
@@ -322,9 +313,7 @@ class _BidListItemState extends State<BidListItem> {
       arguments: _bidItem.orderId,
     );
   }
-bool isSet(String? value) {
-  return value != null && value.trim().isNotEmpty;
-}
+
   void _onLaunchPhone(
     BuildContext context,
     String phone,
@@ -361,7 +350,7 @@ bool isSet(String? value) {
             color: matchCardColor(
               _bidItem.myPrice,
               widget.isFresh
-                  ? AppColors.backgroundFreshCand
+                  ? AppColors.backgroundFreshCand.withValues(alpha: 0.1)
                   : AppColors.backgroundOrderCard,
             ),
             borderRadius: BorderRadius.circular(24),
@@ -369,7 +358,7 @@ bool isSet(String? value) {
               color: matchBorderColor(
                 _bidItem.myPrice,
                 widget.isFresh
-                    ? AppColors.borderFreshCand
+                    ? AppColors.borderFreshCand.withValues(alpha: 0.7)
                     : AppColors.borderOrderCard,
               ),
             ),
@@ -386,13 +375,13 @@ bool isSet(String? value) {
                 // HEADER
                 // =========================
                 Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.only(bottom: 3),
                     child: Row(children: [
                       Expanded(
                         child: readText(
                           text:
                               '${context.l.product}: ${_bidItem.productTitle ?? '—'}',
-                          style: AppFonts.body1bold.black,
+                          style: AppFonts.title2.grey2,
                         ),
                       ),
                       if (_bidItem.myPrice?.matched == true &&
@@ -436,11 +425,7 @@ bool isSet(String? value) {
 
                 orderInfo(
                   header: context.l.formOfPayment,
-                  text: _bidItem.ordPaymentType == 1
-                      ? context.l.paymentFormF1
-                      : _bidItem.ordPaymentType == 2
-                          ? context.l.paymentFormF2
-                          : context.l.allPaymentForm,
+                  text: _paymentForm(context),
                 ),
                 orderInfo(
                   header: context.l.typeOfDelivery,
@@ -458,7 +443,7 @@ bool isSet(String? value) {
                           text:
                               '${context.l.applicationNo} ${_bidItem.orderId} '
                               '${context.l.from} ${_bidItem.orderCreatedHum}',
-                          style: AppFonts.body1medium.black,
+                          style: AppFonts.body1medium.grey2,
                         ),
                       ),
                       if (showCopy)
@@ -467,11 +452,7 @@ bool isSet(String? value) {
                           child: BTransparentScalableButton(
                             onPressed: () {
                               Clipboard.setData(
-                                ClipboardData(
-                                  text:
-                                      '${context.l.applicationNo} ${_bidItem.orderId}\n'
-                                      '${context.l.from} ${_bidItem.orderCreatedHum}',
-                                ),
+                                ClipboardData(text: _toText(context)),
                               );
 
                               inAppNotification(
@@ -496,60 +477,68 @@ bool isSet(String? value) {
 
                 if (_bidItem.isOpened && _bidItem.openedPhon != null)
                   _contactWidget(context)
-                else
-                  _contactButton(context),
+               ,
 
                 // =========================
                 // CARRIER
                 // =========================
 
-                if (_bidItem.isOpened)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Container(
-                      clipBehavior: Clip.hardEdge,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: bStyle(
-                        text: orderingCarrier
-                            ? context.l.orderingCarrier
-                            : carrierOrdered
-                                ? context.l.carrierOrdered
-                                : context.l.bookCarrier,
-                        c: context,
-                        vertical: 15,
-                        active: !orderingCarrier && !carrierOrdered,
-                        colorButt: !orderingCarrier && !carrierOrdered
-                            ? AppColors.mainGreen
-                            : AppColors.greyGreen,
-                        onPressed: () {
-                          if (orderingCarrier || carrierOrdered) {
-                            return;
-                          }
+                const SizedBox(height: 12),
+                Row(
+                  spacing: 8,
+                  children: [
+                    if (_bidItem.isOpened)
+                      Expanded(
+                        child: Container(
+                          clipBehavior: Clip.hardEdge,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: bStyle(
+                            text: context.l.logistician,
+                            c: context,
+                            vertical: 12,
+                            active: !orderingCarrier && !carrierOrdered,
+                            colorButt: !orderingCarrier && !carrierOrdered
+                                ? AppColors.mainGreen
+                                : AppColors.greyGreen,
+                            onPressed: () {
+                              if (orderingCarrier || carrierOrdered) {
+                                return;
+                              }
 
-                          onOrderCarrier(context);
-                        },
+                              onOrderCarrier(context);
+                            },
+                          ),
+                        ),
+                      )
+                    else
+                      Expanded(child: _contactButton(context)),
+                    Expanded(
+                      child: bStyle(
+
+                        text: context.l.additionally,
+                        c: context,
+                        colorText: widget.isFresh
+                            ? AppColors.dobriva
+                            : AppColors.yellow,
+                        vertical: 12,
+                        border: Border.all(
+                          color: widget.isFresh
+                              ? AppColors.dobriva
+                              : AppColors.yellow,
+                          width: 1.5,
+                        ),
+                        colorButt: widget.isFresh
+                            ? AppColors.backgroundFreshCand
+                            : AppColors.backgroundOrderCard,
+                        onPressed: () => widget.onPressed(
+                          model: _bidItem,
+                        ),
                       ),
-                    ),
-                  ),
-                   const SizedBox(height: 12),
-                bStyle(
-                  text: context.l.additionally,
-                  c: context,
-                  colorText: AppColors.darkGreen,
-                  vertical: 15,
-                  border: Border.all(
-                    color: widget.isFresh ? AppColors.dobriva : AppColors.zerno,
-                    width: 1.5,
-                  ),
-                  colorButt: widget.isFresh
-                      ? AppColors.backgroundFreshCand
-                      : AppColors.backgroundOrderCard,
-                  onPressed: () => widget.onPressed(
-                    model: _bidItem,
-                  ),
-                ),
+                    )
+                  ],
+                )
               ],
             ),
           ),
@@ -580,31 +569,46 @@ bool isSet(String? value) {
                 vertical: 12,
               ),
               decoration: BoxDecoration(
-                color: AppColors.accentCardGreen,
+                color:
+                 AppColors.mainGreen.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
-               
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-               if   (isSet(_bidItem.fermerName))
-                  orderInfo(header:  context.l.fullName, text: _bidItem.fermerName ?? '', ),
-
-   if   (isSet(_bidItem.fermerCompany))
-                  orderInfo(header:  context.l.company, text: _bidItem.fermerCompany ?? '', ),
-   if   (isSet(_bidItem.contacts?.district))
-                  orderInfo(header:  context.l.district, text: _bidItem.contacts?.district ?? '',),
-   if   (isSet(_bidItem.contacts?.city))
-                  orderInfo(header:  context.l.town, text: _bidItem.contacts?.city ?? '',),
- if   (isSet(_bidItem.contacts?.addr))
-                  orderInfo(header:  context.l.address, text: _bidItem.contacts?.addr ?? '',),
- if   (isSet(_bidItem.contacts?.phone ))
-                  orderInfo(header:  context.l.phone, text: _bidItem.contacts?.phone ?? '',),
-
+                  if (isSet(_bidItem.fermerName))
+                    orderInfo(
+                      header: context.l.fullName,
+                      text: _bidItem.fermerName ?? '',
+                    ),
+                  if (isSet(_bidItem.fermerCompany))
+                    orderInfo(
+                      header: context.l.company,
+                      text: _bidItem.fermerCompany ?? '',
+                    ),
+                  if (isSet(_bidItem.contacts?.district))
+                    orderInfo(
+                      header: context.l.district,
+                      text: _bidItem.contacts?.district ?? '',
+                    ),
+                  if (isSet(_bidItem.contacts?.city))
+                    orderInfo(
+                      header: context.l.town,
+                      text: _bidItem.contacts?.city ?? '',
+                    ),
+                  if (isSet(_bidItem.contacts?.addr))
+                    orderInfo(
+                      header: context.l.address,
+                      text: _bidItem.contacts?.addr ?? '',
+                    ),
+                  if (isSet(_bidItem.contacts?.phone))
+                    orderInfo(
+                      header: context.l.phone,
+                      text: _bidItem.contacts?.phone ?? '',
+                    ),
                 ],
               ),
             ),
-            
           ],
         ),
       ),
@@ -614,6 +618,73 @@ bool isSet(String? value) {
   // =========================
   // CONTACT BUTTON
   // =========================
+
+  String _paymentForm(BuildContext context) {
+    if (_bidItem.ordPaymentType == 1) return context.l.paymentFormF1;
+    if (_bidItem.ordPaymentType == 2) return context.l.paymentFormF2;
+    return context.l.allPaymentForm;
+  }
+
+  String _toText(BuildContext context) {
+    final lines = <String>[
+      '${context.l.product}: ${_bidItem.productTitle ?? '—'}',
+    ];
+
+    if (_bidItem.myPrice?.matched == true &&
+        _bidItem.myPrice!.badge.isNotEmpty) {
+      lines.add(_bidItem.myPrice!.badge);
+    }
+    if (isSet(_bidItem.dayLabel)) {
+      lines.add(_bidItem.dayLabel!);
+    }
+    if (_bidItem.myPrice?.matched == true &&
+        _bidItem.myPrice!.responseLabel.isNotEmpty) {
+      lines.add(_bidItem.myPrice!.responseLabel);
+    }
+
+    void addRow(String header, String text) {
+      lines.add('$header: $text');
+    }
+
+    addRow(
+      context.l.volume,
+      '${_bidItem.amount ?? '—'} ${context.l.amountTypeTon}',
+    );
+    addRow(context.l.harvestYear, '${_bidItem.year ?? '—'}');
+    addRow(context.l.region, _bidItem.regionName ?? '—');
+    addRow(context.l.formOfPayment, _paymentForm(context));
+    addRow(
+      context.l.typeOfDelivery,
+      localizeDeliveryType(_bidItem.deliveryType ?? '-', context),
+    );
+    lines.add(
+      '${context.l.applicationNo} ${_bidItem.orderId} '
+      '${context.l.from} ${_bidItem.orderCreatedHum ?? ''}',
+    );
+
+    if (_bidItem.isOpened && _bidItem.openedPhon != null) {
+      if (isSet(_bidItem.fermerName)) {
+        addRow(context.l.fullName, _bidItem.fermerName!);
+      }
+      if (isSet(_bidItem.fermerCompany)) {
+        addRow(context.l.company, _bidItem.fermerCompany!);
+      }
+      if (isSet(_bidItem.contacts?.district)) {
+        addRow(context.l.district, _bidItem.contacts!.district!);
+      }
+      if (isSet(_bidItem.contacts?.city)) {
+        addRow(context.l.town, _bidItem.contacts!.city!);
+      }
+      if (isSet(_bidItem.contacts?.addr)) {
+        addRow(context.l.address, _bidItem.contacts!.addr!);
+      }
+      if (isSet(_bidItem.contacts?.phone)) {
+        addRow(context.l.phone, _bidItem.contacts!.phone!);
+      }
+    }
+
+    return lines.join('\n');
+  }
 
   Widget _contactButton(BuildContext context) {
     return Padding(
@@ -633,38 +704,11 @@ bool isSet(String? value) {
                   c: context,
                   colorText: AppColors.white,
                   vertical: 15,
-                  colorButt: AppColors.mainGreen.withAlpha(
-                    (0.7 * 255).round(),
-                  ),
+                  colorButt: AppColors.mainGreen,
                   onPressed: () => _onContactClick(context),
                 ),
-               
               ],
             ),
-    );
-  }
-
-  Widget orderInfo({
-    required String header,
-    required String text,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          readText(
-            text: header,
-            style: AppFonts.body4semibold.grey4,
-          ),
-          const Spacer(),
-        Expanded(child:   readText(
-            text: text,
-            align: TextAlign.right,
-            style: AppFonts.body4medium.black,
-          )),
-        ],
-      ),
     );
   }
 }

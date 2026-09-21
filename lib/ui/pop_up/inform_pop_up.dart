@@ -8,7 +8,7 @@ void showInformPoUp(BuildContext context, String? title, String? description,) {
     context: context,
     builder: (context) {
       return Dialog(
-        backgroundColor: AppColors.grey1,
+        backgroundColor: AppColors.backgroundGradient1,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -20,13 +20,13 @@ void showInformPoUp(BuildContext context, String? title, String? description,) {
             children: [
               /// HEADER
               
-                  Text(title ?? '', style: AppFonts.body1medium.black),
+                  Text(title ?? '', style: AppFonts.body1medium.white),
                 
                 
 
               const SizedBox(height: 20),
 
-              Text(description ?? '', style: AppFonts.body1medium.black),
+              Text(description ?? '', style: AppFonts.body1medium.white),
               const SizedBox(height: 20),
 
               /// BUTTON

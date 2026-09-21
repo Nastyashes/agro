@@ -1,7 +1,8 @@
+import 'package:agro/ui/app_components/empty_list_widget.dart';
 import 'package:agro/ui/pop_up/top_up_balance_popup.dart';
 import 'package:agro/app/new_home_screen/drawer/app_menu_drawer.dart';
-import 'package:agro/app/home/banner/banner_in_list.dart';
-import 'package:agro/app/home/bids_pages/bid_list_item.dart';
+import 'package:agro/app/new_home_screen/banner_in_list.dart';
+import 'package:agro/app/new_home_screen/drawer/bid_list_item.dart';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/app/new_home_screen/new_menu_header.dart';
 import 'package:agro/app/profile/components/account_session_actions.dart';
@@ -13,7 +14,6 @@ import 'package:agro/routes/app_pages.dart';
 import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/app_components/complete_widget.dart';
 import 'package:agro/ui/load/footer_load.dart';
-import 'package:agro/ui/text_field/text_field.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/app_constants.dart';
@@ -146,7 +146,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
               // =========================
 
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
                 child: Row(
                   children: [
                     Expanded(
@@ -155,7 +155,11 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                           return NewHomeHeader(
                             baslance: controller.balance,
                             tariff: controller.mainController.tariff,
-                            onTabTopUp: _showTopUp,
+                            isSearchOpen: controller.isSearchOpen,
+                            searchController: controller.searchController,
+                            searchFocusNode: controller.searchFocusNode,
+                            onToggleSearch: controller.toggleSearch,
+                            onSearchChanged: (_) => controller.onSearch(),
                             onPressed: () {
                               Scaffold.of(drawerContext).openDrawer();
                             },
@@ -171,7 +175,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
               // SEARCH
               // only All applications
               // =========================
-              const SizedBox(height: 8),
+             const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: _HomeTabs(
@@ -181,27 +185,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                   onChanged: controller.selectTab,
                 ),
               ),
-              const SizedBox(height: 8),
-
-              if (controller.selectedTab == NewHomeTab.all)
-                TextFieldWidget(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(
-                    color: AppColors.transparent,
-                  ),
-                  text: context.l.search,
-                  height: 54,
-                  textStyle: AppFonts.body2medium.black,
-                  hintStyle: AppFonts.body1medium.grey4,
-                  openKeyboardAuto: true,
-                  colorBg: AppColors.grey3.withValues(alpha: 0.3),
-                  controller: controller.searchController,
-                  onChanged: (_) => controller.onSearch(),
-                ),
-
-              if (controller.selectedTab == NewHomeTab.all)
-                const SizedBox.shrink(),
+      //        const SizedBox(height: 8),
 
               // =========================
               // CONTENT
@@ -287,9 +271,9 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
               bottom: 24,
             ),
             children: controller.bidsFresh.isEmpty
-                ? [
-                    _EmptyFreshApplications(),
-                  ]
+                ? [ emptyListDefault(  context.l.noFreshApplications, AppColors.dobriva.withValues(alpha: 0.4),)]
+           //         _EmptyFreshApplications(),
+                  
                 : _buildBidWidgets(
                     controller.bidsFresh,
                     isFresh: true,
@@ -418,10 +402,10 @@ class _HomeTabs extends StatelessWidget {
     }
 
     return Container(
-      height: 54,
-      padding: const EdgeInsets.all(4),
+      height: 50,
+      padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
-        color: AppColors.grey1.withValues(alpha: 0.5),
+        color:  AppColors.mainGreen.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(100),
       ),
       child: Row(

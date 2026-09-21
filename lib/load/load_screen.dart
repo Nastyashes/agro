@@ -1,3 +1,4 @@
+import 'package:agro/ui/app_components/app_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,23 +11,17 @@ class LoadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
-        child: Scaffold(
-          backgroundColor: const Color(0xffEFEFEF),
-          body: Stack(
-            alignment: Alignment.topCenter,
-            children: [
-              Image.asset(Assets.startBg,
-                  fit: BoxFit.fill,
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height),
-              Align(
-                  alignment: Alignment.center,
-                  child: SvgPicture.asset(Assets.pictureLogo,
-                      width: MediaQuery.of(context).size.width / 1.4)),
-            ],
-          ),
+    return Scaffold(
+        backgroundColor: const Color(0xffEFEFEF),
+        body: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            const AppBackground(),
+            Align(
+                alignment: Alignment.center,
+                child: Image.asset(Assets.pictureLogo,
+                    width: MediaQuery.of(context).size.width / 1.4)),
+          ],
         ));
   }
 }
@@ -45,7 +40,10 @@ class AppCircularProgressIndicator extends StatelessWidget {
             width: size ?? 100,
             child: LoadingIndicator(
                 indicatorType: Indicator.ballSpinFadeLoader,
-                colors: [color ?? Colors.grey.shade300, color ?? Colors.grey.shade300],
+                colors: [
+                  color ?? Colors.grey.shade300,
+                  color ?? Colors.grey.shade300
+                ],
                 strokeWidth: 2,
                 backgroundColor: Colors.transparent,
                 pathBackgroundColor: Colors.transparent)));

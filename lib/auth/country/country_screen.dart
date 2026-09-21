@@ -41,14 +41,14 @@ class CountryScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(20),
-                child: SvgPicture.asset(Assets.pictureLogo,
+                child: Image.asset(Assets.pictureLogo,
                     width: MediaQuery.of(context).size.width / 1.2),
               ),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Text(
                   context.l.selectCountry,
-                  style: AppFonts.title1.darkGreen,
+                  style: AppFonts.title1.white,
                 ),
               ),
               for (final item in Country.values) ...[
@@ -57,10 +57,10 @@ class CountryScreen extends StatelessWidget {
                   child: bStyle(
                     text: item.label(context),
                     c: context,
-                    colorText: AppColors.additionalGreen,
+                    colorText: AppColors.mainGreen,
                     vertical: 15,
                     border:
-                        Border.all(color: AppColors.additionalGreen, width: 1),
+                        Border.all(color: AppColors.mainGreen, width: 1),
                     colorButt: Colors.transparent,
                     onPressed: () =>
                         _saveCountryAndCheckToken(context, item),

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../ui/buttons/b_transparent_scalable_button.dart';
+import '../../../ui/buttons/b_transparent_scalable_button.dart';
 
 class LaunchPhone extends StatelessWidget {
   final String? contact;
@@ -42,16 +42,14 @@ class LaunchPhone extends StatelessWidget {
             const SizedBox(width: 30),
             BTransparentScalableButton(
                 onPressed: () {
-                  openTelegram(
-                      phone: contact.toString(), context: context);
+                  openTelegram(phone: contact.toString(), context: context);
                 },
                 scale: ScaleFormat.small,
                 child: SvgPicture.asset(Assets.authTelegram, width: 50)),
             const SizedBox(width: 30),
             BTransparentScalableButton(
                 onPressed: () {
-                  openViber(
-                      phone: contact.toString(), context: context);
+                  openViber(phone: contact.toString(), context: context);
                 },
                 scale: ScaleFormat.small,
                 child: SvgPicture.asset(Assets.authViber, width: 50))
@@ -83,7 +81,7 @@ class LaunchPhone extends StatelessWidget {
     LaunchMode mode = LaunchMode.externalApplication,
   }) async {
     const String url = 'tg://msg';
-    final String errorTelegram= context.l.errorTelegram;
+    final String errorTelegram = context.l.errorTelegram;
 
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(
@@ -92,8 +90,7 @@ class LaunchPhone extends StatelessWidget {
       );
     } else {
       notification(
-        text:
-           errorTelegram,
+        text: errorTelegram,
       );
     }
   }
@@ -104,7 +101,7 @@ class LaunchPhone extends StatelessWidget {
     LaunchMode mode = LaunchMode.externalApplication,
   }) async {
     final String url = 'viber://chat?number=$phone';
-    final String errorViber= context.l.errorViber;
+    final String errorViber = context.l.errorViber;
 
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(
@@ -113,8 +110,7 @@ class LaunchPhone extends StatelessWidget {
       );
     } else {
       notification(
-        text:
-            errorViber,
+        text: errorViber,
       );
     }
   }

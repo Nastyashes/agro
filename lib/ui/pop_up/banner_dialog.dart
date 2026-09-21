@@ -86,10 +86,10 @@ class _AdBannerDialogState extends State<_AdBannerDialog> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: AppColors.white,
-          title: Text(context.l.closeBanner, style: AppFonts.body1medium.black),
+          backgroundColor: AppColors.backgroundGradient1,
+          title: Text(context.l.closeBanner, style: AppFonts.body1medium.white),
           content: Text(context.l.closeBannerDescr,
-              style: AppFonts.body2medium.black),
+              style: AppFonts.body2medium.white),
           actionsAlignment: MainAxisAlignment.spaceBetween,
           actions: [
             Row(
@@ -98,8 +98,8 @@ class _AdBannerDialogState extends State<_AdBannerDialog> {
                 Expanded(
                     child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
-                    disabledBackgroundColor: AppColors.grey2,
-                    backgroundColor: AppColors.white,
+                    disabledBackgroundColor: AppColors.black,
+                    backgroundColor: AppColors.backgroundGradient1,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 30,
                       vertical: 16,
@@ -107,13 +107,13 @@ class _AdBannerDialogState extends State<_AdBannerDialog> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100),
                       side: const BorderSide(
-                          color: AppColors.darkGreen, width: 1),
+                          color: AppColors.yellow, width: 1),
                     ),
                   ),
                   onPressed: () => Navigator.pop(context, false),
                   child: Text(
                     context.l.toStay,
-                    style: AppFonts.body2bold.black,
+                    style: AppFonts.body2bold.yellow,
                   ),
                 )),
                 const SizedBox(width: 10),
@@ -142,7 +142,7 @@ class _AdBannerDialogState extends State<_AdBannerDialog> {
             const SizedBox(height: 24),
             Text(
                 '${context.l.adsDisableOffer}${widget.price} ${context.l.adsDisableLater}',
-                style: AppFonts.body2medium.black),
+                style: AppFonts.body2medium.white),
             Padding(
                 padding: const EdgeInsets.all(12),
                 child: Container(

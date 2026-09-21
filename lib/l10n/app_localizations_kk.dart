@@ -78,6 +78,12 @@ class AppLocalizationsKk extends AppLocalizations {
   String get applicationNo => 'Қолданбасы №';
 
   @override
+  String get bidDetails => 'Өтінім мәліметтері';
+
+  @override
+  String get menuItemNew => ' (Жаңа)';
+
+  @override
   String get from => 'мынадан:';
 
   @override
@@ -696,6 +702,9 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get addCombine => 'Комбинация қосу';
+
+  @override
+  String get logistician => 'Логист';
 
   @override
   String get emptyReservations => 'Брондаулар жоқ';

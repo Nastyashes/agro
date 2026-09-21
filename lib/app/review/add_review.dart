@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:get/get.dart';
 
-import '../../../ui/buttons/button_styles.dart';
-import '../../../../ui/text_field/text_field.dart';
+import '../../ui/buttons/button_styles.dart';
+import '../../../ui/text_field/text_field.dart';
 import 'components/review_controller.dart';
 
 class AddReviewScreen extends StatefulWidget {

@@ -21,9 +21,12 @@ Future<bool> showMyPriceConfirmDialog({
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(title, style: AppFonts.body1bold.black, textAlign: TextAlign.center),
+              Text(title,
+                  style: AppFonts.body1bold.black, textAlign: TextAlign.center),
               const SizedBox(height: 16),
-              Text(body, style: AppFonts.body3medium.black, textAlign: TextAlign.center),
+              Text(body,
+                  style: AppFonts.body3medium.black,
+                  textAlign: TextAlign.center),
               const SizedBox(height: 20),
               Row(
                 children: [
@@ -60,6 +63,7 @@ Future<bool> showMyPriceConfirmDialog({
   );
   return result == true;
 }
+
 Future<T?> showMyPricePicker<T>({
   required BuildContext context,
   required String title,
@@ -71,7 +75,7 @@ Future<T?> showMyPricePicker<T>({
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: AppColors.white,
+    backgroundColor: AppColors.backgroundGradient1,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(
         top: Radius.circular(24),
@@ -92,8 +96,7 @@ Future<T?> showMyPricePicker<T>({
           final defaultMaxHeight = screenHeight * 0.8;
 
           // Реально доступне місце при відкритій клавіатурі.
-          final availableHeight =
-              screenHeight - keyboardHeight - topSafeArea;
+          final availableHeight = screenHeight - keyboardHeight - topSafeArea;
 
           // Sheet не повинен бути вищим за доступну область.
           final maxSheetHeight = defaultMaxHeight < availableHeight
@@ -122,7 +125,6 @@ Future<T?> showMyPricePicker<T>({
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const SizedBox(height: 6),
-
                   Container(
                     height: 4,
                     width: 50,
@@ -131,7 +133,6 @@ Future<T?> showMyPricePicker<T>({
                       borderRadius: BorderRadius.circular(60),
                     ),
                   ),
-
                   Padding(
                     padding: const EdgeInsets.fromLTRB(
                       16,
@@ -141,10 +142,9 @@ Future<T?> showMyPricePicker<T>({
                     ),
                     child: Text(
                       title,
-                      style: AppFonts.body1bold.black,
+                      style: AppFonts.body1bold.white,
                     ),
                   ),
-
                   if (enableSearch)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(
@@ -159,10 +159,15 @@ Future<T?> showMyPricePicker<T>({
                           hintText: context.l.search,
                           prefixIcon: const Icon(Icons.search),
                           filled: true,
-                          fillColor: AppColors.grey1,
+                          focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(28),
+                              borderSide: BorderSide(
+                                  color: AppColors.mainGreen, width: 1.5)),
+                          fillColor: AppColors.backgroundGradient1,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(28),
-                            borderSide: BorderSide.none,
+                            borderSide: BorderSide(
+                                color: AppColors.backgroundOrderCard),
                           ),
                         ),
                         onChanged: (value) {
@@ -170,14 +175,13 @@ Future<T?> showMyPricePicker<T>({
                         },
                       ),
                     ),
-
                   Flexible(
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: filtered.length,
-                      separatorBuilder: (_, __) => const Divider(
+                      separatorBuilder: (_, __) =>  Divider(
                         height: 1,
-                        color: AppColors.grey2,
+                        color: AppColors.mainGreen.withValues(alpha: 0.1),
                       ),
                       itemBuilder: (_, index) {
                         final item = filtered[index];
@@ -188,7 +192,7 @@ Future<T?> showMyPricePicker<T>({
                           ),
                           title: Text(
                             label(item),
-                            style: AppFonts.body2medium.black,
+                            style: AppFonts.body2medium.white,
                           ),
                           onTap: () {
                             Navigator.pop(
@@ -200,7 +204,6 @@ Future<T?> showMyPricePicker<T>({
                       },
                     ),
                   ),
-
                   const SizedBox(height: 16),
                 ],
               ),

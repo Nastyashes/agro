@@ -10,7 +10,7 @@ void showConfirmPoUp(BuildContext context, String? title, String? description,
     context: context,
     builder: (context) {
       return Dialog(
-        backgroundColor: AppColors.grey1,
+        backgroundColor: AppColors.backgroundGradient1,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
@@ -33,14 +33,14 @@ void showConfirmPoUp(BuildContext context, String? title, String? description,
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [ 
-                  Text(title ?? '', style: AppFonts.title2.black),
+                  Text(title ?? '', style: AppFonts.title2.white),
                
 
               const SizedBox(height: 20),
 
               Text(description ?? '',
                   textAlign: TextAlign.center,
-                  style: AppFonts.body1medium.black),
+                  style: AppFonts.body1medium.white),
               const SizedBox(height: 20),
 
               /// BUTTON
@@ -50,13 +50,13 @@ void showConfirmPoUp(BuildContext context, String? title, String? description,
                     child: ElevatedButton(
                       style: OutlinedButton.styleFrom(
                         disabledBackgroundColor: AppColors.additionalGreen,
-                        backgroundColor: AppColors.grey1,
+                        backgroundColor: AppColors.backgroundGradient1,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 30,
                           vertical: 16,
                         ),
                         shape: RoundedRectangleBorder(
-                          side: const BorderSide(color: AppColors.mainGreen),
+                          side: const BorderSide(color: AppColors.yellow),
                           borderRadius: BorderRadius.circular(100),
                         ),
                       ),
@@ -66,7 +66,7 @@ void showConfirmPoUp(BuildContext context, String? title, String? description,
                       child: Text(
                         context.l.cancel,
                         style: AppFonts.body2bold.copyWith(
-                          color: AppColors.mainGreen,
+                          color: AppColors.yellow,
                         ),
                       ),
                     ),

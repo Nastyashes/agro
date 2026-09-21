@@ -23,7 +23,7 @@ void showTopUpDialog(BuildContext context, int? balance,
           }
 
           return Dialog(
-            backgroundColor: AppColors.grey1,
+            backgroundColor: AppColors.backgroundGradient1,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
@@ -38,7 +38,7 @@ void showTopUpDialog(BuildContext context, int? balance,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(context.l.topUpBalance,
-                          style: AppFonts.body1medium.black),
+                          style: AppFonts.body1medium.white),
                       IconButton(
                         icon: const Icon(Icons.close),
                         onPressed: () => Navigator.pop(context),
@@ -59,15 +59,15 @@ void showTopUpDialog(BuildContext context, int? balance,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           decoration: BoxDecoration(
                             color: selectedAmount == amount
-                                ? Colors.green.withOpacity(0.15)
-                                : Colors.grey[200],
+                                ? AppColors.backgroundGradient3
+                                : AppColors.backgroundGradient1,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           alignment: Alignment.center,
                           child: Text(context.uahAmount(amount),
                               style: selectedAmount == amount
-                                  ? AppFonts.body2medium.darkGreen
-                                  : AppFonts.body2medium.grey4),
+                                  ? AppFonts.body2medium.white
+                                  : AppFonts.body2medium.grey3),
                         ),
                       );
                     }).toList(),
@@ -76,7 +76,7 @@ void showTopUpDialog(BuildContext context, int? balance,
                   const SizedBox(height: 20),
 
                   /// INPUT LABEL
-                  Text(context.l.orInputSum, style: AppFonts.body3medium.black),
+                  Text(context.l.orInputSum, style: AppFonts.body3medium.white),
 
                   const SizedBox(height: 10),
 
@@ -84,13 +84,13 @@ void showTopUpDialog(BuildContext context, int? balance,
                   TextFieldWidget(
                     padding: const EdgeInsets.only(bottom: 12),
                     borderRadius: BorderRadius.circular(100),
-                    border: Border.all(color: AppColors.grey2),
+                    border: Border.all(color: AppColors.mainGreen),
                     text: context.l.sum,
                     height: 54,
-                    textStyle: AppFonts.body1medium.black,
+                    textStyle: AppFonts.body1medium.white,
                     hintStyle: AppFonts.body1medium.grey3,
                     openKeyboardAuto: false,
-                    colorBg: AppColors.grey1,
+                    colorBg: AppColors.backgroundGradient1,
                     controller: controller,
                     onChanged: (value) {
                       setState(() {

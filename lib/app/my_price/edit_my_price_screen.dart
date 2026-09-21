@@ -46,14 +46,13 @@ class _EditMyPriceScreenState extends State<EditMyPriceScreen> {
           SafeArea(
               child: Column(
             children: [
-                appBarBack(
-                      l.editCombination,
-                    ),
+              appBarBack(
+                l.editCombination,
+              ),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                   children: [
-                  
                     const SizedBox(height: 8),
                     _readOnly(
                         l.productLabel, overview.productName(entry), true),
@@ -65,19 +64,20 @@ class _EditMyPriceScreenState extends State<EditMyPriceScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(l.enterPricePerTon,
-                                style: AppFonts.body2medium.black),
+                                style: AppFonts.body2medium.white),
                             const SizedBox(height: 6),
                             TextFieldWidget(
+                              textStyle: AppFonts.body2medium.white,
                               controller: controller.priceController,
                               height: 56,
-                              colorBg: AppColors.white,
+                              colorBg: AppColors.backgroundGradient1,
                               keyboardType:
                                   const TextInputType.numberWithOptions(
                                 decimal: true,
                               ),
                               borderRadius: BorderRadius.circular(28),
                               border:
-                                  Border.all(color: AppColors.additionalGreen),
+                                  Border.all(color: AppColors.myPriceCardBg),
                               padding: EdgeInsets.zero,
                             )
                           ]),
@@ -108,7 +108,7 @@ class _EditMyPriceScreenState extends State<EditMyPriceScreen> {
                     bStyle(
                       text: l.saveChanges,
                       c: context,
-                      vertical: 16,
+                      vertical: 12,
                       onPressed: controller.onSave,
                     ),
                   ],
@@ -127,20 +127,20 @@ class _EditMyPriceScreenState extends State<EditMyPriceScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: AppFonts.body2medium.black),
+          Text(label, style: AppFonts.body2medium.white),
           const SizedBox(height: 6),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: AppColors.backgroundGradient1,
               borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: AppColors.additionalGreen),
+              border: Border.all(color: AppColors.myPriceCardBg, width: 1.5),
             ),
             child: Text(value,
                 style: isOnlyRead
                     ? AppFonts.body2medium.grey3
-                    : AppFonts.body2medium.black),
+                    : AppFonts.body2medium.white),
           ),
         ],
       ),

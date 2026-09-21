@@ -162,7 +162,7 @@ Widget bStyle({
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(
-              vertical: vertical ?? 16,
+              vertical: vertical ?? 12,
               horizontal: spacerActive ? 20 : 0,
             ),
             child: Row(

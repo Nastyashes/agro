@@ -21,6 +21,8 @@ class MyPriceApi extends Api {
       final rawBody = await request.stream.bytesToString();
       final jsonData = json.decode(rawBody);
       checkAuth(jsonData);
+      log('MyPriceApi $method formData=$formData');
+      log('MyPriceApi $method raw=$jsonData');
       return MyPriceResult<T>.fromJson(jsonData, parse: parse);
     } catch (e, stackTrace) {
       log(

@@ -48,8 +48,7 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
           SafeArea(
             child: Column(
               children: [
-                  appBarBack( l.createCombinationTitle),
-        
+                appBarBack(l.createCombinationTitle),
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
@@ -81,7 +80,7 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
                         error: controller.fieldErrors['product_id'] != null,
                       ),
                       _selectField(
-                         l.selectRegion,
+                        l.selectRegion,
                         controller.overview.nameOf(
                                   controller.overview.regions,
                                   controller.regionId,
@@ -105,13 +104,11 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
                         },
                         error: controller.fieldErrors['region_id'] != null,
                       ),
-                  
                       _selectField(
                         l.paymentForm,
                         controller.paymentType == null
                             ? ''
-                            : 
-                            controller.overview.nameOf(
+                            : controller.overview.nameOf(
                                 controller.overview.paymentTypes,
                                 controller.paymentType,
                               ),
@@ -129,7 +126,7 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
                         },
                         error: controller.fieldErrors['payment_type'] != null,
                       ),
-                          _selectField(
+                      _selectField(
                         l.enterPricePerTon,
                         null,
                         null,
@@ -140,11 +137,10 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
                         error: controller.fieldErrors['price_per_ton'] != null,
                       ),
                       _selectField(
-                      l.contactPerson,
+                        l.contactPerson,
                         controller.teamUserId == null
-                           ? ''
-                           : 
-                            controller.overview.team
+                            ? ''
+                            : controller.overview.team
                                 .firstWhere(
                                   (e) => e.id == controller.teamUserId,
                                   orElse: () => const MyPriceTeamMember(),
@@ -196,7 +192,7 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
     bool error = false,
   }) {
     final border = Border.all(
-      color: error ? AppColors.red : AppColors.additionalGreen,
+      color: error ? AppColors.red : AppColors.myPriceCardBg,
     );
     if (controller != null) {
       return Column(
@@ -205,16 +201,17 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: Text(hint, style: AppFonts.body2medium.black),
+              child: Text(hint, style: AppFonts.body2medium.white),
             ),
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: TextFieldWidget(
+                textStyle: AppFonts.body2medium.white,
                 controller: controller,
                 text: value ?? hint,
                 height: 56,
-                hintStyle: AppFonts.body2medium.grey3,
-                colorBg: AppColors.white,
+                hintStyle: AppFonts.body2medium.grey4,
+                colorBg: AppColors.backgroundGradient1,
                 border: border,
                 borderRadius: BorderRadius.circular(28),
                 keyboardType: keyboardType,
@@ -229,7 +226,7 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 4),
-          child: Text(hint, style: AppFonts.body2medium.black),
+          child: Text(hint, style: AppFonts.body2medium.white),
         ),
         Padding(
           padding: const EdgeInsets.only(bottom: 16),
@@ -240,14 +237,14 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
               alignment: Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               decoration: BoxDecoration(
-                color: AppColors.white,
+                color: AppColors.backgroundGradient1,
                 borderRadius: BorderRadius.circular(28),
                 border: border,
               ),
-              child: Text((value != null && value.isNotEmpty) ?value : hint,
+              child: Text((value != null && value.isNotEmpty) ? value : hint,
                   style: (value != null && value.isNotEmpty)
-                      ? AppFonts.body2medium.black
-                      : AppFonts.body2medium.grey3),
+                      ? AppFonts.body2medium.white
+                      : AppFonts.body2medium.grey4),
             ),
           ),
         ),

@@ -9,10 +9,10 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 import 'package:agro/controllers/abstract/from_controller.dart';
-import '../../../../controllers/app_input_controller.dart';
-import '../../../../model/model_review/model_review.dart';
-import '../../../../ui/local_notification/local_notification.dart';
-import '../../../../vars/model_notifier/user_notifier/user_notifier.dart';
+import '../../../controllers/app_input_controller.dart';
+import '../../../model/model_review/model_review.dart';
+import '../../../ui/local_notification/local_notification.dart';
+import '../../../vars/model_notifier/user_notifier/user_notifier.dart';
 import '../add_review.dart';
 
 class ReviewController extends FormController {

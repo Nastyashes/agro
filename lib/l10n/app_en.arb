@@ -21,6 +21,8 @@
   "supportTeamText": "Thank you for contacting our support team! We are ready to assist you with any questions or problems you encounter.\n\nContact us through our communication channels in Telegram or Viber.\nOur experts will respond quickly to your messages and provide professional assistance as soon as possible.\n",
   "read": "Read",
   "applicationNo": "Application No.",
+  "bidDetails": "Application details",
+  "menuItemNew": " (New)",
   "from": "from:",
   "expired": "Expired",
   "copiedToClipboard": "Order data copied to clipboard",
@@ -234,7 +236,7 @@
     "edit": "Edit",
 "willTakeEffect": "Will take effect",
   "saveChanges": "Save",
-
+"logistician": "Logistic",
   "myPriceEmpty": "You haven't created any \"My Price\" combinations yet. Tap \"Add combination\" to get started",
   "contactPerson": "Contact person",
   "addCombine": "Add combination",

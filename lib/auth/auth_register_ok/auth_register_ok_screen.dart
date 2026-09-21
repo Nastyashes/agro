@@ -1,3 +1,4 @@
+import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +21,7 @@ class AuthRegisterOkScreen extends StatelessWidget {
         value: SystemUiOverlayStyle.dark,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: const Color(0xffEFEFEF),
+          backgroundColor: AppColors.backgroundGradient1,
           body: SafeArea(
             bottom: false,
             child: Stack(
@@ -30,11 +31,11 @@ class AuthRegisterOkScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    Padding(padding: const EdgeInsets.only(top: 25), child: Center(child: SvgPicture.asset(Assets.pictureLogo, width: MediaQuery.of(context).size.width / 1.4))),
+                    Padding(padding: const EdgeInsets.only(top: 25), child: Center(child: Image.asset(Assets.pictureLogo, width: MediaQuery.of(context).size.width / 1.4))),
                     const Spacer(),
                     Container(
                         width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(color: const Color(0xffF8F8F8), borderRadius: BorderRadius.circular(10)),
+                        decoration: BoxDecoration(color: AppColors.backgroundGradient1, borderRadius: BorderRadius.circular(10)),
                         child: Padding(
                           padding: const EdgeInsets.all(15),
                           child: Column(crossAxisAlignment: CrossAxisAlignment.center, mainAxisAlignment: MainAxisAlignment.center, children: [

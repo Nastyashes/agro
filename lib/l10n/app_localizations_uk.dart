@@ -78,6 +78,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get applicationNo => 'Заявка №';
 
   @override
+  String get bidDetails => 'Деталі заявки';
+
+  @override
+  String get menuItemNew => ' (Нове)';
+
+  @override
   String get from => 'від:';
 
   @override
@@ -694,6 +700,9 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get addCombine => 'Додати комбінацію';
+
+  @override
+  String get logistician => 'Логіст';
 
   @override
   String get emptyReservations => 'Немає бронювань';

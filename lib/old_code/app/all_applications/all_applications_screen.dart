@@ -1,8 +1,8 @@
+import 'package:agro/app/new_home_screen/drawer/bid_list_item.dart';
 import 'package:agro/old_code/app/all_applications/all_applications_controller.dart';
-import 'package:agro/app/home/banner/banner_in_list.dart';
+import 'package:agro/app/new_home_screen/banner/banner_in_list.dart';
 
 import 'package:agro/old_code/app/home/components/block_order_unified.dart';
-import 'package:agro/app/home/bids_pages/bid_list_item.dart';
 import 'package:agro/model/answer/answer.dart';
 import 'package:agro/model/enums.dart';
 import 'package:agro/ui/theme/colors.dart';

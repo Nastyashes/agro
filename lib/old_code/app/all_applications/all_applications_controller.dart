@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:agro/app/bids_pages/components/launch_phone.dart';
 import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:get/get.dart';
 import 'package:agro/routes/app_pages.dart';
@@ -7,7 +8,6 @@ import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/model/model_order/application.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:agro/app/home/order/components/launch_phone.dart';
 import 'package:agro/model/model_order/model_contact.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/tariff/tariff.dart';

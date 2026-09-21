@@ -1,9 +1,9 @@
 import 'dart:developer';
 
+import 'package:agro/app/home/order/components/set_answer.dart.dart';
 import 'package:agro/ui/pop_up/banner_dialog.dart';
 import 'package:agro/ui/pop_up/inform_pop_up.dart';
-import 'package:agro/app/home/order/components/launch_phone.dart';
-import 'package:agro/app/home/order/components/set_answer.dart.dart';
+import 'package:agro/app/bid_detail/components/launch_phone.dart';
 import 'package:agro/app/my_price/components/my_price_dialogs.dart';
 import 'package:agro/app/my_price/components/my_price_error.dart';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
@@ -36,7 +36,7 @@ class BidItemController extends BaseController {
   bool isProcessingContact = false;
 
   final _localStorageRepository = LocalStorageRepository();
-    NewHomeController? get _homeController =>
+  NewHomeController? get _homeController =>
       Get.isRegistered<NewHomeController>()
           ? Get.find<NewHomeController>()
           : null;
@@ -89,116 +89,116 @@ class BidItemController extends BaseController {
   }
 
   Future<void> onContactClick(BuildContext context) async {
-  final String errorTariffMail = context.l.errorTariffMail;
+    final String errorTariffMail = context.l.errorTariffMail;
 
-  if (bidItem.isOpened) return;
+    if (bidItem.isOpened) return;
 
-  try {
-    final contactPrice = bidItem.contactPrice ?? 0;
-    final main = Get.isRegistered<MainController>()
-        ? Get.find<MainController>()
-        : null;
-    final isFree = main?.isFree == true;
-    final isAdsDisabled = main?.isAdsDisabled == true;
-    final shouldShowAd = contactPrice == 0 && isFree && !isAdsDisabled;
-
-    String adsPrice = context.adsPriceLabel();
-
-    if (!shouldShowAd) {
-      await _openContact(context);
-      return;
-    }
-
-    // 🔥 окремий try/catch саме навколо запиту банера —
-    // будь-яка помилка тут (мережа, тайм-аут, невалідний JSON) не блокує відкриття контакту
-    OpenContactsAdResponse? res;
     try {
-      res = await Api().traider.openContactsAd(orderId: bidItem.orderId!);
-      log('OPEN Contacts Ad: ${res.toJson()}');
-    } catch (e) {
-      log('openContactsAd failed, fallback to direct open: $e');
-      await _openContact(context);
-      return;
-    }
+      final contactPrice = bidItem.contactPrice ?? 0;
+      final main = Get.isRegistered<MainController>()
+          ? Get.find<MainController>()
+          : null;
+      final isFree = main?.isFree == true;
+      final isAdsDisabled = main?.isAdsDisabled == true;
+      final shouldShowAd = contactPrice == 0 && isFree && !isAdsDisabled;
 
-    if (res.status != true) {
-      await _openContact(context);
-      return;
-    }
+      String adsPrice = context.adsPriceLabel();
 
-    final ad = res.adBanner;
-    if (ad == null) {
-      await _openContact(context);
-      return;
-    }
+      if (!shouldShowAd) {
+        await _openContact(context);
+        return;
+      }
 
-    final watched = await showAdBannerDialog(
-      context,
-      imageUrl: ad.image,
-      phone: ad.phone,
-      price: adsPrice,
-      onDisableAds: () async {
-        await _homeController?.disableAds(context);
-      },
-    );
+      // 🔥 окремий try/catch саме навколо запиту банера —
+      // будь-яка помилка тут (мережа, тайм-аут, невалідний JSON) не блокує відкриття контакту
+      OpenContactsAdResponse? res;
+      try {
+        res = await Api().traider.openContactsAd(orderId: bidItem.orderId!);
+        log('OPEN Contacts Ad: ${res.toJson()}');
+      } catch (e) {
+        log('openContactsAd failed, fallback to direct open: $e');
+        await _openContact(context);
+        return;
+      }
 
-    if (watched == true) {
-      await _openContact(context);
-    }
-  } catch (e) {
-    log("contact open failed: $e");
-    notification(text: context.l.failedOpenContactRetry);
-  }
-}
+      if (res.status != true) {
+        await _openContact(context);
+        return;
+      }
 
-Future<void> _openContact(BuildContext context) async {
-  try {
-    ApiAnswer apiAnswer = await Api().traider.openBidContact(
-          orderId: bidItem.orderId!,
-        );
+      final ad = res.adBanner;
+      if (ad == null) {
+        await _openContact(context);
+        return;
+      }
 
-    log(apiAnswer.data.toString());
-
-    if (apiAnswer.data['status'] == 'insufficient') {
-      final String message =
-          apiAnswer.data['message']?.toString() ?? context.l.insufficientBalance;
-      notification(text: message);
-      return;
-    }
-
-    if (apiAnswer.data['status'] == '+') {
-      final payload = apiAnswer.data['payload'];
-
-      bidItem = bidItem.copyWith(
-        opened: 1,
-        openedPhon: payload['phone']?.toString(),
-        fermerCompany: payload['company']?.toString(),
-        fermerName: payload['name']?.toString(),
-        fermerPhone: payload['phone']?.toString(),
-        fermerEmail: payload['email']?.toString(),
-        contacts: BidContacts.fromJson(payload),
+      final watched = await showAdBannerDialog(
+        context,
+        imageUrl: ad.image,
+        phone: ad.phone,
+        price: adsPrice,
+        onDisableAds: () async {
+          await _homeController?.disableAds(context);
+        },
       );
 
-      _homeController?.updateBidItem(bidItem);
-
-      contactOpened = true;
-      setState(() {});
-      return;
-    }
-
-    // 🔥 будь-який інший статус — показуємо меседж з бекенду, якщо є
-    final String message =
-        apiAnswer.data['message']?.toString() ?? context.l.failedOpenContact;
-    if (context.mounted) {
-      notification(text: message);
-    }
-  } catch (e) {
-    log("_openContact error: $e");
-    if (context.mounted) {
-      notification(text: context.l.connectionErrorRetry);
+      if (watched == true) {
+        await _openContact(context);
+      }
+    } catch (e) {
+      log("contact open failed: $e");
+      notification(text: context.l.failedOpenContactRetry);
     }
   }
-}
+
+  Future<void> _openContact(BuildContext context) async {
+    try {
+      ApiAnswer apiAnswer = await Api().traider.openBidContact(
+            orderId: bidItem.orderId!,
+          );
+
+      log(apiAnswer.data.toString());
+
+      if (apiAnswer.data['status'] == 'insufficient') {
+        final String message = apiAnswer.data['message']?.toString() ??
+            context.l.insufficientBalance;
+        notification(text: message);
+        return;
+      }
+
+      if (apiAnswer.data['status'] == '+') {
+        final payload = apiAnswer.data['payload'];
+
+        bidItem = bidItem.copyWith(
+          opened: 1,
+          openedPhon: payload['phone']?.toString(),
+          fermerCompany: payload['company']?.toString(),
+          fermerName: payload['name']?.toString(),
+          fermerPhone: payload['phone']?.toString(),
+          fermerEmail: payload['email']?.toString(),
+          contacts: BidContacts.fromJson(payload),
+        );
+
+        _homeController?.updateBidItem(bidItem);
+
+        contactOpened = true;
+        setState(() {});
+        return;
+      }
+
+      // 🔥 будь-який інший статус — показуємо меседж з бекенду, якщо є
+      final String message =
+          apiAnswer.data['message']?.toString() ?? context.l.failedOpenContact;
+      if (context.mounted) {
+        notification(text: message);
+      }
+    } catch (e) {
+      log("_openContact error: $e");
+      if (context.mounted) {
+        notification(text: context.l.connectionErrorRetry);
+      }
+    }
+  }
 
   Future<void> onOrderCarrier(BuildContext context) async {
     if (orderingCarrier || carrierOrdered) return;
@@ -274,7 +274,7 @@ Future<void> _openContact(BuildContext context) async {
             apiAnswer.data['message']?.toString() ?? context.l.error;
         if (context.mounted) {
           showInformPoUp(context, context.l.error, message);
-            notification(text: context.l.failedOpenContact);
+          notification(text: context.l.failedOpenContact);
         }
       }
     } catch (e) {
@@ -285,6 +285,7 @@ Future<void> _openContact(BuildContext context) async {
       }
     }
   }
+
   void onLaunchPhone(BuildContext context, String? phone) =>
       showCupertinoModalBottomSheet(
         topRadius: const Radius.circular(30),
@@ -345,9 +346,9 @@ Future<void> _openContact(BuildContext context) async {
         if (!confirmed) return;
 
         var confirmResult = await Api().myPrice.dealConfirm(
-          orderId: orderId,
-          expectedAmount: amount,
-        );
+              orderId: orderId,
+              expectedAmount: amount,
+            );
 
         if (!confirmResult.ok) {
           final action = await showMyPriceError(

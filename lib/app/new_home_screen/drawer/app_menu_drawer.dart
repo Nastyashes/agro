@@ -1,4 +1,5 @@
 import 'package:agro/app/new_home_screen/drawer/menu_item.dart';
+import 'package:agro/generated/assets.dart';
 import 'package:agro/ui/buttons/button_styles.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
@@ -36,7 +37,7 @@ class AppMenuDrawer extends StatelessWidget {
     required this.phone,
     this.tariffLabel,
     this.unreadNotifications = 0,
-    this.adsPrice =  AppConstants.adsPrice,
+    this.adsPrice = AppConstants.adsPrice,
     this.showTopUp = true,
     this.showDisableAds = true,
     this.showMyPrice = true,
@@ -61,24 +62,55 @@ class AppMenuDrawer extends StatelessWidget {
     final l = context.l;
 
     return Container(
-      color: AppColors.backgroundDrawer,
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+            image: AssetImage(Assets.drawerBg),
+            opacity: 0.2,
+            alignment: AlignmentGeometry.bottomCenter),
+        color: Color(0xFF060E11),
+      ),
       child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Row(
+                children: [
+                  Image.asset(
+                    Assets.pictureLogo,
+                    height: 44,
+                  ),
+                  const Spacer(),
+                  if (tariffLabel != null && tariffLabel!.isNotEmpty)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: AppColors.yellow.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.yellow, width: 1.5),
+                      ),
+                      child: Text(
+                        tariffLabel!,
+                        style: AppFonts.body2bold
+                            .copyWith(color: AppColors.yellow),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 4),
               _DrawerHeader(
                 userName: userName,
                 phone: phone,
-                tariffLabel: tariffLabel,
+                //    tariffLabel: tariffLabel,
               ),
               if (showTopUp) ...[
                 const SizedBox(height: 20),
                 bStyle(
                   text: l.topUpBalance,
                   c: context,
-                  vertical: 14,
+                  vertical: 12,
                   onPressed: onTopUp ?? () {},
                 ),
               ],
@@ -88,6 +120,7 @@ class AppMenuDrawer extends StatelessWidget {
                   icon: Icons.bar_chart_outlined,
                   title: l.myPrice,
                   onPressed: onMyPrice,
+                  isNew: true,
                 ),
               if (showDeals)
                 MenuItem(
@@ -137,13 +170,14 @@ class AppMenuDrawer extends StatelessWidget {
                 bStyle(
                   text: '${l.disableBanner}(${context.uahAmount(adsPrice)})',
                   c: context,
-                  vertical: 14,
+                  vertical: 12,
                   onPressed: onDisableAds ?? () {},
                 ),
               ],
               const SizedBox(height: 12),
               Center(
                 child: MenuItem(
+                  withColorBg: false,
                   icon: Icons.delete_outline,
                   title: l.deleteProfile,
                   iconColor: AppColors.red,
@@ -164,42 +198,23 @@ class AppMenuDrawer extends StatelessWidget {
 class _DrawerHeader extends StatelessWidget {
   final String userName;
   final String phone;
-  final String? tariffLabel;
+  //final String? tariffLabel;
 
   const _DrawerHeader({
     required this.userName,
     required this.phone,
-    required this.tariffLabel,
+    //  required this.tariffLabel,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(userName, style: AppFonts.title2.additionalGreen),
-              const SizedBox(height: 4),
-              Text(phone, style: AppFonts.body2medium.additionalGreen),
-            ],
-          ),
-        ),
-        if (tariffLabel != null && tariffLabel!.isNotEmpty)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.backgroundOrderCard,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.yellow, width: 1.5),
-            ),
-            child: Text(
-              tariffLabel!,
-              style: AppFonts.body2bold.copyWith(color: AppColors.premiumText),
-            ),
-          ),
+        Expanded(child: Text(userName, style: AppFonts.title2.white)),
+        const SizedBox(height: 4),
+        Text(phone, style: AppFonts.body2medium.white),
       ],
     );
   }

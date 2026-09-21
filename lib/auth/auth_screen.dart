@@ -36,7 +36,7 @@ class _AuthScreenState extends State<AuthScreen> {
         value: SystemUiOverlayStyle.dark,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          backgroundColor: AppColors.white,
+          backgroundColor: AppColors.backgroundGradient1,
           body: Stack(
         children: [
           const AppBackground(), SafeArea(
@@ -49,9 +49,15 @@ class _AuthScreenState extends State<AuthScreen> {
                       Padding(
                           padding: const EdgeInsets.only(top: 120, bottom: 120),
                           child: Center(
-                              child: SvgPicture.asset(Assets.pictureLogo,
+                              child: Image.asset(Assets.pictureLogo,
                                   width: MediaQuery.of(c).size.width / 1.2))),
                       TextFieldWidget(
+                        colorBg: AppColors.backgroundGradient1,
+                        border: Border.all(width: 1.5, color: AppColors.mainGreen),
+                        borderRadius: BorderRadius.circular(16),
+                        textStyle: AppFonts.body1medium.white,
+                        headerColor: AppColors.white,
+                        hintStyle: AppFonts.body1medium.grey3,
                           padding: const EdgeInsets.only(top: 15),
                           text: context.l.enterPhoneNumber,
                           header: context.l.phoneNumber,

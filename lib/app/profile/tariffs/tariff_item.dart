@@ -134,7 +134,7 @@ final isByPiece =
           Expanded(
               child: Text(
             text,
-            style: AppFonts.tariffHeader,
+            style: AppFonts.tariffHeader.copyWith(color: AppColors.white),
           )),
         ],
       ),

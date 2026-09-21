@@ -1,8 +1,8 @@
-import 'package:agro/app/home/banner/banner_in_list.dart';
+import 'package:agro/app/new_home_screen/banner/banner_in_list.dart';
+import 'package:agro/app/new_home_screen/drawer/bid_list_item.dart';
 
 import 'package:agro/old_code/app/home/components/home_header.dart';
 import 'package:agro/old_code/app/home/components/block_order_unified.dart';
-import 'package:agro/app/home/bids_pages/bid_list_item.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/ui/pop_up/top_up_balance_popup.dart';
 import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';

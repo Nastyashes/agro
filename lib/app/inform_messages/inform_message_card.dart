@@ -26,10 +26,10 @@ class InformMessageCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: AppColors.backgroundGradient1,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: message.isRead ? AppColors.grey2 : AppColors.mainGreen,
+          color: message.isRead ? AppColors.mainGreen.withValues(alpha: 0.3) : AppColors.mainGreen,
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -38,19 +38,19 @@ class InformMessageCard extends StatelessWidget {
         children: [
           Text(
             message.title ?? '',
-            style: AppFonts.body1semibold.black,
+            style: AppFonts.body1semibold.white,
           ),
           if (dateText != null) ...[
             const SizedBox(height: 4),
             Text(
               dateText,
-              style: AppFonts.caption.grey4,
+              style: AppFonts.caption.grey3,
             ),
           ],
           const SizedBox(height: 10),
           Text(
             message.message ?? '',
-            style: AppFonts.body2medium.grey4,
+            style: AppFonts.body2medium.grey3,
           ),
           if (!message.isRead && onRead != null) ...[
             const SizedBox(height: 12),

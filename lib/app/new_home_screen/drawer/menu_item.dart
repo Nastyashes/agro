@@ -1,6 +1,7 @@
 import 'package:agro/ui/buttons/b_transparent_scalable_button.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
 class MenuItem extends StatelessWidget {
@@ -12,37 +13,48 @@ class MenuItem extends StatelessWidget {
   final bool showDivider;
   final Color iconColor;
   final Color titleColor;
+  final bool withColorBg;
+  final bool isNew;
 
   const MenuItem({
     super.key,
     required this.icon,
     required this.title,
+    this.isNew = false,
     this.onPressed,
+    this.withColorBg = true,
     this.badge = 0,
     this.showChevron = true,
     this.showDivider = true,
-    this.iconColor = AppColors.additionalGreen,
-    this.titleColor = AppColors.black,
+    this.iconColor = AppColors.green,
+    this.titleColor = AppColors.white,
   });
 
   @override
   Widget build(BuildContext context) {
     final titleStyle = AppFonts.body2medium.copyWith(color: titleColor);
     final row = Row(
-      mainAxisSize: showChevron || showDivider
-          ? MainAxisSize.max
-          : MainAxisSize.min,
+      mainAxisSize:
+          showChevron || showDivider ? MainAxisSize.max : MainAxisSize.min,
       children: [
         _MenuIcon(icon: icon, color: iconColor, badge: badge),
         const SizedBox(width: 12),
         if (showChevron || showDivider)
-          Expanded(child: Text(title, style: titleStyle))
+          Expanded(
+            child: Row(
+              children: [
+                Text(title, style: titleStyle),
+                if (isNew)
+                  Text(context.l.menuItemNew, style: AppFonts.caption.red),
+              ],
+            ),
+          )
         else
           Text(title, style: titleStyle),
         if (showChevron)
           const Icon(
             Icons.chevron_right,
-            color: AppColors.additionalGreen,
+            color: AppColors.yellow,
             size: 22,
           ),
       ],
@@ -51,20 +63,18 @@ class MenuItem extends StatelessWidget {
     return BTransparentScalableButton(
       onPressed: onPressed ?? () {},
       scale: ScaleFormat.small,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            child: row,
-          ),
-          if (showDivider)
-            const Divider(
-              height: 1,
-              thickness: 1,
-              color: AppColors.mainGreen,
-            ),
-        ],
-      ),
+      child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 3),
+          child: Container(
+              decoration: BoxDecoration(
+                  color: withColorBg
+                      ? const Color(0xFF0E1D23)
+                      : AppColors.transparent,
+                  borderRadius: BorderRadius.circular(8)),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                child: row,
+              ))),
     );
   }
 }
@@ -82,7 +92,7 @@ class _MenuIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final iconWidget = Icon(icon, size: 24, color: color);
+    final iconWidget = Icon(icon, size: 32, color: color);
     if (badge <= 0) return iconWidget;
 
     return SizedBox(

@@ -9,3 +9,7 @@ extension LocaleContext on BuildContext {
 
   String adsPriceLabel() => uahAmount(AppConstants.adsPrice);
 }
+
+bool isSet(String? value) {
+  return value != null && value.trim().isNotEmpty;
+}
