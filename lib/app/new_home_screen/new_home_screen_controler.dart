@@ -457,10 +457,33 @@ class NewHomeController extends BaseController {
       final result = await Api().traider.disableAds();
 
       if (result.data['status'] == '+') {
+        final payload = result.data is Map
+            ? Map<String, dynamic>.from(result.data as Map)
+            : <String, dynamic>{};
+        final nextUserfield = <String, dynamic>{
+          'is_ads_disabled': true,
+        };
+        final until = payload['ads_disabled_until'] ??
+            (payload['userfield'] is Map
+                ? payload['userfield']['ads_disabled_until']
+                : null);
+        if (until != null) {
+          nextUserfield['ads_disabled_until'] = until;
+        }
+        if (payload['userfield'] is Map) {
+          nextUserfield.addAll(
+            Map<String, dynamic>.from(payload['userfield'] as Map),
+          );
+          nextUserfield['is_ads_disabled'] = true;
+        }
+        mainController.patchUserfield(nextUserfield);
+
         await Future.wait([
           loadAllBids(reset: true),
           if (isFree) loadFreshBids(reset: true),
         ]);
+
+        mainController.patchUserfield(nextUserfield);
       }
 
       if (context.mounted) {

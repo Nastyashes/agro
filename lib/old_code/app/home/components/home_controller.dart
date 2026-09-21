@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:agro/app/bids_pages/components/launch_phone.dart';
+import 'package:agro/app/bid_detail/components/launch_phone.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/old_code/app/home/order/components/add_price.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';

@@ -24,7 +24,7 @@ class MainController extends BaseController {
   bool get isVip => tariff?.isVip == true;
 
   bool get isAdsDisabled =>
-      _userfield['is_ads_disabled'] == true;
+      _isTruthy(_userfield['is_ads_disabled']);
 
   bool get shouldShowAds =>
       isFree && !isAdsDisabled;
@@ -113,6 +113,10 @@ class MainController extends BaseController {
     );
   }
 
+  void patchUserfield(Map<String, dynamic> value) {
+    _userfield.addAll(value);
+  }
+
   void updateBalance(dynamic value) {
     _balance.value =
         int.tryParse('${value ?? 0}') ?? 0;
@@ -129,4 +133,8 @@ class MainController extends BaseController {
   void disableMyPrice() {
     myPriceEnabled.value = false;
   }
+}
+
+bool _isTruthy(dynamic value) {
+  return value == true || value == 1 || value == '1' || value == 'true';
 }

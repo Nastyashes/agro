@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:agro/app/bids_pages/components/launch_phone.dart';
+import 'package:agro/app/bid_detail/components/launch_phone.dart';
 import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:get/get.dart';
 import 'package:agro/routes/app_pages.dart';

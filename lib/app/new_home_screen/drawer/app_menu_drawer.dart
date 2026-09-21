@@ -39,7 +39,7 @@ class AppMenuDrawer extends StatelessWidget {
     this.unreadNotifications = 0,
     this.adsPrice = AppConstants.adsPrice,
     this.showTopUp = true,
-    this.showDisableAds = true,
+    this.showDisableAds = false,
     this.showMyPrice = true,
     this.showDeals = true,
     this.showTariffs = true,
