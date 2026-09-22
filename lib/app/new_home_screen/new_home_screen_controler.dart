@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/controllers/app_input_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
+import 'package:agro/model/message/message.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
@@ -89,6 +90,8 @@ class NewHomeController extends BaseController {
 
   bool get hasFreshBids => bidsFresh.isNotEmpty;
 
+  final unreadInformCount = 0.obs;
+
   // =========================
   // INIT
   // =========================
@@ -124,6 +127,7 @@ class NewHomeController extends BaseController {
     await Future.wait([
       loadAdBanner(),
       loadAllBids(reset: true),
+      loadUnreadInformMessages(),
       if (isFree) loadFreshBids(reset: true),
     ]);
 
@@ -363,7 +367,10 @@ class NewHomeController extends BaseController {
 
   Future<void> onRefreshAll() async {
     try {
-      await loadAllBids(reset: true);
+      await Future.wait([
+        loadAllBids(reset: true),
+        loadUnreadInformMessages(),
+      ]);
       allRefreshController.refreshCompleted();
     } catch (_) {
       allRefreshController.refreshFailed();
@@ -386,10 +393,26 @@ class NewHomeController extends BaseController {
 
   Future<void> onRefreshFresh() async {
     try {
-      await loadFreshBids(reset: true);
+      await Future.wait([
+        loadFreshBids(reset: true),
+        loadUnreadInformMessages(),
+      ]);
       freshRefreshController.refreshCompleted();
     } catch (_) {
       freshRefreshController.refreshFailed();
+    }
+  }
+
+  Future<void> loadUnreadInformMessages() async {
+    try {
+      final apiAnswer = await Api().traider.getMessages();
+      if (apiAnswer.code != 200) return;
+
+      unreadInformCount.value = parseMessagesPayload(apiAnswer.data)
+          .where((message) => !message.isRead)
+          .length;
+    } catch (e) {
+      log('NewHomeController loadUnreadInformMessages error: $e');
     }
   }
 

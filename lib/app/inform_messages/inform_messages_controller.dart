@@ -1,11 +1,13 @@
 import 'dart:developer';
 
 import 'package:agro/controllers/abstract/base_controller.dart';
+import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/model/message/message.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class InformMessagesController extends BaseController {
@@ -57,11 +59,34 @@ class InformMessagesController extends BaseController {
 
     try {
       final apiAnswer = await Api().traider.getMessages();
-      final loaded = _parseMessages(apiAnswer.data);
+
+      log(
+        'InformMessages getMessages response: '
+        'code=${apiAnswer.code}, '
+        'dataType=${apiAnswer.data.runtimeType}, '
+        'data=${apiAnswer.data}',
+        name: 'InformMessages',
+      );
+      debugPrint('[InformMessages] code=${apiAnswer.code}');
+      debugPrint('[InformMessages] dataType=${apiAnswer.data.runtimeType}');
+      debugPrint('[InformMessages] raw data=${apiAnswer.data}');
+
+      final loaded = parseMessagesPayload(apiAnswer.data);
+
+      log(
+        'InformMessages parsed count=${loaded.length}, '
+        'ids=${loaded.map((m) => m.id).toList()}',
+        name: 'InformMessages',
+      );
+      debugPrint(
+        '[InformMessages] parsed=${loaded.length}, '
+        'ids=${loaded.map((m) => m.id).toList()}',
+      );
 
       messages
         ..clear()
         ..addAll(loaded);
+      _publishUnreadCount();
 
       if (context.mounted) {
         setState(() {});
@@ -71,7 +96,9 @@ class InformMessagesController extends BaseController {
         'InformMessagesController loadMessages error: $e',
         error: e,
         stackTrace: stackTrace,
+        name: 'InformMessages',
       );
+      debugPrint('[InformMessages] loadMessages error: $e');
 
       if (context.mounted) {
         notification(text: context.l.somethingWentWrong);
@@ -81,24 +108,9 @@ class InformMessagesController extends BaseController {
     }
   }
 
-  List<Message> _parseMessages(dynamic data) {
-    final List<dynamic> raw;
-
-    if (data is List) {
-      raw = data;
-    } else if (data is Map && data['payload'] is List) {
-      raw = data['payload'] as List;
-    } else {
-      raw = const [];
-    }
-
-    return [
-      for (final item in raw)
-        if (item is Map<String, dynamic>)
-          Message.fromJson(item)
-        else if (item is Map)
-          Message.fromJson(Map<String, dynamic>.from(item)),
-    ];
+  void _publishUnreadCount() {
+    if (!Get.isRegistered<NewHomeController>()) return;
+    Get.find<NewHomeController>().unreadInformCount.value = unreadCount;
   }
 
   Future<void> onReadMessage(Message message) async {

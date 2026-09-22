@@ -127,6 +127,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
             Navigator.pop(context);
             Get.toNamed(Routes.myPriceDeals);
           },
+          unreadNotifications: controller.unreadInformCount.value,
           onInfoMessages: () {
             Navigator.pop(context);
             Get.toNamed(Routes.informMessages);
@@ -152,17 +153,20 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                     Expanded(
                       child: Builder(
                         builder: (drawerContext) {
-                          return NewHomeHeader(
-                            baslance: controller.balance,
-                            tariff: controller.mainController.tariff,
-                            isSearchOpen: controller.isSearchOpen,
-                            searchController: controller.searchController,
-                            searchFocusNode: controller.searchFocusNode,
-                            onToggleSearch: controller.toggleSearch,
-                            onSearchChanged: (_) => controller.onSearch(),
-                            onPressed: () {
-                              Scaffold.of(drawerContext).openDrawer();
-                            },
+                          return Obx(
+                            () => NewHomeHeader(
+                              baslance: controller.balance,
+                              tariff: controller.mainController.tariff,
+                              unreadCount: controller.unreadInformCount.value,
+                              isSearchOpen: controller.isSearchOpen,
+                              searchController: controller.searchController,
+                              searchFocusNode: controller.searchFocusNode,
+                              onToggleSearch: controller.toggleSearch,
+                              onSearchChanged: (_) => controller.onSearch(),
+                              onPressed: () {
+                                Scaffold.of(drawerContext).openDrawer();
+                              },
+                            ),
                           );
                         },
                       ),

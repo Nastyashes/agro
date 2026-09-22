@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:agro/model/message/created.dart';
 import 'package:intl/intl.dart';
 
@@ -19,4 +21,34 @@ class Message extends Created {
   }
 
   bool get isRead => readed == 1;
+}
+
+List<Message> parseMessagesPayload(dynamic data) {
+  final List<dynamic> raw;
+
+  if (data is List) {
+    raw = data;
+  } else if (data is Map && data['payload'] is List) {
+    raw = data['payload'] as List;
+  } else {
+    raw = const [];
+  }
+
+  final parsed = <Message>[];
+  for (final item in raw) {
+    try {
+      if (item is Map<String, dynamic>) {
+        parsed.add(Message.fromJson(item));
+      } else if (item is Map) {
+        parsed.add(Message.fromJson(Map<String, dynamic>.from(item)));
+      }
+    } catch (e) {
+      log(
+        'parseMessagesPayload skip item: $e, item=$item',
+        name: 'InformMessages',
+      );
+    }
+  }
+
+  return parsed;
 }

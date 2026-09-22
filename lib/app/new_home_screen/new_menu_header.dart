@@ -13,6 +13,7 @@ class NewHomeHeader extends StatelessWidget {
     required this.tariff,
     required this.onPressed,
     required this.baslance,
+    this.unreadCount = 0,
     required this.isSearchOpen,
     required this.searchController,
     required this.onToggleSearch,
@@ -22,6 +23,7 @@ class NewHomeHeader extends StatelessWidget {
 
   final Tariff? tariff;
   final int? baslance;
+  final int unreadCount;
   final VoidCallback onPressed;
   final bool isSearchOpen;
   final TextEditingController searchController;
@@ -37,10 +39,22 @@ class NewHomeHeader extends StatelessWidget {
       children: [
         InkWell(
           onTap: onPressed,
-          child: const Icon(
-            Icons.menu_rounded,
-            color: AppColors.mainGreen,
-            size: 32,
+          child: Badge(
+            isLabelVisible: unreadCount > 0,
+            backgroundColor: AppColors.daysRed,
+            label: Text(
+              unreadCount > 99 ? '99+' : '$unreadCount',
+              style: AppFonts.caption.copyWith(
+                color: AppColors.white,
+                fontSize: 10,
+                height: 1,
+              ),
+            ),
+            child: const Icon(
+              Icons.menu_rounded,
+              color: AppColors.mainGreen,
+              size: 32,
+            ),
           ),
         ),
         const SizedBox(width: 12),

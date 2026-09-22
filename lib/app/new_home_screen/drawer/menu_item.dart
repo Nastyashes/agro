@@ -104,7 +104,7 @@ class _MenuIcon extends StatelessWidget {
           iconWidget,
           Positioned(
             top: -4,
-            right: -2,
+            right: -6,
             child: Container(
               constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
               padding: const EdgeInsets.symmetric(horizontal: 4),
