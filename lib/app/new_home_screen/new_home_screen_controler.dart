@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 
 enum NewHomeTab {
@@ -552,5 +553,117 @@ class NewHomeController extends BaseController {
     freshScrollController.dispose();
 
     super.onClose();
+  }
+}
+
+Future<void> payBalance(int amount, BuildContext context) async {
+  print('payBalance start amount=$amount');
+  try {
+    final apiAnswer = await Api().common.balancePay(amount: amount);
+    print(
+      'payBalance response code=${apiAnswer.code} '
+      'dataType=${apiAnswer.data.runtimeType} data=${apiAnswer.data}',
+    );
+
+    if (apiAnswer.data == null || apiAnswer.data is! Map) {
+      print('payBalance invalid response');
+      if (context.mounted) {
+        notification(text: context.l.somethingWentWrong);
+      }
+      return;
+    }
+
+    final data = Map<String, dynamic>.from(apiAnswer.data as Map);
+    if (data['error'] != null) {
+      print('payBalance error=${data['error']}');
+      if (context.mounted) {
+        notification(text: context.l.somethingWentWrong);
+      }
+      return;
+    }
+
+    final payUrl = _paymentUrl(data);
+    print('payBalance orderId=${data['order_id']} payUrl=$payUrl');
+    if (payUrl == null) {
+      print('payBalance url missing keys=${data.keys.toList()}');
+      if (context.mounted) {
+        notification(text: context.l.somethingWentWrong);
+      }
+      return;
+    }
+
+    final opened = await openPaymentUrl(payUrl);
+    print('payBalance opened=$opened');
+    if (!opened && context.mounted) {
+      notification(text: context.l.somethingWentWrong);
+    }
+  } catch (e, stackTrace) {
+    print('payBalance exception: $e\n$stackTrace');
+    if (context.mounted) {
+      notification(text: context.l.somethingWentWrong);
+    }
+  }
+}
+
+String? _paymentUrl(Map<String, dynamic> data) {
+  for (final key in ['url', 'pay_url', 'payment_url', 'link']) {
+    final value = data[key];
+    if (value is String && value.trim().isNotEmpty) {
+      return value.trim();
+    }
+  }
+
+  for (final key in ['data', 'payload', 'result']) {
+    final nested = data[key];
+    if (nested is Map) {
+      final url = _paymentUrl(Map<String, dynamic>.from(nested));
+      if (url != null) return url;
+    }
+  }
+
+  return null;
+}
+
+Future<bool> openPaymentUrl(String rawUrl) async {
+  var value = rawUrl.trim();
+  if (value.startsWith('//')) {
+    value = 'https:$value';
+  } else if (!value.contains('://')) {
+    final base = Api().getUrl();
+    value = '$base${value.startsWith('/') ? value.substring(1) : value}';
+  }
+
+  final uri = Uri.tryParse(value);
+  print('openPaymentUrl raw=$rawUrl parsed=$uri');
+  if (uri == null || !(uri.isScheme('http') || uri.isScheme('https'))) {
+    print('openPaymentUrl rejected scheme=${uri?.scheme}');
+    return false;
+  }
+
+  try {
+    final canLaunch = await canLaunchUrl(uri);
+    print('openPaymentUrl canLaunchUrl=$canLaunch');
+  } catch (e) {
+    print('openPaymentUrl canLaunchUrl error: $e');
+  }
+
+  try {
+    final launched = await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+    print('openPaymentUrl externalApplication=$launched');
+    if (launched) return true;
+  } catch (e) {
+    print('openPaymentUrl externalApplication error: $e');
+  }
+
+  try {
+    final launched = await launchUrl(uri);
+    print('openPaymentUrl platformDefault=$launched');
+    return launched;
+  } catch (e) {
+    print('openPaymentUrl platformDefault error: $e');
+    return false;
   }
 }

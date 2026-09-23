@@ -1,3 +1,4 @@
+import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/ui/pop_up/top_up_balance_popup.dart';
 import 'package:agro/controllers/main_controler.dart';
 import 'package:agro/model/my_price/my_price_result.dart';
@@ -165,7 +166,8 @@ Future<MyPriceErrorAction> showMyPriceError(
     final main = mainController ??
         (Get.isRegistered<MainController>() ? Get.find<MainController>() : null);
     showTopUpDialog(context, main?.balance, (amount) {
-      // Payment is handled by existing top-up flow when wired.
+      print('myPrice topUp selected amount=$amount');
+      payBalance(amount, context);
     });
   }
 

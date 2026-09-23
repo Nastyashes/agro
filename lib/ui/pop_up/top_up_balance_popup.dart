@@ -127,10 +127,16 @@ void showTopUpDialog(BuildContext context, int? balance,
                           ),
                           onPressed: selectedAmount >= 10
                               ? () {
+                                  print(
+                                    'topUp pay pressed amount=$selectedAmount',
+                                  );
                                   Navigator.pop(context);
                                   onSelect(selectedAmount);
                                 }
                               : () {
+                                  print(
+                                    'topUp pay rejected amount=$selectedAmount',
+                                  );
                                   setState(() {
                                     isNoValidSum = true;
                                   });

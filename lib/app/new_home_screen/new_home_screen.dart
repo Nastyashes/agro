@@ -348,7 +348,10 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
     showTopUpDialog(
       context,
       controller.balance,
-      (amount) {},
+      (amount) {
+        print('topUp selected amount=$amount');
+        payBalance(amount, context);
+      },
     );
   }
 

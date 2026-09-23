@@ -31,10 +31,11 @@ class Commmon extends Api {
 
   Future<ApiAnswer> balancePay({required int amount}) async {
     ApiAnswer apiAnswer = ApiAnswer();
+    print('balancePay request amount=$amount');
     var request = await dataRequestMultipart('uagro.wallet.topup',
         parameter: 'amount=$amount', apiUrl: "api.php");
     final rawBody = await request.stream.bytesToString();
-    //  log('Balance pay url: $rawBody');
+    print('balancePay status=${request.statusCode} body=$rawBody');
     apiAnswer.code = request.statusCode;
     apiAnswer.data = json.decode(rawBody);
     checkAuth(apiAnswer.data);
