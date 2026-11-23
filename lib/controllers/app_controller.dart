@@ -2,114 +2,43 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:agro/model/tariff/tariff.dart';
 import 'package:agro/routes/app_pages.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:agro/controllers/abstract/from_controller.dart';
 
 @pragma('vm:entry-point')
 Future<void> backgroundNotificationHandler(RemoteMessage message) async {
   log("Push in background: ${message.data.toString()}");
 }
 
-class AppController extends FormController {
-  late Function(VoidCallback fn) setState;
-  late BuildContext c;
-// =========================
-  // USER DATA
-  // =========================
+/// Owns push-notification setup (FCM + local notifications).
+class AppController extends GetxController {
+  FirebaseMessaging get _firebaseMessaging => FirebaseMessaging.instance;
 
-  final Rxn<Tariff> _tariff = Rxn<Tariff>();
-  final RxInt _balance = 0.obs;
-
-  Tariff? get tariff => _tariff.value;
-  int get balance => _balance.value;
-bool _userDataLoaded = false;
-
-  bool get isFree => tariff?.isFree == true;
-  bool get isPremium => tariff?.isPremium == true;
-  bool get isVip => tariff?.isVip == true;
-  // =========================
-  // TARIFY
-  // =========================
-Future<void> initUserData() async {
-  if (_userDataLoaded) return;
-
-  await loadUserData();
-
-  _userDataLoaded = true;
-}
-  Future<void> loadTariff() async {
-    try {
-      final ApiAnswer apiAnswer = await Api().traider.getTariff();
-
-      _tariff.value = Tariff.fromJson(
-        apiAnswer.data['payload'],
-      );
-
-      log('AppController tariff: ${_tariff.value?.tafiffId}');
-    } catch (e, s) {
-      log(
-        'AppController loadTariff error: $e',
-        error: e,
-        stackTrace: s,
-      );
-    }
-  }
-  // =========================
-  // BALANCE
-  // =========================
-
-  Future<void> loadBalance() async {
-    try {
-      final ApiAnswer apiAnswer = await Api().common.getBalance();
-
-      _balance.value = int.tryParse('${apiAnswer.data['balance'] ?? 0}') ?? 0;
-
-      log('AppController balance: ${_balance.value}');
-    } catch (e, s) {
-      log(
-        'AppController loadBalance error: $e',
-        error: e,
-        stackTrace: s,
-      );
-    }
-  }
-  // =========================
-  // INITIAL DATA
-  // =========================
-
-  Future<void> loadUserData() async {
-    await Future.wait([
-      loadTariff(),
-      loadBalance(),
-    ]);
-  }
-
-  late final FirebaseMessaging _firebaseMessaging;
+  /// AppController is permanent, but initPage runs every time the home screen
+  /// opens (e.g. after logout + login). Listeners must be attached only once.
+  bool _pushListenersAttached = false;
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  void initPage(
-      {required BuildContext context,
-      required Function(VoidCallback fn) set}) async {
-    c = context;
-    setState = set;
+  Future<void> initPage() async {
+    if (kIsWeb) return;
 
-    if (!kIsWeb) {
-      _firebaseMessaging = FirebaseMessaging.instance;
-      try {
+    try {
+      if (_pushListenersAttached) {
+        // Re-bind the device token to the (possibly new) logged-in user.
+        await registerFCMToken();
+      } else {
+        _pushListenersAttached = true;
         await _setupPushNotifications();
-      } catch (e) {
-        log(e.toString());
       }
+    } catch (e) {
+      log(e.toString());
     }
   }
 
