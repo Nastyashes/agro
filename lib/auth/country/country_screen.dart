@@ -6,7 +6,6 @@ import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hive/hive.dart';
 import 'package:get/get.dart';
 import 'package:agro/routes/app_pages.dart';

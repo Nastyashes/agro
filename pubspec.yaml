@@ -15,7 +15,6 @@ dependencies:
   # UI
   loading_indicator: ^3.1.1
   modal_bottom_sheet: ^3.0.0-pre
-  flutter_inset_box_shadow: ^1.0.8
   pinput: ^2.2.31
   mask_text_input_formatter: ^2.4.0
   flutter_rating_stars: ^1.0.3+4
@@ -23,42 +22,26 @@ dependencies:
   # PERSISTENCE
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  hive_generator: ^2.0.0
-  percent_indicator: ^4.2.3  
 
   # FIREBASE
   firebase_core: ^3.8.0
   firebase_messaging: ^15.2.10
-  #google_place: ^0.4.7
 
   # ARCHITECTURE
   provider: ^6.0.5
 
-  cached_network_image: ^3.3.1
   flutter_svg: ^2.0.7
 
-  # maps
-  maps_launcher: ^3.0.0+1
-
-  # pay
-  #  purchases_flutter: ^5.0.0
-  #  rflutter_alert: ^2.0.7
-
   # SERVICE
-  flutter_hooks: ^0.18.6
   responsive_framework: ^0.1.7
   flutter_localizations:
     sdk: flutter
   pull_to_refresh: ^2.0.0
   get: ^4.6.5
   in_app_notification: ^1.1.2
-  clipboard: ^0.1.3
   flutter_local_notifications: ^17.2.2
   permission_handler: ^11.0.1
   mobile_scanner: ^7.0.0
-
-   #loggerf
-  loggy: ^2.0.3
 
   # CONNECT
   url_launcher: ^6.1.11
@@ -66,14 +49,10 @@ dependencies:
   intl: ^0.20.2
   google_mobile_ads: ^8.0.0
 
-  #visibility
-  visibility_detector: ^0.4.0+2
-  flutter_gen: ^5.9.0
-
-
 dev_dependencies:
   # PERSISTENCE
   build_runner: ^2.4.9
+  hive_generator: ^2.0.0
   flutter_lints: ^2.0.1
   analyzer: ^5.13.0
   dependency_validator: ^3.2.2
@@ -87,9 +66,6 @@ flutter:
 
   assets:
     - picture/
-    - picture/start/
     - picture/auth/
-    - picture/app/bottom_navigation/
     - picture/components/
-    - picture/app/
     - picture/app/account/

@@ -1,7 +1,6 @@
 import 'package:agro/ui/app_components/app_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 
 import '../../generated/assets.dart';

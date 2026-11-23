@@ -4,7 +4,6 @@ import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/app_components/appbar_with_back.dart';
 import 'package:agro/ui/app_components/empty_list_widget.dart';
 import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

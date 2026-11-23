@@ -1,7 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
-
 import 'package:agro/app/my_price/components/my_price_dialogs.dart';
 import 'package:agro/app/my_price/components/my_price_error.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
@@ -14,35 +10,6 @@ import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
-void _agentLog(String hypothesisId, String location, String message, [Map<String, Object?> data = const {}]) {
-  // #region agent log
-  final payload = {
-    'sessionId': 'ea8539',
-    'hypothesisId': hypothesisId,
-    'location': location,
-    'message': message,
-    'data': data,
-    'timestamp': DateTime.now().millisecondsSinceEpoch,
-    'runId': 'post-fix',
-  };
-  try {
-    File('/Users/siell/Documents/git/uagro/.cursor/debug-ea8539.log').writeAsStringSync(
-      '${jsonEncode(payload)}\n',
-      mode: FileMode.append,
-    );
-  } catch (_) {}
-  HttpClient()
-      .postUrl(Uri.parse(
-          'http://127.0.0.1:7706/ingest/73a61980-891c-4ed9-aaa0-f7eca662eae9'))
-      .then((req) {
-    req.headers.set('Content-Type', 'application/json');
-    req.headers.set('X-Debug-Session-Id', 'ea8539');
-    req.add(utf8.encode(jsonEncode(payload)));
-    return req.close();
-  }).catchError((_) {});
-  // #endregion
-}
 
 class CreateMyPriceController extends BaseController {
   late BuildContext context;
@@ -129,9 +96,6 @@ class CreateMyPriceController extends BaseController {
 
     MyPriceResult<MyPriceQuote>? quoteResult;
     await loadIfValid(() async {
-      _agentLog('A', 'create_my_price_controller.dart:onSubmit', 'quote_overlay_started', {
-        'loading': loading.value,
-      });
       quoteResult = await Api().myPrice.quote(params!);
       if (quoteResult?.errorCode == 'promo_unavailable') {
         promoController.clear();
@@ -161,11 +125,6 @@ class CreateMyPriceController extends BaseController {
     final quote = quoteData.data!;
     if (!context.mounted) return;
 
-    _agentLog('A', 'create_my_price_controller.dart:onSubmit', 'before_confirm_dialog', {
-      'loading': loading.value,
-      'dialogOutsideOverlay': true,
-      'action': quote.action,
-    });
 
     final amount = quote.pricing.chargedAmount ?? 0;
     final date = quote.slot.activeUntil == null
@@ -187,10 +146,6 @@ class CreateMyPriceController extends BaseController {
       title: quote.isReserve ? context.l.actionReserve : context.l.actionActivate,
       body: body.toString(),
     );
-    _agentLog('B', 'create_my_price_controller.dart:onSubmit', 'after_confirm_dialog', {
-      'loading': loading.value,
-      'confirmed': confirmed,
-    });
     if (!confirmed || !context.mounted) return;
 
     requestId ??= generateMyPriceRequestId();
@@ -199,9 +154,6 @@ class CreateMyPriceController extends BaseController {
 
     MyPriceResult<MyPriceActivateResult>? activateResult;
     await loadIfValid(() async {
-      _agentLog('C', 'create_my_price_controller.dart:onSubmit', 'activate_overlay_started', {
-        'loading': loading.value,
-      });
       activateResult = await Api().myPrice.activate(
         params: activateParams,
         requestId: requestId!,

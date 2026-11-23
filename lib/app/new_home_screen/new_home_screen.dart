@@ -44,10 +44,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
         : Get.put<NewHomeController>(NewHomeController(), permanent: true);
 
     if (Get.isRegistered<AppController>()) {
-      Get.find<AppController>().initPage(
-        context: context,
-        set: setState,
-      );
+      Get.find<AppController>().initPage();
     }
 
     controller.initPage(
