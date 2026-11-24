@@ -99,8 +99,19 @@ void main() {
       expect(last.url.queryParameters['push_id'], '7');
     });
 
-    test('non-200 throws', () async {
+    test('non-200 does not throw (caller reloads the list)', () async {
       serve('{}', 500);
+
+      await expectLater(repo.markRead(7), completes);
+    });
+
+    test('network failure still throws', () async {
+      Api.client = ApiClient(
+        httpClient: MockClient((_) async => throw http.ClientException('off')),
+        baseUrl: () => 'https://uagro.trade/',
+        token: () => 'tok',
+        language: () => 'uk',
+      );
 
       await expectLater(repo.markRead(7), throwsA(isA<ApiException>()));
     });

@@ -19,8 +19,10 @@ class MessagesRepository {
   Future<int> unreadCount() async =>
       (await fetchAll()).where((m) => !m.isRead).length;
 
+  /// Like the legacy code, the HTTP status is not checked: callers reload
+  /// the list afterwards and that shows the real state.
   Future<void> markRead(int? id) async {
-    _ok(await _api.traider.readMessage(id));
+    await _api.traider.readMessage(id);
   }
 
   static ApiAnswer _ok(ApiAnswer answer) {

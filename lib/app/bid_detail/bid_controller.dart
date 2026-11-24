@@ -145,33 +145,32 @@ class BidItemController extends BaseController {
   Future<void> _openContact(BuildContext context) async {
     try {
       final result = await _bids.openContact(bidItem.orderId!);
-      if (!context.mounted) return;
 
-      switch (result.status) {
-        case OpenContactStatus.insufficient:
-          notification(
-              text: result.message ?? context.l.insufficientBalance);
-          return;
-        case OpenContactStatus.failed:
-          notification(text: result.message ?? context.l.failedOpenContact);
-          return;
-        case OpenContactStatus.opened:
-          final contact = result.contact!;
-          bidItem = bidItem.copyWith(
-            opened: 1,
-            openedPhon: contact.phone,
-            fermerCompany: contact.company,
-            fermerName: contact.name,
-            fermerPhone: contact.phone,
-            fermerEmail: contact.email,
-            contacts: contact.contacts,
-          );
-
-          _homeController?.updateBidItem(bidItem);
-
-          contactOpened = true;
-          setState(() {});
+      if (result.status == OpenContactStatus.opened) {
+        // Paid: record it even if the user already left the screen.
+        final contact = result.contact!;
+        bidItem = bidItem.copyWith(
+          opened: 1,
+          openedPhon: contact.phone,
+          fermerCompany: contact.company,
+          fermerName: contact.name,
+          fermerPhone: contact.phone,
+          fermerEmail: contact.email,
+          contacts: contact.contacts,
+        );
+        _homeController?.updateBidItem(bidItem);
+        contactOpened = true;
+        setState(() {});
+        return;
       }
+
+      if (!context.mounted) return;
+      notification(
+        text: result.message ??
+            (result.status == OpenContactStatus.insufficient
+                ? context.l.insufficientBalance
+                : context.l.failedOpenContact),
+      );
     } catch (e) {
       log("_openContact error: $e");
       if (context.mounted) {
@@ -219,12 +218,16 @@ class BidItemController extends BaseController {
     try {
       final result = await _bids.orderAnalysis(bidItem.orderId!);
 
-      setState(() => orderingAnalysis = false);
+      // Paid: mark it ordered even if the user already left the screen, so
+      // the button cannot charge twice.
+      setState(() {
+        orderingAnalysis = false;
+        if (result.status == AnalysisStatus.ordered) analysisOrdered = true;
+      });
       if (!context.mounted) return;
 
       switch (result.status) {
         case AnalysisStatus.ordered:
-          setState(() => analysisOrdered = true);
           showInformPoUp(
             context,
             context.l.done,
@@ -234,8 +237,8 @@ class BidItemController extends BaseController {
           showInformPoUp(
             context,
             context.l.error,
-            context.l.insufficientFunds(
-                result.balance ?? '—', result.price ?? '—'),
+            context.l
+                .insufficientFunds(result.balance ?? '—', result.price ?? '—'),
           );
         case AnalysisStatus.failed:
           showInformPoUp(
