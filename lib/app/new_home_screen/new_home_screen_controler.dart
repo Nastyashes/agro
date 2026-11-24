@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:agro/controllers/abstract/base_controller.dart';
+import 'package:agro/data/repositories/account_repository.dart';
 import 'package:agro/data/repositories/messages_repository.dart';
 import 'package:agro/controllers/app_input_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
@@ -483,41 +484,22 @@ class NewHomeController extends BaseController {
 
   Future<void> disableAds(BuildContext context) async {
     try {
-      final result = await Api().traider.disableAds();
+      final result = await AccountRepository().disableAds();
 
-      if (result.data['status'] == '+') {
-        final payload = result.data is Map
-            ? Map<String, dynamic>.from(result.data as Map)
-            : <String, dynamic>{};
-        final nextUserfield = <String, dynamic>{
-          'is_ads_disabled': true,
-        };
-        final until = payload['ads_disabled_until'] ??
-            (payload['userfield'] is Map
-                ? payload['userfield']['ads_disabled_until']
-                : null);
-        if (until != null) {
-          nextUserfield['ads_disabled_until'] = until;
-        }
-        if (payload['userfield'] is Map) {
-          nextUserfield.addAll(
-            Map<String, dynamic>.from(payload['userfield'] as Map),
-          );
-          nextUserfield['is_ads_disabled'] = true;
-        }
-        mainController.patchUserfield(nextUserfield);
+      if (result.ok) {
+        mainController.patchUserfield(result.userfieldPatch);
 
         await Future.wait([
           loadAllBids(reset: true),
           if (isFree) loadFreshBids(reset: true),
         ]);
 
-        mainController.patchUserfield(nextUserfield);
+        mainController.patchUserfield(result.userfieldPatch);
       }
 
       if (context.mounted) {
         inAppNotification(
-          text: result.data['message']?.toString() ?? '',
+          text: result.message ?? '',
           c: context,
         );
       }
@@ -562,71 +544,18 @@ class NewHomeController extends BaseController {
 }
 
 Future<void> payBalance(int amount, BuildContext context) async {
-  print('payBalance start amount=$amount');
   try {
-    final apiAnswer = await Api().common.balancePay(amount: amount);
-    print(
-      'payBalance response code=${apiAnswer.code} '
-      'dataType=${apiAnswer.data.runtimeType} data=${apiAnswer.data}',
-    );
-
-    if (apiAnswer.data == null || apiAnswer.data is! Map) {
-      print('payBalance invalid response');
-      if (context.mounted) {
-        notification(text: context.l.somethingWentWrong);
-      }
-      return;
-    }
-
-    final data = Map<String, dynamic>.from(apiAnswer.data as Map);
-    if (data['error'] != null) {
-      print('payBalance error=${data['error']}');
-      if (context.mounted) {
-        notification(text: context.l.somethingWentWrong);
-      }
-      return;
-    }
-
-    final payUrl = _paymentUrl(data);
-    print('payBalance orderId=${data['order_id']} payUrl=$payUrl');
-    if (payUrl == null) {
-      print('payBalance url missing keys=${data.keys.toList()}');
-      if (context.mounted) {
-        notification(text: context.l.somethingWentWrong);
-      }
-      return;
-    }
-
+    final payUrl = await AccountRepository().topUpPaymentUrl(amount);
     final opened = await openPaymentUrl(payUrl);
-    print('payBalance opened=$opened');
     if (!opened && context.mounted) {
       notification(text: context.l.somethingWentWrong);
     }
   } catch (e, stackTrace) {
-    print('payBalance exception: $e\n$stackTrace');
+    log('payBalance failed: $e', error: e, stackTrace: stackTrace);
     if (context.mounted) {
       notification(text: context.l.somethingWentWrong);
     }
   }
-}
-
-String? _paymentUrl(Map<String, dynamic> data) {
-  for (final key in ['url', 'pay_url', 'payment_url', 'link']) {
-    final value = data[key];
-    if (value is String && value.trim().isNotEmpty) {
-      return value.trim();
-    }
-  }
-
-  for (final key in ['data', 'payload', 'result']) {
-    final nested = data[key];
-    if (nested is Map) {
-      final url = _paymentUrl(Map<String, dynamic>.from(nested));
-      if (url != null) return url;
-    }
-  }
-
-  return null;
 }
 
 Future<bool> openPaymentUrl(String rawUrl) async {

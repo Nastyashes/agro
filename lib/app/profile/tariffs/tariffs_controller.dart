@@ -1,11 +1,11 @@
 import 'dart:developer';
 
+import 'package:agro/data/repositories/account_repository.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/tariff/model_tariff.dart';
 import 'package:agro/model/tariff/tariff.dart';
-import 'package:agro/server/api/api.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
@@ -50,13 +50,11 @@ class TariffsController extends BaseController {
 
   Future<void> getTariffs() async {
     try {
-      final ApiAnswer apiAnswer = await Api().common.getTariffs();
+      final loaded = await AccountRepository().tariffs();
 
-      tariffs.clear();
-
-      for (final item in apiAnswer.data['items']) {
-        tariffs.add(structTariffData(data: item));
-      }
+      tariffs
+        ..clear()
+        ..addAll(loaded);
     } catch (e, stackTrace) {
       log(
         'getTariffs error: $e',
@@ -99,32 +97,12 @@ class TariffsController extends BaseController {
       final normalized = rawPrice.replaceAll(RegExp(r'[^0-9]'), '');
       final amount = int.tryParse(normalized) ?? 0;
 
-      final apiAnswer = await Api().common.tariffPay(
-            amount: amount,
-          );
+      final payUrl = await AccountRepository().tariffPaymentUrl(amount);
 
-      if (apiAnswer.data == null || apiAnswer.data is! Map) {
-        if (context.mounted) {
-          notification(text: context.l.somethingWentWrong);
-        }
-        return;
-      }
-
-      if (apiAnswer.data['error'] != null) {
-        if (context.mounted) {
-          log('Error: ${apiAnswer.data['error']}');
-          notification(text: context.l.somethingWentWrong);
-        }
+      if (await canLaunchUrl(Uri.parse(payUrl))) {
+        await launchUrl(Uri.parse(payUrl));
       } else {
-        final String payUrl = apiAnswer.data['pay_url'];
-
-        if (await canLaunchUrl(Uri.parse(payUrl))) {
-          await launchUrl(Uri.parse(payUrl));
-        } else {
-          throw Exception('Could not launch pay_url: $payUrl');
-        }
-
-        log('Order ID: ${apiAnswer.data['order_id']}');
+        throw Exception('Could not launch pay_url: $payUrl');
       }
     } catch (e) {
       if (context.mounted) {

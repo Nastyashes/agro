@@ -1,8 +1,8 @@
 import 'dart:developer';
 
+import 'package:agro/data/repositories/account_repository.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/model/tariff/tariff.dart';
-import 'package:agro/server/api/api.dart';
 import 'package:get/get.dart';
 
 class MainController extends BaseController {
@@ -71,12 +71,7 @@ class MainController extends BaseController {
 
   Future<void> loadTariff() async {
     try {
-      final apiAnswer =
-          await Api().traider.getTariff();
-
-      _tariff.value = Tariff.fromJson(
-        apiAnswer.data['payload'],
-      );
+      _tariff.value = await AccountRepository().currentTariff();
     } catch (e, stackTrace) {
       log(
         'MainController loadTariff error: $e',
@@ -88,14 +83,7 @@ class MainController extends BaseController {
 
   Future<void> loadBalance() async {
     try {
-      final apiAnswer =
-          await Api().common.getBalance();
-
-      _balance.value =
-          int.tryParse(
-            '${apiAnswer.data['balance'] ?? 0}',
-          ) ??
-          0;
+      _balance.value = await AccountRepository().balance();
     } catch (e, stackTrace) {
       log(
         'MainController loadBalance error: $e',

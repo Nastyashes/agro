@@ -1,9 +1,9 @@
 import 'dart:developer';
 
+import 'package:agro/data/repositories/account_repository.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/tariff/tariff.dart';
-import 'package:agro/server/api/api.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -47,42 +47,29 @@ class ProfileController extends BaseController {
   void onQrScan() => AccountSessionActions.openQrScan();
 
   Future<void> loadRequest(BuildContext context) async {
-    final apiAnswer = await Api().traider.getAllBids();
+    final loaded = await AccountRepository().userfield();
 
     if (!context.mounted) return;
 
-    userfield = Map<String, dynamic>.from(
-      apiAnswer.data['userfield'] ?? {},
-    );
-
-    log(userfield.toString());
+    userfield = loaded;
   }
 
   Future<void> disableAds(BuildContext context) async {
-    final result = await Api().traider.disableAds();
+    final result = await AccountRepository().disableAds();
 
-    if (result.data['status'] == '+') {
+    if (result.ok) {
       await loadRequest(context);
+    }
 
-      inAppNotification(
-        text: result.data['message'],
-        c: context,
-      );
-    } else {
-      inAppNotification(
-        text: result.data['message'],
-        c: context,
-      );
+    if (context.mounted) {
+      inAppNotification(text: result.message ?? '', c: context);
     }
   }
 
   void onTariffInfo() async {
     try {
-      ApiAnswer apiAnswer = await Api().traider.getTariff();
-      setState(() {
-        log('tariff info: ${apiAnswer.data['payload'].toString()}');
-        tariff = Tariff.fromJson(apiAnswer.data['payload']);
-      });
+      final loaded = await AccountRepository().currentTariff();
+      setState(() => tariff = loaded);
     } catch (e) {
       log(e.toString(), error: e);
     }
@@ -123,11 +110,7 @@ class ProfileController extends BaseController {
 
   Future<void> _loadTariff() async {
     try {
-      ApiAnswer apiAnswer = await Api().traider.getTariff();
-
-      tariff = Tariff.fromJson(apiAnswer.data['payload']);
-
-      log('tariff free=${tariff?.isFree}');
+      tariff = await AccountRepository().currentTariff();
     } catch (e) {
       log(e.toString());
     }
