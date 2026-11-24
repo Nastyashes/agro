@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:agro/load/load_screen.dart';
 import 'package:flutter/material.dart';
@@ -36,37 +34,7 @@ abstract class BaseController extends GetxController {
 
         await Get.showOverlay(
           asyncFunction: () async {
-            // #region agent log
-            try {
-              File('/Users/siell/Documents/git/uagro/.cursor/debug-ea8539.log').writeAsStringSync(
-                '${jsonEncode({
-                  'sessionId': 'ea8539',
-                  'hypothesisId': 'A',
-                  'location': 'base_controller.dart:execute',
-                  'message': 'showOverlay_started',
-                  'data': {'type': runtimeType.toString()},
-                  'timestamp': DateTime.now().millisecondsSinceEpoch,
-                })}\n',
-                mode: FileMode.append,
-              );
-            } catch (_) {}
-            // #endregion
             result = await action();
-            // #region agent log
-            try {
-              File('/Users/siell/Documents/git/uagro/.cursor/debug-ea8539.log').writeAsStringSync(
-                '${jsonEncode({
-                  'sessionId': 'ea8539',
-                  'hypothesisId': 'E',
-                  'location': 'base_controller.dart:execute',
-                  'message': 'showOverlay_action_finished',
-                  'data': {'type': runtimeType.toString()},
-                  'timestamp': DateTime.now().millisecondsSinceEpoch,
-                })}\n',
-                mode: FileMode.append,
-              );
-            } catch (_) {}
-            // #endregion
           },
           loadingWidget: const Center(
             child: AppCircularProgressIndicator(),

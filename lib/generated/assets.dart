@@ -2,62 +2,19 @@
 class Assets {
   Assets._();
 
-  static const String accountActive = 'picture/app/account/active.svg';
-  static const String accountArrow = 'picture/app/account/arrow.svg';
-  static const String accountArrowBot = 'picture/app/account/arrow_bot.svg';
-  static const String accountContact = 'picture/app/account/contact.svg';
   static const String accountDelete = 'picture/app/account/delete.svg';
-  static const String accountEula = 'picture/app/account/eula.svg';
   static const String accountExit = 'picture/app/account/exit.svg';
-  static const String accountInfo = 'picture/app/account/info.svg';
-  static const String accountInfoS = 'picture/app/account/info_s.svg';
-  static const String accountInfoSett = 'picture/app/account/info_sett.svg';
-  static const String accountLanguage = 'picture/app/account/language.svg';
-  static const String accountLearn = 'picture/app/account/learn.svg';
-  static const String accountLike = 'picture/app/account/like.svg';
-  static const String accountNotActive = 'picture/app/account/not_active.svg';
-  static const String accountNotification =
-      'picture/app/account/notification.svg';
   static const String accountPrivacy = 'picture/app/account/privacy.svg';
   static const String accountQuestion = 'picture/app/account/question.svg';
-  static const String accountSetting = 'picture/app/account/setting.svg';
   static const String accountSite = 'picture/app/account/site.svg';
   static const String accountTariffs = 'picture/app/account/tariffs.svg';
-  static const String tariffBeslim = 'picture/app/account/beslim.png';
-  static const String tariffPremium = 'picture/app/account/premium.png';
-  static const String tariffPremiumSale =
-      'picture/app/account/premium_sale.png';
-  static const String tariffVip = 'picture/app/account/vip.png';
-  static const String accountStatistics = 'picture/app/account/statistics.svg';
-  static const String accountTelegram = 'picture/app/account/telegram.svg';
-  static const String accountTerms = 'picture/app/account/terms.svg';
-  static const String appIsViewFalse = 'picture/app/is_view_false.svg';
-  static const String appIsViewTrue = 'picture/app/is_view_true.svg';
   static const String authBg = 'picture/auth/bg.png';
   static const String authTelegram = 'picture/auth/telegram.svg';
   static const String authViber = 'picture/auth/viber.svg';
-  static const String bottomNavigationHelp =
-      'picture/app/bottom_navigation/help.svg';
-  static const String bottomNavigationHome =
-      'picture/app/bottom_navigation/home.svg';
-  static const String bottomNavigationAllApplications =
-      'picture/app/bottom_navigation/leaf_fresh.svg';
-  static const String bottomNavigationProfile =
-      'picture/app/bottom_navigation/profile.svg';
-  static const String componentsArrowBot = 'picture/components/arrow_bot.svg';
-  static const String componentsArrowRight =
-      'picture/components/arrow_right.svg';
-  static const String componentsBack = 'picture/components/back.svg';
   static const String pictureLogo = 'picture/logo.png';
   static const String bgZerno = 'picture/background_app.png';
   static const String drawerBg = 'picture/drawer_bg.png';
-  static const String startBg = 'picture/start/bg.png';
   static const String profile = 'picture/app/account/profile.svg';
-  static const String zerno = 'picture/components/zerno.svg';
-  static const String dobriva = 'picture/components/dobriva.svg';
-  static const String seeds = 'picture/components/seeds.svg';
-  static const String oil = 'picture/components/oil.svg';
-  static const String location = 'picture/components/location.svg';
   static const String qrScan = 'picture/app/account/qr_code_scan.svg';
   static const String hedTariff = 'picture/app/account/hed_tariff.png';
   static const String checkCircle = 'picture/components/check-circle.svg';

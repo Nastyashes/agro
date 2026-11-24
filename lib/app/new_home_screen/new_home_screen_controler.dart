@@ -58,6 +58,10 @@ class NewHomeController extends BaseController {
 
   bool _loadingAll = false;
 
+  /// Incremented on every request; responses from superseded requests
+  /// (e.g. an older search query) are discarded.
+  int _allRequestId = 0;
+
   bool get hasMoreBids =>
       _bidsTotal == null || bids.length < _bidsTotal!;
 
@@ -162,26 +166,28 @@ class NewHomeController extends BaseController {
   Future<void> loadAllBids({
     bool reset = false,
   }) async {
-    if (_loadingAll) return;
+    // Pagination waits for the current request; a reset (new search,
+    // refresh) always wins and supersedes whatever is in flight.
+    if (_loadingAll && !reset) return;
 
     if (!reset && !hasMoreBids) {
       allRefreshController.loadNoData();
       return;
     }
 
+    final requestId = ++_allRequestId;
     _loadingAll = true;
 
     try {
-      if (reset) {
-        _bidsOffset = 0;
-        _bidsTotal = null;
-      }
+      final offset = reset ? 0 : _bidsOffset;
 
       final apiAnswer = await Api().traider.searchBids(
         search: searchController.text,
         limit: AppConstants.bidsPageLimit,
-        offset: _bidsOffset,
+        offset: offset,
       );
+
+      if (requestId != _allRequestId) return;
 
       log('NewHomeController loadAllBids bids: ${apiAnswer.data['bids']}');
 
@@ -204,7 +210,7 @@ class NewHomeController extends BaseController {
         bids.addAll(newItems);
       }
 
-      _bidsOffset += newItems.length;
+      _bidsOffset = offset + newItems.length;
 
       _bidsTotal = int.tryParse(
         '${apiAnswer.data['bids_total'] ?? ''}',
@@ -216,6 +222,8 @@ class NewHomeController extends BaseController {
         setState(() {});
       }
     } catch (e, stackTrace) {
+      if (requestId != _allRequestId) return;
+
       log(
         'NewHomeController loadAllBids error: $e',
         error: e,
@@ -224,7 +232,9 @@ class NewHomeController extends BaseController {
 
       rethrow;
     } finally {
-      _loadingAll = false;
+      if (requestId == _allRequestId) {
+        _loadingAll = false;
+      }
     }
   }
 

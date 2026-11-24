@@ -89,8 +89,6 @@ class BidItemController extends BaseController {
   }
 
   Future<void> onContactClick(BuildContext context) async {
-    final String errorTariffMail = context.l.errorTariffMail;
-
     if (bidItem.isOpened) return;
 
     try {

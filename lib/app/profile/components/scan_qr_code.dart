@@ -1,11 +1,9 @@
-import 'package:agro/generated/assets.dart';
 import 'package:agro/server/api/controller/traider.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
 class QRScannerScreen extends StatelessWidget {
