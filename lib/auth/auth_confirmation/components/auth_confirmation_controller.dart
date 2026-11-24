@@ -1,14 +1,12 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:agro/data/repositories/auth_repository.dart';
 import 'package:agro/model/model_user/struct_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:agro/controllers/abstract/from_controller.dart';
 import '../../../controllers/app_input_controller.dart';
 import '../../../routes/app_pages.dart';
-import '../../../server/api/api.dart';
 
 class AuthConfirmationController extends FormController {
   late Function(VoidCallback fn) setState;
@@ -38,14 +36,12 @@ class AuthConfirmationController extends FormController {
   void onAuth() => Get.offAllNamed(Routes.auth);
 
   void onLogin() => loadIfValid(() async {
-        ApiAnswer apiAnswer = await Api().auth.loginCode(code: codeController.text);
+        final result = await AuthRepository().confirmCode(codeController.text);
 
-        log(apiAnswer.data.toString());
-
-        if (apiAnswer.data['status']) {
-          structUserData(data: apiAnswer.data['payload']['user'], token: apiAnswer.data['payload']['key'], login: true);
+        if (result.isSuccess) {
+          structUserData(data: result.user, token: result.token, login: true);
         } else {
-          setState(() => errorCode = apiAnswer.data['message']);
+          setState(() => errorCode = result.errorMessage);
         }
       }, );
 }
