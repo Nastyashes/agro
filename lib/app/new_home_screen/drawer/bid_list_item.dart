@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:agro/data/repositories/bids_repository.dart';
 import 'package:agro/app/bid_detail/components/launch_phone.dart';
 import 'package:agro/ui/app_components/bids_card_row.dart';
 import 'package:agro/ui/pop_up/banner_dialog.dart';
@@ -9,10 +10,8 @@ import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/controllers/main_controler.dart';
 import 'package:agro/model/enums.dart';
 import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
-import 'package:agro/model/new_models_bids/bids_contacts_model.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/routes/app_pages.dart';
-import 'package:agro/server/api/api.dart';
 import 'package:agro/ui/buttons/b_transparent_scalable_button.dart';
 import 'package:agro/ui/buttons/button_styles.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
@@ -118,11 +117,7 @@ class _BidListItemState extends State<BidListItem> {
       OpenContactsAdResponse? res;
 
       try {
-        res = await Api().traider.openContactsAd(
-              orderId: _bidItem.orderId!,
-            );
-
-        log('OPEN Contacts Ad: ${res.toJson()}');
+        res = await BidsRepository().contactAd(_bidItem.orderId!);
       } catch (e, stackTrace) {
         log(
           'openContactsAd failed, fallback to direct open: $e',
@@ -183,50 +178,30 @@ class _BidListItemState extends State<BidListItem> {
 
   Future<void> _openContact(BuildContext context) async {
     try {
-      final ApiAnswer apiAnswer = await Api().traider.openBidContact(
-            orderId: _bidItem.orderId!,
-          );
+      final result = await BidsRepository().openContact(_bidItem.orderId!);
 
-      log(apiAnswer.data.toString());
-
-      if (apiAnswer.data['status'] == 'insufficient') {
-        final String message = apiAnswer.data['message']?.toString() ??
-            context.l.insufficientBalance;
-
+      if (result.status != OpenContactStatus.opened) {
         if (context.mounted) {
           inAppNotification(
-            text: message,
+            text: result.message ??
+                (result.status == OpenContactStatus.insufficient
+                    ? context.l.insufficientBalance
+                    : context.l.connectionErrorRetry),
             c: context,
           );
         }
-
         return;
       }
 
-      if (apiAnswer.data['status'] != '+') {
-        final String message = apiAnswer.data['message']?.toString() ??
-            context.l.connectionErrorRetry;
-
-        if (context.mounted) {
-          inAppNotification(
-            text: message,
-            c: context,
-          );
-        }
-
-        return;
-      }
-
-      final payload = apiAnswer.data['payload'];
-
+      final contact = result.contact!;
       final updated = _bidItem.copyWith(
         opened: 1,
-        openedPhon: payload['phone']?.toString(),
-        fermerCompany: payload['company']?.toString(),
-        fermerName: payload['name']?.toString(),
-        fermerPhone: payload['phone']?.toString(),
-        fermerEmail: payload['email']?.toString(),
-        contacts: BidContacts.fromJson(payload),
+        openedPhon: contact.phone,
+        fermerCompany: contact.company,
+        fermerName: contact.name,
+        fermerPhone: contact.phone,
+        fermerEmail: contact.email,
+        contacts: contact.contacts,
       );
 
       if (!mounted) return;
@@ -264,13 +239,9 @@ class _BidListItemState extends State<BidListItem> {
     setState(() => orderingCarrier = true);
 
     try {
-      final ApiAnswer apiAnswer = await Api().traider.orderCarrier();
-
-      log('orderCarrier: ${apiAnswer.data}');
-
-      final bool status = apiAnswer.data['status'] == true;
-
-      final String message = apiAnswer.data['message']?.toString() ?? '';
+      final result = await BidsRepository().orderCarrier();
+      final bool status = result.ok;
+      final String message = result.message;
 
       if (!mounted) return;
 

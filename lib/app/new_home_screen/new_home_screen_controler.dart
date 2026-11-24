@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/data/repositories/account_repository.dart';
+import 'package:agro/data/repositories/bids_repository.dart';
 import 'package:agro/data/repositories/messages_repository.dart';
 import 'package:agro/controllers/app_input_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
@@ -31,6 +32,8 @@ class NewHomeController extends BaseController {
   late Function(VoidCallback fn) setState;
 
   final MainController mainController = Get.find<MainController>();
+
+  final BidsRepository _bidsRepository = BidsRepository();
 
   late final TextEditingController searchController;
   late final FocusNode searchFocusNode;
@@ -182,26 +185,15 @@ class NewHomeController extends BaseController {
     try {
       final offset = reset ? 0 : _bidsOffset;
 
-      final apiAnswer = await Api().traider.searchBids(
-        search: searchController.text,
+      final page = await _bidsRepository.search(
+        query: searchController.text,
         limit: AppConstants.bidsPageLimit,
         offset: offset,
       );
 
       if (requestId != _allRequestId) return;
 
-      log('NewHomeController loadAllBids bids: ${apiAnswer.data['bids']}');
-
-      if (apiAnswer.data['status'] == '-') {
-        throw Exception(
-          apiAnswer.data['error']?.toString() ??
-              'searchBids failed',
-        );
-      }
-
-      final response = BidsResponse.fromJson(apiAnswer.data);
-
-      final newItems = response.bids;
+      final newItems = page.items;
 
       if (reset) {
         bids
@@ -213,11 +205,9 @@ class NewHomeController extends BaseController {
 
       _bidsOffset = offset + newItems.length;
 
-      _bidsTotal = int.tryParse(
-        '${apiAnswer.data['bids_total'] ?? ''}',
-      );
+      _bidsTotal = page.total;
 
-      _updateUserfield(apiAnswer.data);
+      _updateUserfield(page.userfield);
 
       if (context.mounted) {
         setState(() {});
@@ -263,18 +253,12 @@ class NewHomeController extends BaseController {
         _freshTotal = null;
       }
 
-      final apiAnswer = await Api().traider.getAllBids(
+      final page = await _bidsRepository.fresh(
         limit: AppConstants.bidsPageLimit,
         offset: _freshOffset,
       );
 
-      log(
-        'NewHomeController loadFreshBids bids: ${apiAnswer.data['bids_fresh']}',
-      );
-
-      final response = BidsResponse.fromJson(apiAnswer.data);
-
-      final newItems = response.bidsFresh;
+      final newItems = page.items;
 
       if (reset) {
         bidsFresh
@@ -286,11 +270,9 @@ class NewHomeController extends BaseController {
 
       _freshOffset += newItems.length;
 
-      _freshTotal = int.tryParse(
-        '${apiAnswer.data['bids_fresh_total'] ?? ''}',
-      );
+      _freshTotal = page.total;
 
-      _updateUserfield(apiAnswer.data);
+      _updateUserfield(page.userfield);
 
       if (context.mounted) {
         setState(() {});
@@ -468,7 +450,7 @@ class NewHomeController extends BaseController {
 
   Future<void> loadAdBanner() async {
     try {
-      adBanner = await Api().traider.getAdBanner();
+      adBanner = await _bidsRepository.feedBanner();
 
       log(
         'NewHomeController ad banner: ${adBanner?.image}',
@@ -516,14 +498,8 @@ class NewHomeController extends BaseController {
     }
   }
 
-  void _updateUserfield(dynamic data) {
-    final value = data['userfield'];
-
-    if (value is Map) {
-      mainController.updateUserfield(
-        Map<String, dynamic>.from(value),
-      );
-    }
+  void _updateUserfield(Map<String, dynamic>? value) {
+    if (value != null) mainController.updateUserfield(value);
   }
 
   @override
