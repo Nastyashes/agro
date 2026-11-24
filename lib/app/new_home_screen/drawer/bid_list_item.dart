@@ -22,6 +22,7 @@ import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:agro/vars/trade_localizers.dart';
+import 'package:agro/ui/pop_up/confirm_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -149,7 +150,11 @@ class _BidListItemState extends State<BidListItem> {
         phone: ad.phone,
         price: context.adsPriceLabel(),
         onDisableAds: () async {
-          await _newHomeController.disableAds(context);
+          showDisableAdsConfirm(
+            context,
+            amount: AppConstants.adsPrice,
+            onConfirm: () => _newHomeController.disableAds(context),
+          );
         },
       );
 

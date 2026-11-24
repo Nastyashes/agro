@@ -103,3 +103,18 @@ void showConfirmPoUp(BuildContext context, String? title, String? description,
     },
   );
 }
+
+/// Asks the user to confirm the disable-ads charge of [amount] UAH.
+/// [onConfirm] runs only after an explicit confirm; cancel/close does nothing.
+void showDisableAdsConfirm(
+  BuildContext context, {
+  required String amount,
+  required Future<void> Function() onConfirm,
+}) {
+  showConfirmPoUp(
+    context,
+    '${context.l.disableBanner.trim()}?',
+    context.l.confirmChargeBody(amount),
+    onConfirm,
+  );
+}
