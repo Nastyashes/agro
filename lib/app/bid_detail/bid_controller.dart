@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:agro/data/repositories/farmer_orders_repository.dart';
 import 'package:agro/app/home/order/components/set_answer.dart.dart';
 import 'package:agro/ui/pop_up/banner_dialog.dart';
 import 'package:agro/ui/pop_up/inform_pop_up.dart';
@@ -341,11 +342,8 @@ class BidItemController extends BaseController {
   void onReview() => Get.toNamed(Routes.review, arguments: bidItem.orderId);
 
   void onSell() => loadIfValid(() async {
-        ApiAnswer apiAnswer =
-            await Api().fermer.closePriceOrder(orderId: bidItem.orderId!);
-        log(apiAnswer.data.toString());
         // після закриття повертаємось назад
-        if (apiAnswer.data['status'].toString() == 'true') {
+        if (await FarmerOrdersRepository().closeOrder(bidItem.orderId!)) {
           Get.back();
         }
       });
