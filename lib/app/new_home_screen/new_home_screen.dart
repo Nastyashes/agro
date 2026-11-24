@@ -18,6 +18,7 @@ import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
+import 'package:agro/ui/pop_up/confirm_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
@@ -108,9 +109,13 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
             Navigator.pop(context);
             AccountSessionActions.confirmDeleteAccount(context);
           },
-          onDisableAds: () async {
+          onDisableAds: () {
             Navigator.pop(context);
-            await controller.disableAds(context);
+            showDisableAdsConfirm(
+              context,
+              amount: AppConstants.adsPrice,
+              onConfirm: () => controller.disableAds(context),
+            );
           },
           onTopUp: () {
             Navigator.pop(context);

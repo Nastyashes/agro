@@ -7,6 +7,7 @@ import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:agro/vars/valid_themes.dart';
+import 'package:agro/ui/pop_up/confirm_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -136,8 +137,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     c: context,
                                     colorText: AppColors.white,
                                     vertical: 15,
-                                    onPressed: () =>
-                                        controller.disableAds(context),
+                                    onPressed: () => showDisableAdsConfirm(
+                                      context,
+                                      amount: controller.adsPrice,
+                                      onConfirm: () =>
+                                          controller.disableAds(context),
+                                    ),
                                   ),
                                   Positioned(
                                     left: -7,
