@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:math' as math;
 
 import 'package:agro/model/my_price/my_price_models.dart';
 import 'package:agro/model/my_price/my_price_result.dart';
 import 'package:agro/server/api/api.dart';
+import 'package:agro/server/api/api_client.dart';
 
 class MyPriceApi extends Api {
   Future<MyPriceResult<T>> _post<T>(
@@ -13,14 +13,13 @@ class MyPriceApi extends Api {
     T Function(dynamic data)? parse,
   }) async {
     try {
-      final request = await dataRequestMultipartBody(
+      final answer = await send(
         method,
-        apiUrl: 'api.php',
-        formData: formData ?? {},
+        endpoint: 'api.php',
+        transport: ApiTransport.body,
+        fields: formData ?? const {},
       );
-      final rawBody = await request.stream.bytesToString();
-      final jsonData = json.decode(rawBody);
-      checkAuth(jsonData);
+      final jsonData = answer.data;
       log('MyPriceApi $method formData=$formData');
       log('MyPriceApi $method raw=$jsonData');
       return MyPriceResult<T>.fromJson(jsonData, parse: parse);
