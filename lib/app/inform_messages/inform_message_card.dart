@@ -29,7 +29,9 @@ class InformMessageCard extends StatelessWidget {
         color: AppColors.backgroundGradient1,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: message.isRead ? AppColors.mainGreen.withValues(alpha: 0.3) : AppColors.mainGreen,
+          color: message.isRead
+              ? AppColors.mainGreen.withValues(alpha: 0.3)
+              : AppColors.mainGreen,
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

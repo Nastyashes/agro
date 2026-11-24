@@ -1,9 +1,9 @@
 import 'dart:developer';
 
 import 'package:agro/controllers/abstract/base_controller.dart';
+import 'package:agro/data/repositories/messages_repository.dart';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/model/message/message.dart';
-import 'package:agro/server/api/api.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +16,13 @@ class InformMessagesController extends BaseController {
 
   late final RefreshController refreshController;
 
+  final MessagesRepository _repository = MessagesRepository();
+
   List<Message> messages = [];
 
   bool _isLoadingMessages = false;
 
-  int get unreadCount =>
-      messages.where((message) => !message.isRead).length;
+  int get unreadCount => messages.where((message) => !message.isRead).length;
 
   @override
   void onInit() {
@@ -58,30 +59,7 @@ class InformMessagesController extends BaseController {
     _isLoadingMessages = true;
 
     try {
-      final apiAnswer = await Api().traider.getMessages();
-
-      log(
-        'InformMessages getMessages response: '
-        'code=${apiAnswer.code}, '
-        'dataType=${apiAnswer.data.runtimeType}, '
-        'data=${apiAnswer.data}',
-        name: 'InformMessages',
-      );
-      debugPrint('[InformMessages] code=${apiAnswer.code}');
-      debugPrint('[InformMessages] dataType=${apiAnswer.data.runtimeType}');
-      debugPrint('[InformMessages] raw data=${apiAnswer.data}');
-
-      final loaded = parseMessagesPayload(apiAnswer.data);
-
-      log(
-        'InformMessages parsed count=${loaded.length}, '
-        'ids=${loaded.map((m) => m.id).toList()}',
-        name: 'InformMessages',
-      );
-      debugPrint(
-        '[InformMessages] parsed=${loaded.length}, '
-        'ids=${loaded.map((m) => m.id).toList()}',
-      );
+      final loaded = await _repository.fetchAll();
 
       messages
         ..clear()
@@ -98,7 +76,6 @@ class InformMessagesController extends BaseController {
         stackTrace: stackTrace,
         name: 'InformMessages',
       );
-      debugPrint('[InformMessages] loadMessages error: $e');
 
       if (context.mounted) {
         notification(text: context.l.somethingWentWrong);
@@ -115,8 +92,7 @@ class InformMessagesController extends BaseController {
 
   Future<void> onReadMessage(Message message) async {
     try {
-      await Api().traider.readMessage(message.id);
-      log('read message ${message.id}');
+      await _repository.markRead(message.id);
       await loadMessages();
     } catch (e, stackTrace) {
       log(

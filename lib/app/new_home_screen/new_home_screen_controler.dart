@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:agro/controllers/abstract/base_controller.dart';
+import 'package:agro/data/repositories/messages_repository.dart';
 import 'package:agro/controllers/app_input_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
-import 'package:agro/model/message/message.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
@@ -416,12 +416,7 @@ class NewHomeController extends BaseController {
 
   Future<void> loadUnreadInformMessages() async {
     try {
-      final apiAnswer = await Api().traider.getMessages();
-      if (apiAnswer.code != 200) return;
-
-      unreadInformCount.value = parseMessagesPayload(apiAnswer.data)
-          .where((message) => !message.isRead)
-          .length;
+      unreadInformCount.value = await MessagesRepository().unreadCount();
     } catch (e) {
       log('NewHomeController loadUnreadInformMessages error: $e');
     }
