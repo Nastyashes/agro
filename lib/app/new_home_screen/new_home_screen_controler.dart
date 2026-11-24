@@ -639,7 +639,7 @@ Future<bool> openPaymentUrl(String rawUrl) async {
   if (value.startsWith('//')) {
     value = 'https:$value';
   } else if (!value.contains('://')) {
-    final base = Api().getUrl();
+    final base = Api.baseUrl();
     value = '$base${value.startsWith('/') ? value.substring(1) : value}';
   }
 

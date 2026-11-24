@@ -1,12 +1,9 @@
-import 'dart:convert';
-import 'dart:developer';
-
-import 'package:agro/server/api/controller/common.dart';
 import 'package:agro/auth/country/country_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:agro/server/api/api_client.dart';
+import 'package:agro/server/api/controller/common.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
-import 'package:http/http.dart';
 
 import '../../routes/app_pages.dart';
 import 'controller/auth.dart';
@@ -14,108 +11,61 @@ import 'controller/fermer.dart';
 import 'controller/my_price.dart';
 import 'controller/traider.dart';
 
-int numRequestSend = 0;
-
 class Api {
-  Map<String, String> headers() =>
-      {'Content-Type': 'application/json', 'Accept': 'application/json'};
+  static ApiClient _client = _defaultClient();
 
-  Map<String, String> headersNoBearer() =>
-      {'Content-Type': 'application/json', 'Accept': 'application/json'};
+  /// Shared transport for every API group. Tests replace it with a fake.
+  static ApiClient get client => _client;
 
-  String getUrl() {
-    var box = Hive.box('data');
-    String? selectedCountry = box.get('selectedCountry');
-    if (selectedCountry == Country.kazakh.name) {
-      return 'https://uagro.kz/';
-    } else {
-      return "https://uagro.trade/";
-    }
+  @visibleForTesting
+  static set client(ApiClient value) => _client = value;
+
+  static ApiClient _defaultClient() => ApiClient(
+        baseUrl: baseUrl,
+        token: _token,
+        language: language,
+        onUnauthorized: _onUnauthorized,
+      );
+
+  static String baseUrl() {
+    final String? selectedCountry = Hive.box('data').get('selectedCountry');
+    return selectedCountry == Country.kazakh.name
+        ? 'https://uagro.kz/'
+        : 'https://uagro.trade/';
   }
 
-  String getLanguage() {
-    var box = Hive.box('data');
-    return box.get('language') ?? 'en';
+  static String language() => Hive.box('data').get('language') ?? 'en';
+
+  static String _token() => Hive.box('data').get('modelUser')?.token ?? '';
+
+  static void _onUnauthorized() {
+    Hive.box('data').clear();
+    Get.offAllNamed(Routes.auth);
   }
 
-  Future<StreamedResponse> dataRequest(path,
-      {String req = 'POST',
-      String? parameter,
-      bool urlActive = true,
-      bool bearerActive = true,
-      String? body,
-      required BuildContext c}) async {
-    StreamedResponse request = await ((Request(req,
-            Uri.parse('${urlActive ? getUrl() : ''}$path?${parameter ?? ''}')))
-          ..headers.addAll(bearerActive ? headers() : headersNoBearer())
-          ..body = body ?? json.encode({}))
-        .send();
-
-    log('GET url: ${getUrl()}$path${parameter ?? ''}');
-
-    return request;
-  }
-
-  Future<StreamedResponse> dataRequestMultipartBody(
+  /// Sends [method] and wraps the result in the legacy [ApiAnswer].
+  @protected
+  Future<ApiAnswer> send(
     String method, {
-    String apiUrl = "apiapp.php",
-    bool bearerActive = true,
-    bool langActive = true,
-    Map<String, String>? formData,
+    String endpoint = 'apiapp.php',
+    ApiTransport transport = ApiTransport.query,
+    Map<String, String> query = const {},
+    Map<String, String> fields = const {},
+    bool withLang = true,
+    bool handleUnauthorized = true,
   }) async {
-    final key = Hive.box('data').get('modelUser')?.token ?? '';
-
-    final url = '${getUrl()}$apiUrl';
-
-    final request = MultipartRequest(
-      'POST',
-      Uri.parse(url),
+    final response = await client.post(
+      method,
+      endpoint: endpoint,
+      transport: transport,
+      query: query,
+      fields: fields,
+      withLang: withLang,
+      handleUnauthorized: handleUnauthorized,
     );
-
-    request.headers.addAll(
-      bearerActive ? headers() : headersNoBearer(),
-    );
-
-    request.fields['method'] = method;
-    request.fields['key'] = key;
-
-    if (langActive) {
-      request.fields['lang'] = getLanguage();
-    }
-
-    if (formData != null) {
-      request.fields.addAll(formData);
-    }
-
-    log('POST url: $url | fields: ${_safeLogFields(request.fields)}');
-
-    return await request.send();
-  }
-
-  Future<StreamedResponse> dataRequestMultipart(method,
-      {String? parameter,
-      String apiUrl = "apiapp.php",
-      bool bearerActive = true,
-      bool langActive = true,
-      Map<String, String>? formData}) async {
-    String key = Hive.box('data').get('modelUser') == null ||
-            Hive.box('data').get('modelUser').token == null
-        ? ''
-        : Hive.box('data').get('modelUser').token;
-    String url =
-        '${getUrl()}$apiUrl?method=$method&key=$key${parameter == null ? '' : '&$parameter'}${langActive ? '&lang=${getLanguage()}' : ''}';
-    var request = MultipartRequest('POST', Uri.parse(url));
-
-    request.headers.addAll(bearerActive ? headers() : headersNoBearer());
-
-    if (formData != null) {
-      formData.forEach((key, value) {
-        request.fields[key] = value;
-      });
-    }
-    log('POST url: ${_maskSensitiveUrl(url)}');
-
-    return await request.send();
+    return ApiAnswer()
+      ..code = response.statusCode
+      ..data = response.data;
   }
 
   Auth get auth => Auth();
@@ -129,36 +79,20 @@ class Api {
   Commmon get common => Commmon();
 }
 
-Map<String, String> _safeLogFields(Map<String, String> fields) {
-  final copy = Map<String, String>.from(fields);
-  for (final key in ['key', 'device_token']) {
-    final value = copy[key];
-    if (value != null && value.isNotEmpty) {
-      copy[key] = '***';
-    }
-  }
-  return copy;
-}
-
-String _maskSensitiveUrl(String url) {
-  return url.replaceAllMapped(
-    RegExp(r'(key|device_token)=([^&]+)'),
-    (match) => '${match[1]}=***',
-  );
-}
+/// Reproduces how the legacy raw-URL code sent [value]: an unescaped `+` in
+/// a query string is decoded by PHP as a space. Login endpoints rely on that
+/// exact server-side input, so they keep it until the backend confirms
+/// otherwise.
+String legacyQueryValue(String value) => value.replaceAll('+', ' ');
 
 class ApiAnswer {
   int? code;
   dynamic data;
 }
 
-void checkAuth(data) {
-  try {
-    if (data['message'] == 'Unauthorized') {
-      Hive.box('data').put('pinCode', null);
-      Hive.box('data').clear();
-
-      Get.offAllNamed(Routes.auth);
-    }
-  } catch (_) {}
+/// Ends the session when [data] says the token is no longer valid.
+void checkAuth(dynamic data) {
+  if (data is Map && data['message'] == 'Unauthorized') {
+    Api._onUnauthorized();
+  }
 }

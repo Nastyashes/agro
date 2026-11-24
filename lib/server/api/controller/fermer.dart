@@ -1,81 +1,23 @@
-import 'dart:convert';
-
 import '../api.dart';
 
 class Fermer extends Api {
-  Future<ApiAnswer> getOrderList(
-      {required int page, required int limit, String? search}) async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('order.list',
-        parameter:
-            'mode=fermer&page=$page&limit=$limit&search=$search&deleted=false');
+  Future<ApiAnswer> getInfoPriceOrder({required int orderId}) =>
+      send('order.pricelist', query: {'order_id': '$orderId'});
 
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
+  Future<ApiAnswer> closePriceOrder({required int orderId}) =>
+      send('fermer.closeorder', query: {'order_id': '$orderId'});
 
-    return apiAnswer;
-  }
+  Future<ApiAnswer> viewReview({required int orderId}) =>
+      send('order.reviews', query: {'itemid': '$orderId'});
 
-  Future<ApiAnswer> createOrder() async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('order.plus');
-
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
-
-    return apiAnswer;
-  }
-
-  Future<ApiAnswer> getInfoPriceOrder({required int orderId}) async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('order.pricelist',
-        parameter: 'order_id=$orderId');
-
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
-
-    return apiAnswer;
-  }
-
-  Future<ApiAnswer> closePriceOrder({required int orderId}) async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('fermer.closeorder',
-        parameter: 'order_id=$orderId');
-
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
-
-    return apiAnswer;
-  }
-
-  Future<ApiAnswer> viewReview({required int orderId}) async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('order.reviews',
-        parameter: 'itemid=$orderId');
-
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
-
-    return apiAnswer;
-  }
-
-  Future<ApiAnswer> sendReviewFermer(
-      {required int orderId,
-      required int rating,
-      required String comment}) async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('order.comment',
-        parameter: 'order_id=$orderId&rating=$rating&comment=$comment');
-
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
-
-    return apiAnswer;
-  }
+  Future<ApiAnswer> sendReviewFermer({
+    required int orderId,
+    required int rating,
+    required String comment,
+  }) =>
+      send('order.comment', query: {
+        'order_id': '$orderId',
+        'rating': '$rating',
+        'comment': comment,
+      });
 }

@@ -1,77 +1,17 @@
-import 'dart:convert';
-
 import 'package:agro/server/api/api.dart';
 
 class Commmon extends Api {
-  Future<ApiAnswer> sendMessageToBot(String message) async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('admin.sendMessage',
-        parameter: 'message=$message&akey=Palladium57884');
+  // Оплатити тариф з балансу 1.0.22
+  Future<ApiAnswer> tariffPay({required int amount}) => send('checkout',
+      endpoint: 'api.php', query: {'amount': '$amount'}, withLang: false);
 
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
+  // Поповнити баланс 1.0.22
+  Future<ApiAnswer> balancePay({required int amount}) =>
+      send('uagro.wallet.topup',
+          endpoint: 'api.php', query: {'amount': '$amount'});
 
-    return apiAnswer;
-  }
-//Оплатити тариф з балансу 1.0.22
+  Future<ApiAnswer> getTariffs() => send('voc.tariffs');
 
-  Future<ApiAnswer> tariffPay({required int amount}) async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('checkout',
-        parameter: 'amount=$amount', langActive: false, apiUrl: "api.php");
-    //  final rawBody = await request.stream.bytesToString();
-    // log('RAW BODY: $rawBody');
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
-    return apiAnswer;
-  }
-//Поповнити баланс 1.0.22
-
-  Future<ApiAnswer> balancePay({required int amount}) async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    print('balancePay request amount=$amount');
-    var request = await dataRequestMultipart('uagro.wallet.topup',
-        parameter: 'amount=$amount', apiUrl: "api.php");
-    final rawBody = await request.stream.bytesToString();
-    print('balancePay status=${request.statusCode} body=$rawBody');
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(rawBody);
-    checkAuth(apiAnswer.data);
-    return apiAnswer;
-  }
-
-  Future<ApiAnswer> getTariffs() async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('voc.tariffs');
-
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
-    return apiAnswer;
-  }
-// Отримати баланс 1.0.22
-
-  Future<ApiAnswer> getBalance() async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('balance', apiUrl: 'api.php');
-    final rawBody = await request.stream.bytesToString();
-    // log('BALANCE RAW: $rawBody');
-
-    apiAnswer.data = json.decode(rawBody);
-    apiAnswer.code = request.statusCode;
-    checkAuth(apiAnswer.data);
-    return apiAnswer;
-  }
-
-  Future<ApiAnswer> setOrderReaded(String orderId) async {
-    ApiAnswer apiAnswer = ApiAnswer();
-    var request = await dataRequestMultipart('order.setReaded',
-        parameter: "order_id=$orderId");
-    apiAnswer.code = request.statusCode;
-    apiAnswer.data = json.decode(await request.stream.bytesToString());
-    checkAuth(apiAnswer.data);
-    return apiAnswer;
-  }
+  // Отримати баланс 1.0.22
+  Future<ApiAnswer> getBalance() => send('balance', endpoint: 'api.php');
 }
