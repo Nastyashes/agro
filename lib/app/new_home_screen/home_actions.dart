@@ -1,3 +1,4 @@
+import 'package:agro/ui/components/app_snackbar.dart';
 import 'dart:developer';
 
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
@@ -16,7 +17,7 @@ Future<void> disableAdsWithFeedback(BuildContext context) async {
   final message = await Get.find<NewHomeController>().disableAds();
   if (!context.mounted) return;
   if (message == null) {
-    notification(text: context.l.somethingWentWrong);
+    notification(text: context.l.somethingWentWrong, type: SnackType.error);
   } else {
     inAppNotification(text: message, c: context);
   }
@@ -27,12 +28,12 @@ Future<void> payBalance(int amount, BuildContext context) async {
     final payUrl = await AccountRepository().topUpPaymentUrl(amount);
     final opened = await openPaymentUrl(payUrl);
     if (!opened && context.mounted) {
-      notification(text: context.l.somethingWentWrong);
+      notification(text: context.l.somethingWentWrong, type: SnackType.error);
     }
   } catch (e, stackTrace) {
     log('payBalance failed: $e', error: e, stackTrace: stackTrace);
     if (context.mounted) {
-      notification(text: context.l.somethingWentWrong);
+      notification(text: context.l.somethingWentWrong, type: SnackType.error);
     }
   }
 }

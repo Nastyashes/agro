@@ -1,3 +1,4 @@
+import 'package:agro/ui/components/app_snackbar.dart';
 import 'package:agro/generated/assets.dart';
 import 'package:agro/ui/buttons/button_styles.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
@@ -91,6 +92,7 @@ class LaunchPhone extends StatelessWidget {
     } else {
       notification(
         text: errorTelegram,
+        type: SnackType.error,
       );
     }
   }
@@ -111,6 +113,7 @@ class LaunchPhone extends StatelessWidget {
     } else {
       notification(
         text: errorViber,
+        type: SnackType.error,
       );
     }
   }

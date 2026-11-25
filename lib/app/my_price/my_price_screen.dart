@@ -5,7 +5,7 @@ import 'package:agro/app/my_price/controller/my_price_controller.dart';
 import 'package:agro/model/my_price/my_price_models.dart';
 import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/app_components/appbar_with_back.dart';
-import 'package:agro/ui/app_components/empty_list_widget.dart';
+import 'package:agro/ui/components/empty_state.dart';
 import 'package:agro/ui/buttons/button_styles.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
@@ -132,8 +132,11 @@ class _MyPriceScreenState extends State<MyPriceScreen> {
     );
     if (items.isEmpty) {
       return isReservations
-          ? emptyListDefault(context.l.emptyReservations, AppColors.darkGreen)
-          : emptyListDefault(context.l.myPriceEmpty, AppColors.darkGreen);
+          ? EmptyState(
+              title: context.l.emptyReservations,
+              icon: Icons.bookmark_border_rounded)
+          : EmptyState(
+              title: context.l.myPriceEmpty, icon: Icons.bar_chart_rounded);
     }
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),

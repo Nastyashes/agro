@@ -1,3 +1,4 @@
+import 'package:agro/ui/components/app_snackbar.dart';
 import 'package:agro/app/new_home_screen/home_actions.dart';
 import 'package:agro/app/my_price/components/my_price_dialogs.dart';
 import 'package:agro/app/my_price/components/my_price_error.dart' as mp;
@@ -90,6 +91,7 @@ class ScreenBidDetailUi implements BidDetailUi {
             BidNotice.connectionErrorRetry => l.connectionErrorRetry,
             BidNotice.carrierError => l.errorTariffMail,
           },
+      type: SnackType.error,
     );
   }
 
@@ -116,7 +118,7 @@ class ScreenBidDetailUi implements BidDetailUi {
             l.insufficientFunds(result.balance ?? '—', result.price ?? '—'));
       case AnalysisStatus.failed:
         showInformPoUp(context, l.error, result.message ?? l.error);
-        notification(text: l.failedOpenContact);
+        notification(text: l.failedOpenContact, type: SnackType.error);
     }
   }
 

@@ -1,8 +1,9 @@
+import 'package:agro/ui/components/app_snackbar.dart';
 import 'package:agro/app/inform_messages/inform_message_card.dart';
 import 'package:agro/app/inform_messages/inform_messages_controller.dart';
 import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/app_components/appbar_with_back.dart';
-import 'package:agro/ui/app_components/empty_list_widget.dart';
+import 'package:agro/ui/components/empty_state.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/vars/helper.dart';
@@ -26,7 +27,9 @@ class _InformMessagesScreenState extends State<InformMessagesScreen> {
     super.initState();
     controller = Get.put(InformMessagesController());
     _failureWorker = ever(controller.failures, (_) {
-      if (mounted) notification(text: context.l.somethingWentWrong);
+      if (mounted) {
+        notification(text: context.l.somethingWentWrong, type: SnackType.error);
+      }
     });
   }
 
@@ -60,8 +63,9 @@ class _InformMessagesScreenState extends State<InformMessagesScreen> {
                     child: Obx(() {
                       final messages = controller.sortedMessages;
                       return messages.isEmpty
-                          ? emptyListDefault(context.l.emptyInformMessages,
-                              AppColors.darkGreen)
+                          ? EmptyState(
+                              title: context.l.emptyInformMessages,
+                              icon: Icons.notifications_none_rounded)
                           : ListView.separated(
                               physics: const AlwaysScrollableScrollPhysics(),
                               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),

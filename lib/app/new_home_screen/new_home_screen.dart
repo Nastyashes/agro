@@ -1,8 +1,9 @@
+import 'package:agro/ui/components/app_snackbar.dart';
 import 'package:agro/app/new_home_screen/widgets/home_tabs.dart';
 import 'package:agro/app/new_home_screen/home_actions.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/data/session_storage.dart';
-import 'package:agro/ui/app_components/empty_list_widget.dart';
+import 'package:agro/ui/components/empty_state.dart';
 import 'package:agro/ui/pop_up/top_up_balance_popup.dart';
 import 'package:agro/app/new_home_screen/drawer/app_menu_drawer.dart';
 import 'package:agro/app/new_home_screen/banner_in_list.dart';
@@ -19,7 +20,6 @@ import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/app_components/complete_widget.dart';
 import 'package:agro/ui/load/footer_load.dart';
 import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:agro/ui/pop_up/confirm_pop_up.dart';
@@ -54,7 +54,9 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
 
     controller.initPage();
     _failureWorker = ever(controller.failures, (_) {
-      if (mounted) notification(text: context.l.somethingWentWrong);
+      if (mounted) {
+        notification(text: context.l.somethingWentWrong, type: SnackType.error);
+      }
     });
   }
 
@@ -289,13 +291,11 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
             ),
             children: controller.bidsFresh.isEmpty
                 ? [
-                    emptyListDefault(
-                      context.l.noFreshApplications,
-                      AppColors.dobriva.withValues(alpha: 0.4),
+                    EmptyState(
+                      title: context.l.noFreshApplications,
+                      icon: Icons.schedule_rounded,
                     )
                   ]
-                //         _EmptyFreshApplications(),
-
                 : _buildBidWidgets(
                     controller.bidsFresh,
                     isFresh: true,
@@ -387,41 +387,5 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
     }
 
     return '';
-  }
-}
-
-// ============================================================
-// EMPTY FRESH
-// ============================================================
-
-class _EmptyFreshApplications extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        20,
-        12,
-        20,
-        0,
-      ),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 20,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.dobriva.withOpacity(0.06),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: AppColors.dobriva,
-          ),
-        ),
-        child: Text(
-          context.l.noFreshApplications,
-          style: AppFonts.body1medium.black,
-        ),
-      ),
-    );
   }
 }
