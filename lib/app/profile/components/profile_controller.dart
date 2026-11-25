@@ -1,3 +1,4 @@
+import 'package:agro/data/session_storage.dart';
 import 'dart:developer';
 
 import 'package:agro/data/repositories/account_repository.dart';
@@ -6,7 +7,6 @@ import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
 import '../../../ui/local_notification/local_notification.dart';
@@ -21,7 +21,7 @@ class ProfileController extends BaseController {
   @override
   void onInit() {
     loadRequest(Get.context!);
-    modelUser.value = Hive.box('data').get('modelUser');
+    modelUser.value = SessionStorage.instance.user ?? ModelUser();
     super.onInit();
   }
 

@@ -1,9 +1,9 @@
+import 'package:agro/data/session_storage.dart';
 import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/server/api/api_client.dart';
 import 'package:agro/server/api/controller/common.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 
 import '../../routes/app_pages.dart';
 import 'controller/auth.dart';
@@ -28,18 +28,17 @@ class Api {
       );
 
   static String baseUrl() {
-    final String? selectedCountry = Hive.box('data').get('selectedCountry');
-    return selectedCountry == Country.kazakh.name
+    return SessionStorage.instance.country == Country.kazakh.name
         ? 'https://uagro.kz/'
         : 'https://uagro.trade/';
   }
 
-  static String language() => Hive.box('data').get('language') ?? 'en';
+  static String language() => SessionStorage.instance.language;
 
-  static String _token() => Hive.box('data').get('modelUser')?.token ?? '';
+  static String _token() => SessionStorage.instance.token;
 
   static void _onUnauthorized() {
-    Hive.box('data').clear();
+    SessionStorage.instance.clear();
     Get.offAllNamed(Routes.auth);
   }
 

@@ -1,3 +1,4 @@
+import 'package:agro/data/session_storage.dart';
 import 'dart:async';
 import 'dart:developer';
 
@@ -17,7 +18,6 @@ import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -116,8 +116,7 @@ class NewHomeController extends BaseController {
     allScrollController = ScrollController();
     freshScrollController = ScrollController();
 
-    final storedUser = Hive.box('data').get('modelUser');
-    modelUser = storedUser is ModelUser ? storedUser : ModelUser();
+    modelUser = SessionStorage.instance.user ?? ModelUser();
 
     super.onInit();
   }
@@ -129,7 +128,7 @@ class NewHomeController extends BaseController {
     this.context = context;
     setState = set;
 
-    modelUser = Hive.box('data').get('modelUser');
+    modelUser = SessionStorage.instance.user ?? ModelUser();
 
     await mainController.initUserData();
 

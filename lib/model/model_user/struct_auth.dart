@@ -1,9 +1,9 @@
+import 'package:agro/data/session_storage.dart';
 import 'dart:developer';
 
 import 'package:agro/vars/model_notifier/user_notifier/user_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
 import 'model_user.dart';
@@ -22,11 +22,9 @@ structUserData(
   } catch (err) {
     log(err.toString());
   }
-  log("ROLEE:$data");
-  log(data['role']);
   if (login) {
     c?.read<UserNotifier>().setModelUser(val: modelUser, upd: false);
-    Hive.box('data').put('modelUser', modelUser);
+    SessionStorage.instance.saveUser(modelUser);
 
     Get.offAllNamed(Routes.app);
   } else {
