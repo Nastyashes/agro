@@ -1,131 +1,49 @@
-import 'package:agro/data/session_storage.dart';
 import 'dart:developer';
 
-import 'package:agro/data/repositories/account_repository.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
-import 'package:agro/model/model_user/model_user.dart';
+import 'package:agro/data/repositories/account_repository.dart';
 import 'package:agro/model/tariff/model_tariff.dart';
 import 'package:agro/model/tariff/tariff.dart';
-import 'package:agro/ui/local_notification/local_notification.dart';
-import 'package:agro/vars/helper.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:get/get.dart';
 
+/// Tariff cards carousel. No BuildContext or setState.
 class TariffsController extends BaseController {
-   late Function(VoidCallback fn) setState;
+  TariffsController({
+    AccountRepository? repository,
+    MainController? mainController,
+  })  : _repository = repository ?? AccountRepository(),
+        _mainController = mainController;
 
-  final MainController mainController = Get.find<MainController>();
+  final AccountRepository _repository;
+  final MainController? _mainController;
 
-  ModelUser? modelUser;
-  int currentPageIndex = 0;
-  bool buyButtonVisible = false;
-  List<ModelTariff> tariffs = [];
+  MainController get mainController =>
+      _mainController ?? Get.find<MainController>();
 
+  final RxList<ModelTariff> tariffs = <ModelTariff>[].obs;
+  final RxInt currentPageIndex = 0.obs;
+
+  /// Current user's tariff (reactive via MainController).
   Tariff? get tariff => mainController.tariff;
 
+  @override
+  void onReady() {
+    super.onReady();
+    loadTariffs();
+  }
 
-  Future<void> initPage({
-    required BuildContext context,
-    required Function(VoidCallback fn) set,
-  }) async {
-    setState = set;
-    modelUser = SessionStorage.instance.user;
-
-    await getTariffs();
-
+  Future<void> loadTariffs() async {
+    try {
+      tariffs.assignAll(await _repository.tariffs());
+    } catch (e, stackTrace) {
+      log('TariffsController load error: $e', error: e, stackTrace: stackTrace);
+    }
     if (mainController.tariff == null) {
       await mainController.initUserData();
     }
-
-    if (context.mounted) {
-      setState(() {
-        currentPageIndex = 0;
-        buyButtonVisible = getBuyButtonVisible(0, tariff);
-      });
-    }
+    currentPageIndex.value = 0;
   }
 
-  Future<void> getTariffs() async {
-    try {
-      final loaded = await AccountRepository().tariffs();
-
-      tariffs
-        ..clear()
-        ..addAll(loaded);
-    } catch (e, stackTrace) {
-      log(
-        'getTariffs error: $e',
-        error: e,
-        stackTrace: stackTrace,
-      );
-    }
-  }
-  void onPageChanged(int page) {
-    setState(() {
-      currentPageIndex = page;
-      buyButtonVisible = getBuyButtonVisible(page, tariff);
-    });
-  }
-
-  void onBuyTariff(String tariff) {
-    openTelegram(text: tariff);
-  }
-
-  Future<void> openTelegram({
-    required String text,
-    LaunchMode mode = LaunchMode.externalApplication,
-  }) async {
-    String url =
-        'https://t.me/uagro_admin?text=Доброго дня. Хочу придбати пакет "$text" ';
-
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(
-        Uri.parse(url),
-      );
-    } else {
-      throw Exception('openTelegram could not launching url: $url');
-    }
-  }
-
-  Future<void> onPayTariff(ModelTariff tariff, BuildContext context) async {
-    try {
-      final rawPrice = tariff.price ?? '';
-
-      final normalized = rawPrice.replaceAll(RegExp(r'[^0-9]'), '');
-      final amount = int.tryParse(normalized) ?? 0;
-
-      final payUrl = await AccountRepository().tariffPaymentUrl(amount);
-
-      if (await canLaunchUrl(Uri.parse(payUrl))) {
-        await launchUrl(Uri.parse(payUrl));
-      } else {
-        throw Exception('Could not launch pay_url: $payUrl');
-      }
-    } catch (e) {
-      if (context.mounted) {
-        log('Error purchasing tariff: ${e.toString()}', error: e);
-        notification(text: context.l.somethingWentWrong);
-      }
-    }
-  }
-
-
-  bool getBuyButtonVisible(int index, Tariff? tariff) {
-    switch (index) {
-      case 0:
-        return (tariff?.isVip == false && tariff?.isPremium == false) ||
-            tariff?.isFree == true;
-      case 1:
-        return tariff?.isFree != false ||
-            (tariff?.isPremium != true && tariff?.isVip != true);
-      case 2:
-        return tariff?.isVip != true;
-    }
-    return true;
-  }
-
-  void onBack(BuildContext context) => Navigator.pop(context);
+  void onPageChanged(int page) => currentPageIndex.value = page;
 }
