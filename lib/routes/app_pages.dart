@@ -10,9 +10,7 @@ import 'package:agro/app/my_price/my_price_screen.dart';
 import 'package:agro/app/new_home_screen/new_home_screen.dart';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/load/start_screen.dart';
-import 'package:agro/app/profile/components/profile_controller.dart';
 import 'package:agro/app/profile/components/scan_qr_code.dart';
-import 'package:agro/app/profile/profile_screen.dart';
 import 'package:agro/app/profile/tariffs/tariffs_controller.dart';
 import 'package:agro/app/profile/tariffs/tariffs_screen.dart';
 import 'package:agro/auth/auth_confirmation/auth_confirmation_screen.dart';
@@ -75,13 +73,6 @@ abstract class AppPages {
           }),
         ),
         GetPage(name: Routes.scanQrCode, page: () => const QRScannerScreen()),
-        GetPage(
-          name: Routes.profile,
-          page: () => const ProfileScreen(),
-          binding: BindingsBuilder(() {
-            Get.lazyPut<ProfileController>(() => ProfileController());
-          }),
-        ),
         GetPage(name: Routes.country, page: () => const CountryScreen()),
         GetPage(
             name: Routes.bidItemScreen,
