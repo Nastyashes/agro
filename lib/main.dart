@@ -15,15 +15,12 @@ import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:in_app_notification/in_app_notification.dart';
-import 'package:provider/provider.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:agro/load/start_screen.dart';
 import 'package:agro/routes/app_pages.dart';
-import 'package:agro/vars/model_notifier/user_notifier/user_notifier.dart';
 
 import 'config/config.dart';
 import 'model/model_user/model_user.dart';
-import 'vars/model_notifier/bottom_menu_notifier/bottom_menu_notifier.dart';
 
 Future<void> main() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -72,14 +69,8 @@ Future<void> main() async {
     log(err.toString());
   }
 
-  runApp(MultiProvider(
-      providers: [
-        ChangeNotifierProvider<BottomMenuNotifier>(
-            create: (_) => BottomMenuNotifier()),
-        ChangeNotifierProvider<UserNotifier>(create: (_) => UserNotifier()),
-      ],
-      child: const AnnotatedRegion<SystemUiOverlayStyle>(
-          value: SystemUiOverlayStyle.light, child: MyApp())));
+  runApp(const AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light, child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

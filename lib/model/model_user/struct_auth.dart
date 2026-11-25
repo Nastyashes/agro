@@ -1,16 +1,13 @@
 import 'package:agro/data/session_storage.dart';
 import 'dart:developer';
 
-import 'package:agro/vars/model_notifier/user_notifier/user_notifier.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
 import 'model_user.dart';
 import '../../routes/app_pages.dart';
 
 structUserData(
-    {required data, BuildContext? c, bool login = false, String? token}) {
+    {required data, bool login = false, String? token}) {
   ModelUser modelUser = ModelUser();
   try {
     modelUser.id = data['id'].toString();
@@ -23,7 +20,6 @@ structUserData(
     log(err.toString());
   }
   if (login) {
-    c?.read<UserNotifier>().setModelUser(val: modelUser, upd: false);
     SessionStorage.instance.saveUser(modelUser);
 
     Get.offAllNamed(Routes.app);
