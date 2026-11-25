@@ -1,57 +1,46 @@
 import 'dart:developer';
 
+import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/data/repositories/messages_repository.dart';
-import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/model/message/message.dart';
-import 'package:agro/ui/local_notification/local_notification.dart';
-import 'package:agro/vars/helper.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
+/// Informational messages screen state. Holds no BuildContext: the screen
+/// observes [messages] and turns [failures] into a user-facing message.
 class InformMessagesController extends BaseController {
-  late BuildContext context;
-  late Function(VoidCallback fn) setState;
+  InformMessagesController({
+    MessagesRepository? repository,
+    void Function(int unread)? onUnreadChanged,
+  })  : _repository = repository ?? MessagesRepository(),
+        _onUnreadChanged = onUnreadChanged ?? _publishToHome;
 
-  late final RefreshController refreshController;
+  final MessagesRepository _repository;
+  final void Function(int unread) _onUnreadChanged;
 
-  final MessagesRepository _repository = MessagesRepository();
+  final RefreshController refreshController = RefreshController();
 
-  List<Message> messages = [];
+  final RxList<Message> messages = <Message>[].obs;
+
+  /// Incremented on every failed load/read; the screen shows an error.
+  final RxInt failures = 0.obs;
 
   bool _isLoadingMessages = false;
 
-  int get unreadCount => messages.where((message) => !message.isRead).length;
+  int get unreadCount => messages.where((m) => !m.isRead).length;
 
-  @override
-  void onInit() {
-    refreshController = RefreshController();
-    super.onInit();
-  }
-
-  void initPage({
-    required BuildContext context,
-    required Function(VoidCallback fn) set,
-  }) {
-    this.context = context;
-    setState = set;
-    loadMessages();
-  }
-
+  /// Unread first, newest first within each group.
   List<Message> get sortedMessages {
-    final unread = messages.where((m) => !m.isRead).toList();
-    final read = messages.where((m) => m.isRead).toList();
-
-    unread.sort(_byDateDesc);
-    read.sort(_byDateDesc);
-
+    final unread = messages.where((m) => !m.isRead).toList()..sort(_byDateDesc);
+    final read = messages.where((m) => m.isRead).toList()..sort(_byDateDesc);
     return [...unread, ...read];
   }
 
-  int _byDateDesc(Message a, Message b) {
-    return (b.createdAt?.millisecondsSinceEpoch ?? 0)
-        .compareTo(a.createdAt?.millisecondsSinceEpoch ?? 0);
+  @override
+  void onReady() {
+    super.onReady();
+    loadMessages();
   }
 
   Future<void> loadMessages() async {
@@ -59,61 +48,46 @@ class InformMessagesController extends BaseController {
     _isLoadingMessages = true;
 
     try {
-      final loaded = await _repository.fetchAll();
-
-      messages
-        ..clear()
-        ..addAll(loaded);
-      _publishUnreadCount();
-
-      if (context.mounted) {
-        setState(() {});
-      }
+      messages.assignAll(await _repository.fetchAll());
+      _onUnreadChanged(unreadCount);
     } catch (e, stackTrace) {
-      log(
-        'InformMessagesController loadMessages error: $e',
-        error: e,
-        stackTrace: stackTrace,
-        name: 'InformMessages',
-      );
-
-      if (context.mounted) {
-        notification(text: context.l.somethingWentWrong);
-      }
+      log('InformMessagesController loadMessages error: $e',
+          error: e, stackTrace: stackTrace, name: 'InformMessages');
+      failures.value++;
     } finally {
       _isLoadingMessages = false;
     }
   }
 
-  void _publishUnreadCount() {
-    if (!Get.isRegistered<NewHomeController>()) return;
-    Get.find<NewHomeController>().unreadInformCount.value = unreadCount;
-  }
-
   Future<void> onReadMessage(Message message) async {
     try {
       await _repository.markRead(message.id);
-      await loadMessages();
     } catch (e, stackTrace) {
-      log(
-        'InformMessagesController onReadMessage error: $e',
-        error: e,
-        stackTrace: stackTrace,
-      );
-
-      if (context.mounted) {
-        notification(text: context.l.somethingWentWrong);
-      }
+      log('InformMessagesController onReadMessage error: $e',
+          error: e, stackTrace: stackTrace, name: 'InformMessages');
+      failures.value++;
+      return;
     }
+    await loadMessages();
   }
 
   Future<void> onRefresh() async {
-    try {
-      await loadMessages();
+    final before = failures.value;
+    await loadMessages();
+    if (failures.value == before) {
       refreshController.refreshCompleted();
-    } catch (_) {
+    } else {
       refreshController.refreshFailed();
     }
+  }
+
+  static int _byDateDesc(Message a, Message b) =>
+      (b.createdAt?.millisecondsSinceEpoch ?? 0)
+          .compareTo(a.createdAt?.millisecondsSinceEpoch ?? 0);
+
+  static void _publishToHome(int unread) {
+    if (!Get.isRegistered<NewHomeController>()) return;
+    Get.find<NewHomeController>().unreadInformCount.value = unread;
   }
 
   @override
