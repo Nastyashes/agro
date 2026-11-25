@@ -1,3 +1,4 @@
+import 'package:agro/data/session_storage.dart';
 import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/tariff/tariff.dart';
@@ -12,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import '../../generated/assets.dart';
 import 'components/block_setting.dart';
 import 'components/profile_controller.dart';
@@ -37,8 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var box = Hive.box('data');
-    String? selectedCountry = box.get('selectedCountry');
+    final String? selectedCountry = SessionStorage.instance.country;
 
     return Scaffold(
         appBar: AppBar(

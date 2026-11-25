@@ -1,3 +1,4 @@
+import 'package:agro/data/session_storage.dart';
 import 'package:agro/ui/app_components/empty_list_widget.dart';
 import 'package:agro/ui/pop_up/top_up_balance_popup.dart';
 import 'package:agro/app/new_home_screen/drawer/app_menu_drawer.dart';
@@ -21,7 +22,6 @@ import 'package:agro/vars/helper.dart';
 import 'package:agro/ui/pop_up/confirm_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class NewHomeScreen extends StatefulWidget {
@@ -80,7 +80,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
           showDeals: controller.modelUser.isTraider &&
               controller.mainController.myPriceEnabled.value,
           showTariffs: controller.modelUser.isTraider ||
-              Hive.box('data').get('selectedCountry') == Country.ukraine.name,
+              SessionStorage.instance.country == Country.ukraine.name,
           onTariffs: () {
             Navigator.pop(context);
             AccountSessionActions.openTariffs();

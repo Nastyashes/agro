@@ -1,3 +1,4 @@
+import 'package:agro/data/session_storage.dart';
 import 'dart:developer';
 
 import 'package:agro/data/repositories/account_repository.dart';
@@ -11,7 +12,6 @@ import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:hive/hive.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TariffsController extends BaseController {
@@ -32,7 +32,7 @@ class TariffsController extends BaseController {
     required Function(VoidCallback fn) set,
   }) async {
     setState = set;
-    modelUser = Hive.box('data').get('modelUser');
+    modelUser = SessionStorage.instance.user;
 
     await getTariffs();
 

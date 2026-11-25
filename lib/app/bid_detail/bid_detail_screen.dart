@@ -1,3 +1,4 @@
+import 'package:agro/data/session_storage.dart';
 import 'package:agro/app/bid_detail/bid_controller.dart';
 import 'package:agro/app/my_price/components/my_price_match_style.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
@@ -15,7 +16,6 @@ import 'package:agro/vars/helper.dart';
 import 'package:agro/vars/trade_localizers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hive/hive.dart';
 import 'package:get/get.dart';
 
 class BidDetailScreen extends StatefulWidget {
@@ -29,8 +29,7 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
   late final BidItemController controller;
 
   bool get _isTrader {
-    return (Hive.box('data').get('modelUser') as ModelUser?)?.isTraider ??
-        false;
+    return SessionStorage.instance.user?.isTraider ?? false;
   }
 
   @override

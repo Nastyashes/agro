@@ -1,3 +1,4 @@
+import 'package:agro/data/session_storage.dart';
 import 'package:agro/ui/pop_up/confirm_pop_up.dart';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/controllers/app_controller.dart';
@@ -12,7 +13,6 @@ import 'package:agro/vars/model_notifier/bottom_menu_notifier/bottom_menu_notifi
 import 'package:agro/vars/model_notifier/user_notifier/user_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -36,7 +36,7 @@ class AccountSessionActions {
       '${context.l.deleteProfile}?',
       context.l.dataWillBeDeleted,
       () async {
-        await Hive.box('data').clear();
+        await SessionStorage.instance.clear();
 
         if (!context.mounted) return;
 
@@ -57,7 +57,7 @@ class AccountSessionActions {
       '${context.l.logOutOfProfile}?',
       context.l.dataDeviceDeleted,
       () async {
-        await Hive.box('data').clear();
+        await SessionStorage.instance.clear();
         await LocalStorageRepository().clear();
 
         if (!context.mounted) return;

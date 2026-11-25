@@ -1,3 +1,4 @@
+import 'package:agro/data/session_storage.dart';
 import 'dart:developer';
 
 import 'package:agro/app/my_price/components/my_price_error.dart';
@@ -9,7 +10,6 @@ import 'package:agro/routes/app_pages.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 
 class MyPriceController extends BaseController {
   late BuildContext context;
@@ -22,7 +22,7 @@ class MyPriceController extends BaseController {
   final MainController mainController = Get.find<MainController>();
 
   ModelUser get modelUser =>
-      Hive.box('data').get('modelUser') as ModelUser? ?? ModelUser();
+      SessionStorage.instance.user ?? ModelUser();
 
   void initPage({
     required BuildContext context,

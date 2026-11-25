@@ -1,3 +1,4 @@
+import 'package:agro/data/session_storage.dart';
 import 'dart:developer';
 
 import 'package:agro/model/answer/answer.dart';
@@ -7,7 +8,7 @@ import 'package:hive/hive.dart';
 
 class LocalStorageRepository {
   addNew(CallResult result, String orderId) async {
-    ModelUser? modelUser = Hive.box('data').get('modelUser');
+    ModelUser? modelUser = SessionStorage.instance.user;
     final box = await Hive.openBox<Answer>(_answers);
     box.put("${modelUser?.id}$orderId",
         Answer(userId: modelUser?.id, orderId: orderId, result: result));
@@ -16,7 +17,7 @@ class LocalStorageRepository {
   }
 
   Future<CallResult?> getResult(String orderId) async {
-    ModelUser? modelUser = Hive.box('data').get('modelUser');
+    ModelUser? modelUser = SessionStorage.instance.user;
     final box = await Hive.openBox<Answer>(_answers);
     Answer? data = box.get("${modelUser?.id}$orderId");
     log("answer get: ${data.toString()}");
