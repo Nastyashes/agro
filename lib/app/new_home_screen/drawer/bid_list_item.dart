@@ -148,7 +148,7 @@ class _BidListItemState extends State<BidListItem> {
           showDisableAdsConfirm(
             context,
             amount: AppConstants.adsPrice,
-            onConfirm: () => _newHomeController.disableAds(context),
+            onConfirm: () => disableAdsWithFeedback(context),
           );
         },
       );

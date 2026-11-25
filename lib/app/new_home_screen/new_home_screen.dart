@@ -1,3 +1,4 @@
+import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/data/session_storage.dart';
 import 'package:agro/ui/app_components/empty_list_widget.dart';
 import 'package:agro/ui/pop_up/top_up_balance_popup.dart';
@@ -35,6 +36,7 @@ class NewHomeScreen extends StatefulWidget {
 
 class _NewHomeScreenState extends State<NewHomeScreen> {
   late final NewHomeController controller;
+  late final Worker _failureWorker;
 
   @override
   void initState() {
@@ -48,10 +50,16 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
       Get.find<AppController>().initPage();
     }
 
-    controller.initPage(
-      context: context,
-      set: setState,
-    );
+    controller.initPage();
+    _failureWorker = ever(controller.failures, (_) {
+      if (mounted) notification(text: context.l.somethingWentWrong);
+    });
+  }
+
+  @override
+  void dispose() {
+    _failureWorker.dispose();
+    super.dispose();
   }
 
   @override
@@ -114,7 +122,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
             showDisableAdsConfirm(
               context,
               amount: AppConstants.adsPrice,
-              onConfirm: () => controller.disableAds(context),
+              onConfirm: () => disableAdsWithFeedback(context),
             );
           },
           onTopUp: () {
@@ -160,7 +168,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
                               baslance: controller.balance,
                               tariff: controller.mainController.tariff,
                               unreadCount: controller.unreadInformCount.value,
-                              isSearchOpen: controller.isSearchOpen,
+                              isSearchOpen: controller.isSearchOpen.value,
                               searchController: controller.searchController,
                               searchFocusNode: controller.searchFocusNode,
                               onToggleSearch: controller.toggleSearch,
@@ -184,12 +192,12 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
              const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _HomeTabs(
-                  allCount: controller.mainController.tariff?.orderCount,
-                  selectedTab: controller.selectedTab,
-                  showFresh: controller.isFree,
-                  onChanged: controller.selectTab,
-                ),
+                child: Obx(() => _HomeTabs(
+                      allCount: controller.mainController.tariff?.orderCount,
+                      selectedTab: controller.selectedTab.value,
+                      showFresh: controller.isFree,
+                      onChanged: controller.selectTab,
+                    )),
               ),
       //        const SizedBox(height: 8),
 
@@ -198,10 +206,11 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
               // =========================
 
               Expanded(
-                child: controller.selectedTab == NewHomeTab.fresh &&
+                child: Obx(() => controller.selectedTab.value ==
+                            NewHomeTab.fresh &&
                         controller.isFree
                     ? _buildFreshList()
-                    : _buildAllList(),
+                    : _buildAllList()),
               ),
             ],
           ),
@@ -331,9 +340,9 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
         result.add(
           BannerItemForList(
             imageUrl:
-                controller.adBanner?.image ?? AppConstants.fallbackAdImage,
+                controller.adBanner.value?.image ?? AppConstants.fallbackAdImage,
             phoneNumber:
-                controller.adBanner?.phone ?? AppConstants.fallbackAdPhone,
+                controller.adBanner.value?.phone ?? AppConstants.fallbackAdPhone,
           ),
         );
       }

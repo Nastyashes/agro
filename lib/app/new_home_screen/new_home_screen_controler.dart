@@ -28,17 +28,19 @@ enum NewHomeTab {
 }
 
 class NewHomeController extends BaseController {
-  late BuildContext context;
-  late Function(VoidCallback fn) setState;
+  NewHomeController({BidsRepository? bids, AccountRepository? account})
+      : _bidsRepository = bids ?? BidsRepository(),
+        _account = account ?? AccountRepository();
 
+  final AccountRepository _account;
   final MainController mainController = Get.find<MainController>();
 
-  final BidsRepository _bidsRepository = BidsRepository();
+  final BidsRepository _bidsRepository;
 
   late final TextEditingController searchController;
   late final FocusNode searchFocusNode;
 
-  bool isSearchOpen = false;
+  final RxBool isSearchOpen = false.obs;
 
   late final RefreshController allRefreshController;
   late final RefreshController freshRefreshController;
@@ -48,14 +50,14 @@ class NewHomeController extends BaseController {
 
   late ModelUser modelUser;
 
-  NewHomeTab selectedTab = NewHomeTab.all;
+  final Rx<NewHomeTab> selectedTab = NewHomeTab.all.obs;
 
 
   // =========================
   // ALL BIDS
   // =========================
 
-  final List<BidItem> bids = [];
+  final RxList<BidItem> bids = <BidItem>[].obs;
 
   int _bidsOffset = 0;
   int? _bidsTotal;
@@ -73,7 +75,7 @@ class NewHomeController extends BaseController {
   // FRESH BIDS
   // =========================
 
-  final List<BidItem> bidsFresh = [];
+  final RxList<BidItem> bidsFresh = <BidItem>[].obs;
 
   int _freshOffset = 0;
   int? _freshTotal;
@@ -87,7 +89,10 @@ class NewHomeController extends BaseController {
   // SHARED DATA
   // =========================
 
-  AdBannerModel? adBanner;
+  final Rxn<AdBannerModel> adBanner = Rxn<AdBannerModel>();
+
+  /// Incremented when a search fails; the screen shows an error.
+  final RxInt failures = 0.obs;
 
   Timer? _searchDebounce;
 
@@ -121,13 +126,7 @@ class NewHomeController extends BaseController {
     super.onInit();
   }
 
-  Future<void> initPage({
-    required BuildContext context,
-    required Function(VoidCallback fn) set,
-  }) async {
-    this.context = context;
-    setState = set;
-
+  Future<void> initPage() async {
     modelUser = SessionStorage.instance.user ?? ModelUser();
 
     await mainController.initUserData();
@@ -138,10 +137,6 @@ class NewHomeController extends BaseController {
       loadUnreadInformMessages(),
       if (isFree) loadFreshBids(reset: true),
     ]);
-
-    if (!context.mounted) return;
-
-    setState(() {});
   }
 
   // =========================
@@ -153,13 +148,7 @@ class NewHomeController extends BaseController {
       return;
     }
 
-    if (selectedTab == tab) {
-      return;
-    }
-
-    setState(() {
-      selectedTab = tab;
-    });
+    selectedTab.value = tab;
   }
 
   // =========================
@@ -208,9 +197,6 @@ class NewHomeController extends BaseController {
 
       _updateUserfield(page.userfield);
 
-      if (context.mounted) {
-        setState(() {});
-      }
     } catch (e, stackTrace) {
       if (requestId != _allRequestId) return;
 
@@ -273,9 +259,6 @@ class NewHomeController extends BaseController {
 
       _updateUserfield(page.userfield);
 
-      if (context.mounted) {
-        setState(() {});
-      }
     } catch (e, stackTrace) {
       log(
         'NewHomeController loadFreshBids error: $e',
@@ -294,15 +277,9 @@ class NewHomeController extends BaseController {
   // =========================
 
   void toggleSearch() {
-    final opening = !isSearchOpen;
-
-    setState(() {
-      isSearchOpen = opening;
-
-      if (opening && isFree) {
-        selectedTab = NewHomeTab.all;
-      }
-    });
+    final opening = !isSearchOpen.value;
+    isSearchOpen.value = opening;
+    if (opening && isFree) selectedTab.value = NewHomeTab.all;
 
     if (opening) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -330,11 +307,7 @@ class NewHomeController extends BaseController {
         try {
           await loadAllBids(reset: true);
         } catch (_) {
-          if (context.mounted) {
-            notification(
-              text: context.l.somethingWentWrong,
-            );
-          }
+          failures.value++;
         }
       },
     );
@@ -437,10 +410,6 @@ class NewHomeController extends BaseController {
     if (freshIndex != -1) {
       bidsFresh[freshIndex] = updated;
     }
-
-    if (context.mounted) {
-      setState(() {});
-    }
   }
 
   // =========================
@@ -449,51 +418,37 @@ class NewHomeController extends BaseController {
 
   Future<void> loadAdBanner() async {
     try {
-      adBanner = await _bidsRepository.feedBanner();
+      adBanner.value = await _bidsRepository.feedBanner();
 
       log(
-        'NewHomeController ad banner: ${adBanner?.image}',
+        'NewHomeController ad banner: ${adBanner.value?.image}',
       );
     } catch (e) {
       log(
         'NewHomeController loadAdBanner error: $e',
       );
 
-      adBanner = null;
+      adBanner.value = null;
     }
   }
 
-  Future<void> disableAds(BuildContext context) async {
+  /// Charges the balance to switch ads off and refreshes the lists.
+  /// Returns the server message, or null if the request failed.
+  Future<String?> disableAds() async {
     try {
-      final result = await AccountRepository().disableAds();
-
+      final result = await _account.disableAds();
       if (result.ok) {
         mainController.patchUserfield(result.userfieldPatch);
-
         await Future.wait([
           loadAllBids(reset: true),
           if (isFree) loadFreshBids(reset: true),
         ]);
-
         mainController.patchUserfield(result.userfieldPatch);
       }
-
-      if (context.mounted) {
-        inAppNotification(
-          text: result.message ?? '',
-          c: context,
-        );
-      }
+      return result.message ?? '';
     } catch (e) {
-      log(
-        'NewHomeController disableAds error: $e',
-      );
-
-      if (context.mounted) {
-        notification(
-          text: context.l.somethingWentWrong,
-        );
-      }
+      log('NewHomeController disableAds error: $e');
+      return null;
     }
   }
 
@@ -515,6 +470,17 @@ class NewHomeController extends BaseController {
     freshScrollController.dispose();
 
     super.onClose();
+  }
+}
+
+/// Runs [NewHomeController.disableAds] and shows its outcome.
+Future<void> disableAdsWithFeedback(BuildContext context) async {
+  final message = await Get.find<NewHomeController>().disableAds();
+  if (!context.mounted) return;
+  if (message == null) {
+    notification(text: context.l.somethingWentWrong);
+  } else {
+    inAppNotification(text: message, c: context);
   }
 }
 

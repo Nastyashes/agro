@@ -69,7 +69,7 @@ class ScreenBidDetailUi implements BidDetailUi {
         showDisableAdsConfirm(
           context,
           amount: AppConstants.adsPrice,
-          onConfirm: () => Get.find<NewHomeController>().disableAds(context),
+          onConfirm: () => disableAdsWithFeedback(context),
         );
       },
     );
