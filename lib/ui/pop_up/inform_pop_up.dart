@@ -1,65 +1,39 @@
-import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/ui/components/app_button.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
-void showInformPoUp(BuildContext context, String? title, String? description,) {
+/// A result message with a single acknowledge button.
+void showInformPoUp(BuildContext context, String? title, String? description) {
   showDialog(
     context: context,
-    builder: (context) {
-      return Dialog(
-        backgroundColor: AppColors.backgroundGradient1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+    builder: (context) => Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 360),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              /// HEADER
-              
-                  Text(title ?? '', style: AppFonts.body1medium.white),
-                
-                
-
-              const SizedBox(height: 20),
-
-              Text(description ?? '', style: AppFonts.body1medium.white),
-              const SizedBox(height: 20),
-
-              /// BUTTON
-              Row(
-                children: [
-               
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        disabledBackgroundColor: AppColors.additionalGreen,
-                        backgroundColor: AppColors.mainGreen,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 30,
-                          vertical: 16,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context);                      },
-                      child: Text(
-                        context.l.yes,
-                        style: AppFonts.body2bold.white,
-                      ),
-                    ),
-                  ),
-                ],
-              )
+              Text(title ?? '',
+                  style: AppText.title, textAlign: TextAlign.center),
+              if (description != null && description.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(description,
+                    style: AppText.body.copyWith(color: Palette.textSecondary),
+                    textAlign: TextAlign.center),
+              ],
+              const SizedBox(height: 22),
+              AppButton(
+                label: context.l.ok,
+                onPressed: () => Navigator.of(context).pop(),
+              ),
             ],
           ),
         ),
-      );
-    },
+      ),
+    ),
   );
 }

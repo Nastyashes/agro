@@ -55,6 +55,9 @@ class AppLocalizationsKk extends AppLocalizations {
   String get logOutOfProfile => 'Профильден тыс кіру';
 
   @override
+  String get logOut => 'Шығу';
+
+  @override
   String get thanksForRegistration => 'Тіркелу үшін рахмет';
 
   @override

@@ -51,10 +51,10 @@ void main() {
     expect(find.text('Вимкнути рекламу?'), findsNothing);
   });
 
-  testWidgets('close icon charges nothing', (tester) async {
+  testWidgets('tapping outside the dialog charges nothing', (tester) async {
     await pumpButton(tester);
 
-    await tester.tap(find.byIcon(Icons.close));
+    await tester.tapAt(const Offset(5, 5));
     await tester.pumpAndSettle();
 
     expect(charges, 0);

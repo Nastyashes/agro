@@ -55,6 +55,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logOutOfProfile => 'Log out of profile';
 
   @override
+  String get logOut => 'Log out';
+
+  @override
   String get thanksForRegistration => 'Thank you for signing up';
 
   @override

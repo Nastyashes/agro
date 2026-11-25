@@ -192,6 +192,12 @@ abstract class AppLocalizations {
   /// **'Вийти з профілю'**
   String get logOutOfProfile;
 
+  /// No description provided for @logOut.
+  ///
+  /// In uk, this message translates to:
+  /// **'Вийти'**
+  String get logOut;
+
   /// No description provided for @thanksForRegistration.
   ///
   /// In uk, this message translates to:

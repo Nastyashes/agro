@@ -14,7 +14,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:in_app_notification/in_app_notification.dart';
+import 'package:agro/ui/theme/app_theme.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 import 'package:agro/load/start_screen.dart';
 import 'package:agro/routes/app_pages.dart';
@@ -78,17 +78,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InAppNotification(
-        child: AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.dark,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.light,
       child: GetMaterialApp(
           navigatorKey: navigatorKey,
           builder: (context, child) {
-            SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark
+            SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light
                 .copyWith(statusBarColor: Colors.transparent));
             return GestureDetector(
               onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
               child: MediaQuery(
+                  // Fixed until the old screens move to the new design; they
+                  // overflow at large system text (e.g. the drawer at 1.3).
                   data: MediaQuery.of(context)
                       .copyWith(textScaler: const TextScaler.linear(1.0)),
                   child: ScrollConfiguration(
@@ -109,7 +110,7 @@ class MyApp extends StatelessWidget {
             );
           },
           supportedLocales: AppLocalizations.supportedLocales,
-          theme: ThemeData.dark(),
+          theme: buildAppTheme(),
           localizationsDelegates: const [
             AppLocalizations.delegate,
             GlobalMaterialLocalizations.delegate,
@@ -121,6 +122,6 @@ class MyApp extends StatelessWidget {
           defaultTransition: Transition.fadeIn,
           transitionDuration: const Duration(milliseconds: 200),
           home: const StartScreen()),
-    ));
+    );
   }
 }

@@ -13,8 +13,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AccountSessionActions {
-  static void openSite() =>
-      launchUrl(Uri.parse(AppConstants.siteUrl));
+  static void openSite() => launchUrl(Uri.parse(AppConstants.siteUrl));
 
   static void openSupport() =>
       launchUrl(Uri.parse(AppConstants.supportTelegramUrl));
@@ -31,6 +30,9 @@ class AccountSessionActions {
       context,
       '${context.l.deleteProfile}?',
       context.l.dataWillBeDeleted,
+      confirmLabel: context.l.delete,
+      icon: Icons.delete_outline_rounded,
+      destructive: true,
       () async {
         await SessionStorage.instance.clear();
 
@@ -50,6 +52,9 @@ class AccountSessionActions {
       context,
       '${context.l.logOutOfProfile}?',
       context.l.dataDeviceDeleted,
+      confirmLabel: context.l.logOut,
+      icon: Icons.logout_rounded,
+      destructive: true,
       () async {
         await SessionStorage.instance.clear();
         await LocalStorageRepository().clear();

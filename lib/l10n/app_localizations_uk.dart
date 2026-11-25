@@ -55,6 +55,9 @@ class AppLocalizationsUk extends AppLocalizations {
   String get logOutOfProfile => 'Вийти з профілю';
 
   @override
+  String get logOut => 'Вийти';
+
+  @override
   String get thanksForRegistration => 'Дякуємо за реєстрацію';
 
   @override

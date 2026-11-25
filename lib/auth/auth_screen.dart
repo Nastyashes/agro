@@ -1,3 +1,4 @@
+import 'package:agro/ui/components/app_snackbar.dart';
 import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
@@ -30,7 +31,9 @@ class _AuthScreenState extends State<AuthScreen> {
   void initState() {
     super.initState();
     _rejectedWorker = ever(controller.rejected, (_) {
-      if (mounted) notification(text: context.l.numberNoRegistered);
+      if (mounted) {
+        notification(text: context.l.numberNoRegistered, type: SnackType.error);
+      }
     });
   }
 

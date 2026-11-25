@@ -5,7 +5,7 @@ import 'package:agro/model/my_price/my_price_models.dart';
 import 'package:agro/routes/app_pages.dart';
 import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/app_components/appbar_with_back.dart';
-import 'package:agro/ui/app_components/empty_list_widget.dart';
+import 'package:agro/ui/components/empty_state.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/helper.dart';
@@ -51,7 +51,9 @@ class _MyPriceDealsScreenState extends State<MyPriceDealsScreen> {
                   child: Obx(() => controller.initialLoading.value
                       ? const Center(child: CircularProgressIndicator())
                       : controller.items.isEmpty
-                          ? emptyListDefault(l.emptyDeals, AppColors.darkGreen)
+                          ? EmptyState(
+                              title: l.emptyDeals,
+                              icon: Icons.handshake_outlined)
                           : NotificationListener<ScrollNotification>(
                               onNotification: (notification) {
                                 if (notification.metrics.pixels >

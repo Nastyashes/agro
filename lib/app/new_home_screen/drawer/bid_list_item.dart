@@ -1,3 +1,4 @@
+import 'package:agro/ui/components/app_snackbar.dart';
 import 'package:agro/app/bid_detail/bid_controller.dart';
 import 'package:agro/app/bid_detail/components/bid_detail_ui.dart';
 import 'package:agro/app/bid_detail/components/launch_phone.dart';
@@ -239,6 +240,7 @@ class _BidListItemState extends State<BidListItem> {
                               inAppNotification(
                                 text: context.l.copiedToClipboard,
                                 c: context,
+                                type: SnackType.success,
                               );
                             },
                             scale: ScaleFormat.big,

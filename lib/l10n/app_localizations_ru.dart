@@ -55,6 +55,9 @@ class AppLocalizationsRu extends AppLocalizations {
   String get logOutOfProfile => 'Выйти из профиля';
 
   @override
+  String get logOut => 'Выйти';
+
+  @override
   String get thanksForRegistration => 'Спасибо за регистрацию';
 
   @override
