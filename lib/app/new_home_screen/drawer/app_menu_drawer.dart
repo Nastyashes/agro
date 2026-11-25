@@ -1,16 +1,19 @@
 import 'package:agro/app/new_home_screen/drawer/menu_item.dart';
 import 'package:agro/generated/assets.dart';
-import 'package:agro/ui/buttons/button_styles.dart';
-import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/ui/components/app_button.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
+/// Hidden side menu (client requirement), «Чорнозем» v3+ layout. Items
+/// that are not built yet are shown muted with «Незабаром».
 class AppMenuDrawer extends StatelessWidget {
   final String userName;
   final String phone;
   final String? tariffLabel;
+  final int balance;
   final int unreadNotifications;
   final String adsPrice;
   final bool showTopUp;
@@ -31,11 +34,15 @@ class AppMenuDrawer extends StatelessWidget {
   final VoidCallback? onDisableAds;
   final VoidCallback? onDeleteAccount;
 
+  /// Tap on a «Незабаром» item.
+  final VoidCallback? onComingSoon;
+
   const AppMenuDrawer({
     super.key,
     required this.userName,
     required this.phone,
     this.tariffLabel,
+    this.balance = 0,
     this.unreadNotifications = 0,
     this.adsPrice = AppConstants.adsPrice,
     this.showTopUp = true,
@@ -55,137 +62,141 @@ class AppMenuDrawer extends StatelessWidget {
     this.onLogout,
     this.onDisableAds,
     this.onDeleteAccount,
+    this.onComingSoon,
   });
 
   @override
   Widget build(BuildContext context) {
     final l = context.l;
 
-    return Container(
+    return DecoratedBox(
       decoration: const BoxDecoration(
+        color: Palette.bg1,
         image: DecorationImage(
-            image: AssetImage(Assets.drawerBg),
-            opacity: 0.2,
-            alignment: AlignmentGeometry.bottomCenter),
-        color: Color(0xFF060E11),
+          image: AssetImage(Assets.bgZerno),
+          opacity: 0.14,
+          alignment: Alignment.bottomCenter,
+          fit: BoxFit.fitWidth,
+        ),
       ),
       child: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+          padding: const EdgeInsets.fromLTRB(20, 12, 16, 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Row(
-                children: [
-                  Image.asset(
-                    Assets.pictureLogo,
-                    height: 44,
-                  ),
-                  const Spacer(),
-                  if (tariffLabel != null && tariffLabel!.isNotEmpty)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: AppColors.yellow.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.yellow, width: 1.5),
-                      ),
-                      child: Text(
-                        tariffLabel!,
-                        style: AppFonts.body2bold
-                            .copyWith(color: AppColors.yellow),
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              _DrawerHeader(
-                userName: userName,
-                phone: phone,
-                //    tariffLabel: tariffLabel,
-              ),
+              Row(children: [
+                Image.asset(Assets.pictureLogo, height: 40),
+                const Spacer(),
+                if (tariffLabel != null && tariffLabel!.isNotEmpty)
+                  _TariffChip(
+                      label: tariffLabel!,
+                      onTap: showTariffs ? onTariffs : null),
+              ]),
+              const SizedBox(height: 18),
+              Text(userName, style: AppText.title),
+              const SizedBox(height: 2),
+              Text(phone,
+                  style: AppText.body.copyWith(color: Palette.textSecondary)),
               if (showTopUp) ...[
-                const SizedBox(height: 20),
-                bStyle(
-                  text: l.topUpBalance,
-                  c: context,
-                  vertical: 12,
-                  onPressed: onTopUp ?? () {},
-                ),
+                const SizedBox(height: 16),
+                _BalanceStrip(balance: balance, onTopUp: onTopUp),
               ],
               const SizedBox(height: 12),
+              MenuItem(
+                icon: Icons.warehouse_outlined,
+                title: l.intake,
+                mark: MenuItemMark.soon,
+                onPressed: onComingSoon,
+              ),
               if (showMyPrice)
                 MenuItem(
-                  icon: Icons.bar_chart_outlined,
+                  icon: Icons.bar_chart_rounded,
                   title: l.myPrice,
+                  mark: MenuItemMark.isNew,
                   onPressed: onMyPrice,
-                  isNew: true,
                 ),
+              MenuItem(
+                icon: Icons.assignment_outlined,
+                title: l.myBids,
+                mark: MenuItemMark.soon,
+                onPressed: onComingSoon,
+              ),
+              MenuItem(
+                icon: Icons.bookmark_border_rounded,
+                title: l.savedBids,
+                mark: MenuItemMark.soon,
+                onPressed: onComingSoon,
+              ),
               if (showDeals)
                 MenuItem(
-                  icon: Icons.article_outlined,
+                  icon: Icons.handshake_outlined,
                   title: l.deals,
                   onPressed: onDeals,
                 ),
               MenuItem(
-                icon: Icons.error_outline,
-                title: l.infoMessages,
+                icon: Icons.notifications_none_rounded,
+                title: l.messages,
                 badge: unreadNotifications,
                 onPressed: onInfoMessages,
               ),
               if (showTariffs)
                 MenuItem(
-                  icon: Icons.credit_card_outlined,
+                  icon: Icons.workspace_premium_outlined,
                   title: l.tariffs,
                   onPressed: onTariffs,
                 ),
-              MenuItem(
-                icon: Icons.public_outlined,
-                title: l.ourSite,
-                onPressed: onSite,
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 6),
+                child: Divider(height: 1),
               ),
               MenuItem(
-                icon: Icons.qr_code_scanner_outlined,
+                icon: Icons.qr_code_scanner_rounded,
                 title: l.scanQrCode,
                 onPressed: onQrScan,
               ),
               MenuItem(
-                icon: Icons.headset_mic_outlined,
+                icon: Icons.language_rounded,
+                title: l.ourSite,
+                onPressed: onSite,
+              ),
+              MenuItem(
+                icon: Icons.support_agent_rounded,
                 title: l.support,
                 onPressed: onSupport,
               ),
               MenuItem(
-                icon: Icons.shield_outlined,
+                icon: Icons.policy_outlined,
                 title: l.privacyPolicy,
                 onPressed: onPrivacy,
               ),
-              MenuItem(
-                icon: Icons.logout,
-                title: l.logOutOfAccount,
-                onPressed: onLogout,
-              ),
               if (showDisableAds) ...[
-                const SizedBox(height: 16),
-                bStyle(
-                  text: '${l.disableBanner}(${context.uahAmount(adsPrice)})',
-                  c: context,
-                  vertical: 12,
-                  onPressed: onDisableAds ?? () {},
+                const SizedBox(height: 14),
+                _OutlineGreenButton(
+                  label: '${l.disableBanner.trim()} · '
+                      '${context.uahAmount(adsPrice)}',
+                  onPressed: onDisableAds,
                 ),
               ],
-              const SizedBox(height: 12),
-              Center(
-                child: MenuItem(
-                  withColorBg: false,
-                  icon: Icons.delete_outline,
-                  title: l.deleteProfile,
-                  iconColor: AppColors.red,
-                  titleColor: AppColors.red,
-                  showChevron: false,
-                  showDivider: false,
-                  onPressed: onDeleteAccount,
-                ),
+              const SizedBox(height: 18),
+              // Wraps to two lines when the labels do not fit.
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                spacing: 16,
+                children: [
+                  _FooterAction(
+                    icon: Icons.logout_rounded,
+                    label: l.logOut,
+                    color: Palette.textSecondary,
+                    onTap: onLogout,
+                  ),
+                  _FooterAction(
+                    icon: Icons.delete_outline_rounded,
+                    label: l.deleteProfile,
+                    color: Palette.red,
+                    onTap: onDeleteAccount,
+                  ),
+                ],
               ),
             ],
           ),
@@ -195,27 +206,114 @@ class AppMenuDrawer extends StatelessWidget {
   }
 }
 
-class _DrawerHeader extends StatelessWidget {
-  final String userName;
-  final String phone;
-  //final String? tariffLabel;
+class _TariffChip extends StatelessWidget {
+  const _TariffChip({required this.label, required this.onTap});
 
-  const _DrawerHeader({
-    required this.userName,
-    required this.phone,
-    //  required this.tariffLabel,
-  });
+  final String label;
+  final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(child: Text(userName, style: AppFonts.title2.white)),
-        const SizedBox(height: 4),
-        Text(phone, style: AppFonts.body2medium.white),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Material(
+        color: Palette.wheatSoft,
+        borderRadius: BorderRadius.circular(10),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(10),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 5, 8, 5),
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Text(label, style: AppText.label.copyWith(color: Palette.wheat)),
+              if (onTap != null) ...[
+                const SizedBox(width: 4),
+                const Icon(Icons.chevron_right_rounded,
+                    size: 16, color: Palette.wheat),
+              ],
+            ]),
+          ),
+        ),
+      );
+}
+
+class _BalanceStrip extends StatelessWidget {
+  const _BalanceStrip({required this.balance, required this.onTopUp});
+
+  final int balance;
+  final VoidCallback? onTopUp;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
+        decoration: BoxDecoration(
+          color: Palette.bg2,
+          borderRadius: BorderRadius.circular(Radii.button),
+        ),
+        child: Row(children: [
+          const Icon(Icons.account_balance_wallet_rounded,
+              size: 22, color: Palette.green),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(context.l.balance,
+                    style:
+                        AppText.caption.copyWith(color: Palette.textTertiary)),
+                Text(context.uahAmount(balance), style: AppText.headline),
+              ],
+            ),
+          ),
+          AppButton(
+            label: context.l.topUp,
+            size: AppButtonSize.small,
+            onPressed: onTopUp,
+          ),
+        ]),
+      );
+}
+
+class _OutlineGreenButton extends StatelessWidget {
+  const _OutlineGreenButton({required this.label, required this.onPressed});
+
+  final String label;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) => OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Palette.green,
+          side: const BorderSide(color: Palette.green),
+        ),
+        child: Text(label,
+            style: AppText.button.copyWith(color: Palette.green),
+            textAlign: TextAlign.center),
+      );
+}
+
+class _FooterAction extends StatelessWidget {
+  const _FooterAction({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(icon, size: 20, color: color),
+            const SizedBox(width: 8),
+            Text(label, style: AppText.bodyMedium.copyWith(color: color)),
+          ]),
+        ),
+      );
 }

@@ -84,9 +84,6 @@ class AppLocalizationsRu extends AppLocalizations {
   String get bidDetails => 'Детали заявки';
 
   @override
-  String get menuItemNew => ' (Новое)';
-
-  @override
   String get from => 'от:';
 
   @override
@@ -787,4 +784,59 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get secondsShort => 'с';
+
+  @override
+  String get balance => 'Баланс';
+
+  @override
+  String get comingSoon => 'Скоро';
+
+  @override
+  String get comingSoonHint => 'Этот раздел скоро появится';
+
+  @override
+  String get newBadge => 'Новое';
+
+  @override
+  String get intake => 'Приёмка';
+
+  @override
+  String get myBids => 'Мои заявки';
+
+  @override
+  String get savedBids => 'Сохранённые';
+
+  @override
+  String get messages => 'Сообщения';
+
+  @override
+  String get openContact => 'Открыть контакт';
+
+  @override
+  String get freshShort => 'Свежие';
+
+  @override
+  String get freshBid => 'Свежая';
+
+  @override
+  String get typeGrain => 'Зерно';
+
+  @override
+  String get typeFertilizer => 'Удобрения';
+
+  @override
+  String get typeSeeds => 'Семена';
+
+  @override
+  String get typeOil => 'Масло';
+
+  @override
+  String tariffUntil(String date) {
+    return 'до $date';
+  }
+
+  @override
+  String harvestOf(String year) {
+    return 'урожай $year';
+  }
 }

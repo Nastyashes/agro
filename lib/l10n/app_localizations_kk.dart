@@ -84,9 +84,6 @@ class AppLocalizationsKk extends AppLocalizations {
   String get bidDetails => 'Өтінім мәліметтері';
 
   @override
-  String get menuItemNew => ' (Жаңа)';
-
-  @override
   String get from => 'мынадан:';
 
   @override
@@ -789,4 +786,59 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get secondsShort => 'с';
+
+  @override
+  String get balance => 'Баланс';
+
+  @override
+  String get comingSoon => 'Жақында';
+
+  @override
+  String get comingSoonHint => 'Бұл бөлім жақында қосылады';
+
+  @override
+  String get newBadge => 'Жаңа';
+
+  @override
+  String get intake => 'Қабылдау';
+
+  @override
+  String get myBids => 'Менің өтінімдерім';
+
+  @override
+  String get savedBids => 'Сақталғандар';
+
+  @override
+  String get messages => 'Хабарламалар';
+
+  @override
+  String get openContact => 'Байланысты ашу';
+
+  @override
+  String get freshShort => 'Жаңалары';
+
+  @override
+  String get freshBid => 'Жаңа';
+
+  @override
+  String get typeGrain => 'Астық';
+
+  @override
+  String get typeFertilizer => 'Тыңайтқыштар';
+
+  @override
+  String get typeSeeds => 'Тұқым';
+
+  @override
+  String get typeOil => 'Май';
+
+  @override
+  String tariffUntil(String date) {
+    return '$date дейін';
+  }
+
+  @override
+  String harvestOf(String year) {
+    return '$year өнімі';
+  }
 }

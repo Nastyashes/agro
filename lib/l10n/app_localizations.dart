@@ -246,12 +246,6 @@ abstract class AppLocalizations {
   /// **'Деталі заявки'**
   String get bidDetails;
 
-  /// No description provided for @menuItemNew.
-  ///
-  /// In uk, this message translates to:
-  /// **' (Нове)'**
-  String get menuItemNew;
-
   /// No description provided for @from.
   ///
   /// In uk, this message translates to:
@@ -819,7 +813,7 @@ abstract class AppLocalizations {
   /// No description provided for @scanQrCode.
   ///
   /// In uk, this message translates to:
-  /// **'Cканувати QR-код'**
+  /// **'Сканувати QR-код'**
   String get scanQrCode;
 
   /// No description provided for @failedScan.
@@ -1589,6 +1583,108 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'с'**
   String get secondsShort;
+
+  /// No description provided for @balance.
+  ///
+  /// In uk, this message translates to:
+  /// **'Баланс'**
+  String get balance;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In uk, this message translates to:
+  /// **'Незабаром'**
+  String get comingSoon;
+
+  /// No description provided for @comingSoonHint.
+  ///
+  /// In uk, this message translates to:
+  /// **'Цей розділ скоро з\'явиться'**
+  String get comingSoonHint;
+
+  /// No description provided for @newBadge.
+  ///
+  /// In uk, this message translates to:
+  /// **'Нове'**
+  String get newBadge;
+
+  /// No description provided for @intake.
+  ///
+  /// In uk, this message translates to:
+  /// **'Прийомка'**
+  String get intake;
+
+  /// No description provided for @myBids.
+  ///
+  /// In uk, this message translates to:
+  /// **'Мої заявки'**
+  String get myBids;
+
+  /// No description provided for @savedBids.
+  ///
+  /// In uk, this message translates to:
+  /// **'Збережені'**
+  String get savedBids;
+
+  /// No description provided for @messages.
+  ///
+  /// In uk, this message translates to:
+  /// **'Повідомлення'**
+  String get messages;
+
+  /// No description provided for @openContact.
+  ///
+  /// In uk, this message translates to:
+  /// **'Відкрити контакт'**
+  String get openContact;
+
+  /// No description provided for @freshShort.
+  ///
+  /// In uk, this message translates to:
+  /// **'Свіжі'**
+  String get freshShort;
+
+  /// No description provided for @freshBid.
+  ///
+  /// In uk, this message translates to:
+  /// **'Свіжа'**
+  String get freshBid;
+
+  /// No description provided for @typeGrain.
+  ///
+  /// In uk, this message translates to:
+  /// **'Зерно'**
+  String get typeGrain;
+
+  /// No description provided for @typeFertilizer.
+  ///
+  /// In uk, this message translates to:
+  /// **'Добрива'**
+  String get typeFertilizer;
+
+  /// No description provided for @typeSeeds.
+  ///
+  /// In uk, this message translates to:
+  /// **'Насіння'**
+  String get typeSeeds;
+
+  /// No description provided for @typeOil.
+  ///
+  /// In uk, this message translates to:
+  /// **'Олія'**
+  String get typeOil;
+
+  /// No description provided for @tariffUntil.
+  ///
+  /// In uk, this message translates to:
+  /// **'до {date}'**
+  String tariffUntil(String date);
+
+  /// No description provided for @harvestOf.
+  ///
+  /// In uk, this message translates to:
+  /// **'урожай {year}'**
+  String harvestOf(String year);
 }
 
 class _AppLocalizationsDelegate

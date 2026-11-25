@@ -23,7 +23,6 @@
   "read": "Read",
   "applicationNo": "Application No.",
   "bidDetails": "Application details",
-  "menuItemNew": " (New)",
   "from": "from:",
   "expired": "Expired",
   "copiedToClipboard": "Order data copied to clipboard",
@@ -274,5 +273,22 @@
   "secondsShort": "s",
 
   "@save": {},
-  "@@locale": "en"
+  "@@locale": "en",
+  "balance": "Balance",
+  "comingSoon": "Soon",
+  "comingSoonHint": "This section is coming soon",
+  "newBadge": "New",
+  "intake": "Intake points",
+  "myBids": "My bids",
+  "savedBids": "Saved",
+  "messages": "Messages",
+  "openContact": "Open contact",
+  "freshShort": "Fresh",
+  "freshBid": "Fresh",
+  "typeGrain": "Grain",
+  "typeFertilizer": "Fertilizers",
+  "typeSeeds": "Seeds",
+  "typeOil": "Oil",
+  "tariffUntil": "until {date}",
+  "harvestOf": "harvest {year}"
 }

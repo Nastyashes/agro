@@ -23,7 +23,6 @@
     "read": "Прочитать",
     "applicationNo": "Заявка №",
   "bidDetails": "Детали заявки",
-  "menuItemNew": " (Новое)",
     "from": "от:",
     "expired": "Срок действия истек",
     "copiedToClipboard": "Данные о заказе скопированы в буфер обмена",
@@ -275,5 +274,22 @@
 
 
     "@save": {},
-    "@@locale": "ru"
+    "@@locale": "ru",
+  "balance": "Баланс",
+  "comingSoon": "Скоро",
+  "comingSoonHint": "Этот раздел скоро появится",
+  "newBadge": "Новое",
+  "intake": "Приёмка",
+  "myBids": "Мои заявки",
+  "savedBids": "Сохранённые",
+  "messages": "Сообщения",
+  "openContact": "Открыть контакт",
+  "freshShort": "Свежие",
+  "freshBid": "Свежая",
+  "typeGrain": "Зерно",
+  "typeFertilizer": "Удобрения",
+  "typeSeeds": "Семена",
+  "typeOil": "Масло",
+  "tariffUntil": "до {date}",
+  "harvestOf": "урожай {year}"
 }

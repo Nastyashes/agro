@@ -23,7 +23,6 @@
   "read": "Прочитати",
   "applicationNo": "Заявка №",
   "bidDetails": "Деталі заявки",
-  "menuItemNew": " (Нове)",
   "from": "від:",
   "expired": "Термін дії закінчився",
   "copiedToClipboard": "Дані про замовлення скопійовані в буфер обміну",
@@ -118,7 +117,7 @@
   "notActualKey": "Заявка не актуальна",
   "paymentFormF1": "1ф. (по перерахунку)",
   "paymentFormF2": "2ф. (готівка)",
-  "scanQrCode": "Cканувати QR-код",
+  "scanQrCode": "Сканувати QR-код",
   "failedScan": "Не вдалося сканувати QR-код",
   "loginSuccess": "Вхід yспішний",
   "loginFailed": "Не вдалося увійти",
@@ -273,5 +272,24 @@
 
 
   "@save": {},
-  "@@locale": "uk"
+  "@@locale": "uk",
+  "balance": "Баланс",
+  "comingSoon": "Незабаром",
+  "comingSoonHint": "Цей розділ скоро з'явиться",
+  "newBadge": "Нове",
+  "intake": "Прийомка",
+  "myBids": "Мої заявки",
+  "savedBids": "Збережені",
+  "messages": "Повідомлення",
+  "openContact": "Відкрити контакт",
+  "freshShort": "Свіжі",
+  "freshBid": "Свіжа",
+  "typeGrain": "Зерно",
+  "typeFertilizer": "Добрива",
+  "typeSeeds": "Насіння",
+  "typeOil": "Олія",
+  "tariffUntil": "до {date}",
+  "@tariffUntil": { "placeholders": { "date": { "type": "String" } } },
+  "harvestOf": "урожай {year}",
+  "@harvestOf": { "placeholders": { "year": { "type": "String" } } }
 }

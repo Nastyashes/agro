@@ -13,7 +13,6 @@ class Assets {
   static const String authViber = 'picture/auth/viber.svg';
   static const String pictureLogo = 'picture/logo.png';
   static const String bgZerno = 'picture/background_app.png';
-  static const String drawerBg = 'picture/drawer_bg.png';
   static const String profile = 'picture/app/account/profile.svg';
   static const String qrScan = 'picture/app/account/qr_code_scan.svg';
   static const String hedTariff = 'picture/app/account/hed_tariff.png';

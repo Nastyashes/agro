@@ -84,9 +84,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get bidDetails => 'Application details';
 
   @override
-  String get menuItemNew => ' (New)';
-
-  @override
   String get from => 'from:';
 
   @override
@@ -788,4 +785,59 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get secondsShort => 's';
+
+  @override
+  String get balance => 'Balance';
+
+  @override
+  String get comingSoon => 'Soon';
+
+  @override
+  String get comingSoonHint => 'This section is coming soon';
+
+  @override
+  String get newBadge => 'New';
+
+  @override
+  String get intake => 'Intake points';
+
+  @override
+  String get myBids => 'My bids';
+
+  @override
+  String get savedBids => 'Saved';
+
+  @override
+  String get messages => 'Messages';
+
+  @override
+  String get openContact => 'Open contact';
+
+  @override
+  String get freshShort => 'Fresh';
+
+  @override
+  String get freshBid => 'Fresh';
+
+  @override
+  String get typeGrain => 'Grain';
+
+  @override
+  String get typeFertilizer => 'Fertilizers';
+
+  @override
+  String get typeSeeds => 'Seeds';
+
+  @override
+  String get typeOil => 'Oil';
+
+  @override
+  String tariffUntil(String date) {
+    return 'until $date';
+  }
+
+  @override
+  String harvestOf(String year) {
+    return 'harvest $year';
+  }
 }

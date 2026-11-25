@@ -1,130 +1,82 @@
-import 'package:agro/ui/buttons/b_transparent_scalable_button.dart';
-import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
-class MenuItem extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final VoidCallback? onPressed;
-  final int badge;
-  final bool showChevron;
-  final bool showDivider;
-  final Color iconColor;
-  final Color titleColor;
-  final bool withColorBg;
-  final bool isNew;
+enum MenuItemMark { none, isNew, soon }
 
+/// Drawer row: icon, title, optional mark or unread count, chevron.
+/// A [MenuItemMark.soon] row is muted; its tap only explains it is coming.
+class MenuItem extends StatelessWidget {
   const MenuItem({
     super.key,
     required this.icon,
     required this.title,
-    this.isNew = false,
-    this.onPressed,
-    this.withColorBg = true,
+    required this.onPressed,
+    this.mark = MenuItemMark.none,
     this.badge = 0,
-    this.showChevron = true,
-    this.showDivider = true,
-    this.iconColor = AppColors.green,
-    this.titleColor = AppColors.white,
   });
+
+  final IconData icon;
+  final String title;
+  final VoidCallback? onPressed;
+  final MenuItemMark mark;
+  final int badge;
 
   @override
   Widget build(BuildContext context) {
-    final titleStyle = AppFonts.body2medium.copyWith(color: titleColor);
-    final row = Row(
-      mainAxisSize:
-          showChevron || showDivider ? MainAxisSize.max : MainAxisSize.min,
-      children: [
-        _MenuIcon(icon: icon, color: iconColor, badge: badge),
-        const SizedBox(width: 12),
-        if (showChevron || showDivider)
+    final soon = mark == MenuItemMark.soon;
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(12),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 48),
+        child: Row(children: [
+          Icon(icon,
+              size: 24, color: soon ? Palette.textTertiary : Palette.green),
+          const SizedBox(width: 14),
           Expanded(
-            child: Row(
-              children: [
-                Text(title, style: titleStyle),
-                if (isNew)
-                  Text(context.l.menuItemNew, style: AppFonts.caption.red),
-              ],
+            child: Text(
+              title,
+              style: AppText.bodyMedium.copyWith(
+                  color: soon ? Palette.textSecondary : Palette.textPrimary),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-          )
-        else
-          Text(title, style: titleStyle),
-        if (showChevron)
-          const Icon(
-            Icons.chevron_right,
-            color: AppColors.yellow,
-            size: 22,
           ),
-      ],
-    );
-
-    return BTransparentScalableButton(
-      onPressed: onPressed ?? () {},
-      scale: ScaleFormat.small,
-      child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 3),
-          child: Container(
-              decoration: BoxDecoration(
-                  color: withColorBg
-                      ? const Color(0xFF0E1D23)
-                      : AppColors.transparent,
-                  borderRadius: BorderRadius.circular(8)),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                child: row,
-              ))),
+          if (mark == MenuItemMark.isNew)
+            _Pill(context.l.newBadge, bg: Palette.greenSoft, fg: Palette.green),
+          if (soon)
+            _Pill(context.l.comingSoon,
+                bg: Palette.bg3, fg: Palette.textSecondary),
+          if (badge > 0)
+            _Pill(badge > 99 ? '99+' : '$badge',
+                bg: Palette.red, fg: Palette.textPrimary, round: true),
+          const SizedBox(width: 6),
+          const Icon(Icons.chevron_right_rounded,
+              size: 20, color: Palette.textTertiary),
+        ]),
+      ),
     );
   }
 }
 
-class _MenuIcon extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  final int badge;
+class _Pill extends StatelessWidget {
+  const _Pill(this.text,
+      {required this.bg, required this.fg, this.round = false});
 
-  const _MenuIcon({
-    required this.icon,
-    required this.color,
-    required this.badge,
-  });
+  final String text;
+  final Color bg, fg;
+  final bool round;
 
   @override
-  Widget build(BuildContext context) {
-    final iconWidget = Icon(icon, size: 32, color: color);
-    if (badge <= 0) return iconWidget;
-
-    return SizedBox(
-      width: 28,
-      height: 24,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          iconWidget,
-          Positioned(
-            top: -4,
-            right: -6,
-            child: Container(
-              constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              decoration: const BoxDecoration(
-                color: AppColors.daysRed,
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                badge > 99 ? '99+' : '$badge',
-                style: AppFonts.caption.copyWith(
-                  color: AppColors.white,
-                  fontSize: 10,
-                  height: 1,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Container(
+        margin: const EdgeInsets.only(left: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: BorderRadius.circular(round ? 100 : Radii.tag),
+        ),
+        child: Text(text, style: AppText.tag.copyWith(color: fg)),
+      );
 }

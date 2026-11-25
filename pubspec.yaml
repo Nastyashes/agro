@@ -65,4 +65,5 @@ flutter:
     - picture/
     - picture/auth/
     - picture/components/
+    - picture/types/
     - picture/app/account/
