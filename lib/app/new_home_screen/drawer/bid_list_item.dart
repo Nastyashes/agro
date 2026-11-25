@@ -1,15 +1,10 @@
-import 'dart:developer';
-
-import 'package:agro/data/repositories/bids_repository.dart';
+import 'package:agro/app/bid_detail/bid_controller.dart';
+import 'package:agro/app/bid_detail/components/bid_detail_ui.dart';
 import 'package:agro/app/bid_detail/components/launch_phone.dart';
 import 'package:agro/ui/app_components/bids_card_row.dart';
-import 'package:agro/ui/pop_up/banner_dialog.dart';
-import 'package:agro/ui/pop_up/inform_pop_up.dart';
 import 'package:agro/app/my_price/components/my_price_match_style.dart';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
-import 'package:agro/controllers/main_controler.dart';
 import 'package:agro/model/enums.dart';
-import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/routes/app_pages.dart';
 import 'package:agro/ui/buttons/b_transparent_scalable_button.dart';
@@ -21,7 +16,6 @@ import 'package:agro/ui/theme/fonts.dart';
 import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:agro/vars/trade_localizers.dart';
-import 'package:agro/ui/pop_up/confirm_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -45,28 +39,32 @@ class BidListItem extends StatefulWidget {
 }
 
 class _BidListItemState extends State<BidListItem> {
-  late BidItem _bidItem;
+  /// Same tested contact/carrier logic as the bid screen.
+  late final BidItemController _actions;
 
-  bool _isLoading = false;
-  bool orderingCarrier = false;
-  bool carrierOrdered = false;
-
-  final MainController _mainController = Get.find<MainController>();
   final NewHomeController _newHomeController = Get.find<NewHomeController>();
+
+  BidItem get _bidItem => _actions.bidItem;
 
   @override
   void initState() {
     super.initState();
-    _bidItem = widget.bidItem;
+    _actions = BidItemController()..ui = ScreenBidDetailUi(context);
+    _actions.bid.value = widget.bidItem;
   }
 
   @override
   void didUpdateWidget(covariant BidListItem oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     if (oldWidget.bidItem != widget.bidItem) {
-      _bidItem = widget.bidItem;
+      _actions.bid.value = widget.bidItem;
     }
+  }
+
+  @override
+  void dispose() {
+    _actions.onClose();
+    super.dispose();
   }
 
   Color get _dayBadgeColor => switch (_bidItem.dayColor) {
@@ -86,201 +84,6 @@ class _BidListItemState extends State<BidListItem> {
 
   // =========================
   // CONTACT
-  // =========================
-
-  Future<void> _onContactClick(BuildContext context) async {
-    if (_bidItem.isOpened || _isLoading) return;
-
-    setState(() => _isLoading = true);
-
-    final String errorTariffMail = context.l.errorTariffMail;
-
-    try {
-      final contactPrice = _bidItem.contactPrice ?? 0;
-
-      final isFree = _mainController.isFree;
-      final isAdsDisabled = _mainController.isAdsDisabled;
-
-      final shouldShowAd = contactPrice == 0 && isFree && !isAdsDisabled;
-
-      log('contactPrice=$contactPrice');
-      log('isFree=$isFree');
-      log('isAdsDisabled=$isAdsDisabled');
-      log('shouldShowAd=$shouldShowAd');
-
-      // Якщо реклама не потрібна — одразу відкриваємо контакт.
-      if (!shouldShowAd) {
-        await _openContact(context);
-        return;
-      }
-
-      OpenContactsAdResponse? res;
-
-      try {
-        res = await BidsRepository().contactAd(_bidItem.orderId!);
-      } catch (e, stackTrace) {
-        log(
-          'openContactsAd failed, fallback to direct open: $e',
-          error: e,
-          stackTrace: stackTrace,
-        );
-
-        // Помилка завантаження реклами не блокує відкриття контакту.
-        await _openContact(context);
-        return;
-      }
-
-      if (res.status != true || res.adBanner == null) {
-        await _openContact(context);
-        return;
-      }
-
-      if (!context.mounted) return;
-
-      final ad = res.adBanner!;
-
-      final watched = await showAdBannerDialog(
-        context,
-        imageUrl: ad.image,
-        phone: ad.phone,
-        price: context.adsPriceLabel(),
-        onDisableAds: () async {
-          showDisableAdsConfirm(
-            context,
-            amount: AppConstants.adsPrice,
-            onConfirm: () => disableAdsWithFeedback(context),
-          );
-        },
-      );
-
-      if (watched == true && context.mounted) {
-        await _openContact(context);
-      }
-    } catch (e, stackTrace) {
-      log(
-        'contact open failed: $e',
-        error: e,
-        stackTrace: stackTrace,
-      );
-
-      if (context.mounted) {
-        inAppNotification(
-          text: errorTariffMail,
-          c: context,
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
-    }
-  }
-
-  Future<void> _openContact(BuildContext context) async {
-    try {
-      final result = await BidsRepository().openContact(_bidItem.orderId!);
-
-      if (result.status != OpenContactStatus.opened) {
-        if (context.mounted) {
-          inAppNotification(
-            text: result.message ??
-                (result.status == OpenContactStatus.insufficient
-                    ? context.l.insufficientBalance
-                    : context.l.connectionErrorRetry),
-            c: context,
-          );
-        }
-        return;
-      }
-
-      final contact = result.contact!;
-      final updated = _bidItem.copyWith(
-        opened: 1,
-        openedPhon: contact.phone,
-        fermerCompany: contact.company,
-        fermerName: contact.name,
-        fermerPhone: contact.phone,
-        fermerEmail: contact.email,
-        contacts: contact.contacts,
-      );
-
-      if (!mounted) return;
-
-      setState(() {
-        _bidItem = updated;
-      });
-
-      // Оновлюємо заявку в обох списках NewHome:
-      // "Всі заявки" та "Свіжі заявки".
-      _newHomeController.updateBidItem(updated);
-    } catch (e, stackTrace) {
-      log(
-        '_openContact error: $e',
-        error: e,
-        stackTrace: stackTrace,
-      );
-
-      if (context.mounted) {
-        inAppNotification(
-          text: context.l.connectionErrorRetry,
-          c: context,
-        );
-      }
-    }
-  }
-
-  // =========================
-  // CARRIER
-  // =========================
-
-  Future<void> onOrderCarrier(BuildContext context) async {
-    if (orderingCarrier || carrierOrdered) return;
-
-    setState(() => orderingCarrier = true);
-
-    try {
-      final result = await BidsRepository().orderCarrier();
-      final bool status = result.ok;
-      final String message = result.message;
-
-      if (!mounted) return;
-
-      setState(() {
-        orderingCarrier = false;
-
-        if (status) {
-          carrierOrdered = true;
-        }
-      });
-
-      if (context.mounted) {
-        showInformPoUp(
-          context,
-          status ? context.l.done : context.l.error,
-          message,
-        );
-      }
-    } catch (e, stackTrace) {
-      log(
-        'onOrderCarrier error: $e',
-        error: e,
-        stackTrace: stackTrace,
-      );
-
-      if (mounted) {
-        setState(() => orderingCarrier = false);
-      }
-
-      if (context.mounted) {
-        notification(
-          text: context.l.errorTariffMail,
-        );
-      }
-    }
-  }
-
-  // =========================
-  // OTHER ACTIONS
   // =========================
 
   void onReview() {
@@ -308,7 +111,9 @@ class _BidListItemState extends State<BidListItem> {
   // =========================
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => Obx(() => _buildCard(context));
+
+  Widget _buildCard(BuildContext context) {
     final bool isDistrib = _newHomeController.modelUser.role == 'distrib';
 
     final bool showCopy = isDistrib &&
@@ -452,8 +257,7 @@ class _BidListItemState extends State<BidListItem> {
                 // =========================
 
                 if (_bidItem.isOpened && _bidItem.openedPhon != null)
-                  _contactWidget(context)
-               ,
+                  _contactWidget(context),
 
                 // =========================
                 // CARRIER
@@ -474,16 +278,19 @@ class _BidListItemState extends State<BidListItem> {
                             text: context.l.logistician,
                             c: context,
                             vertical: 12,
-                            active: !orderingCarrier && !carrierOrdered,
-                            colorButt: !orderingCarrier && !carrierOrdered
+                            active: !_actions.orderingCarrier.value &&
+                                !_actions.carrierOrdered.value,
+                            colorButt: !_actions.orderingCarrier.value &&
+                                    !_actions.carrierOrdered.value
                                 ? AppColors.mainGreen
                                 : AppColors.greyGreen,
                             onPressed: () {
-                              if (orderingCarrier || carrierOrdered) {
+                              if (_actions.orderingCarrier.value ||
+                                  _actions.carrierOrdered.value) {
                                 return;
                               }
 
-                              onOrderCarrier(context);
+                              _actions.onOrderCarrier();
                             },
                           ),
                         ),
@@ -492,7 +299,6 @@ class _BidListItemState extends State<BidListItem> {
                       Expanded(child: _contactButton(context)),
                     Expanded(
                       child: bStyle(
-
                         text: context.l.additionally,
                         c: context,
                         colorText: widget.isFresh
@@ -545,8 +351,7 @@ class _BidListItemState extends State<BidListItem> {
                 vertical: 12,
               ),
               decoration: BoxDecoration(
-                color:
-                 AppColors.mainGreen.withValues(alpha: 0.2),
+                color: AppColors.mainGreen.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -665,7 +470,7 @@ class _BidListItemState extends State<BidListItem> {
   Widget _contactButton(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 0),
-      child: _isLoading
+      child: _actions.openingContact.value
           ? const Center(
               child: CircularProgressIndicator(
                 color: AppColors.mainGreen,
@@ -681,7 +486,7 @@ class _BidListItemState extends State<BidListItem> {
                   colorText: AppColors.white,
                   vertical: 15,
                   colorButt: AppColors.mainGreen,
-                  onPressed: () => _onContactClick(context),
+                  onPressed: _actions.onContactClick,
                 ),
               ],
             ),

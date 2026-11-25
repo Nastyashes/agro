@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:agro/app/bid_detail/bid_controller.dart';
 import 'package:agro/app/bid_detail/components/bid_detail_ui.dart';
 import 'package:agro/app/my_price/components/my_price_error.dart';
@@ -14,6 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
 
 class FakeBids extends BidsRepository {
+  Completer<void>? gate;
   OpenContactsAdResponse ad =
       OpenContactsAdResponse(status: true, message: '', adBanner: null);
   OpenContactResult open = const OpenContactResult(OpenContactStatus.failed);
@@ -30,6 +33,7 @@ class FakeBids extends BidsRepository {
   @override
   Future<OpenContactResult> openContact(int orderId) async {
     opens++;
+    if (gate != null) await gate!.future;
     if (openError != null) throw openError!;
     return open;
   }
@@ -202,6 +206,21 @@ void main() {
       await c.onContactClick();
 
       expect(ui.log, ['notify:connectionErrorRetry:']);
+    });
+
+    test('a double tap while opening sends one paid request', () async {
+      main.free = false;
+      bids.open = opened;
+      bids.gate = Completer<void>();
+
+      final first = c.onContactClick();
+      final second = c.onContactClick();
+      expect(c.openingContact.value, isTrue);
+      bids.gate!.complete();
+      await Future.wait([first, second]);
+
+      expect(bids.opens, 1);
+      expect(c.openingContact.value, isFalse);
     });
 
     test('already opened contact does nothing', () async {
