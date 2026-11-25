@@ -1,143 +1,145 @@
-import 'package:agro/generated/assets.dart';
 import 'package:agro/model/tariff/model_tariff.dart';
-import 'package:agro/model/tariff/tariff.dart';
-import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
+/// One tariff card in the swipeable list: tinted head with the name,
+/// price, then what is included and what is not.
 class TariffItem extends StatelessWidget {
   const TariffItem(
-      {super.key, required this.modelTariff, this.tariff, required this.isMyTariff});
+      {super.key, required this.modelTariff, required this.isMyTariff});
+
   final ModelTariff modelTariff;
-  final Tariff? tariff;
   final bool isMyTariff;
 
   @override
   Widget build(BuildContext context) {
-final isByPiece =
-    (modelTariff.name?.toUpperCase() == AppConstants.tariffByPieceName);
-        return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
+    final color = modelTariff.color;
+    final soft = color.withValues(alpha: 0.13);
+    final isByPiece =
+        modelTariff.name?.toUpperCase() == AppConstants.tariffByPieceName;
+    final oldPrice = modelTariff.priceOld ?? 0;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        image: DecorationImage(
-          image: const AssetImage(Assets.hedTariff),
-          alignment: Alignment.topLeft,
-          fit: BoxFit.fitWidth,
-          colorFilter: ColorFilter.mode(
-            modelTariff.color,
-            BlendMode.srcATop,
-          ),
-        ),
-        border: Border.all(color: modelTariff.color, width: 1),
-        borderRadius: BorderRadius.circular(40),
+        color: Palette.bg1,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: color, width: 1.5),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Container(
+            color: soft,
+            padding: const EdgeInsets.fromLTRB(22, 20, 22, 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [
+                  Icon(Icons.workspace_premium_rounded, size: 28, color: color),
+                  const Spacer(),
+                  if (isMyTariff)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Text(context.l.myTariff,
+                          style:
+                              AppText.tag.copyWith(color: Palette.textInverse)),
+                    ),
+                ]),
+                const SizedBox(height: 6),
+                Text(modelTariff.name ?? '', style: AppText.display),
+              ],
+            ),
+          ),
           Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Visibility(
-                visible: isMyTariff,
-                replacement: const SizedBox(
-                  width: 120,
-                  height: 54,
-                ),
-                child: Container(
-                  width: 120,
-                  height: 54,
-                  alignment: Alignment.topCenter,
-                  padding: const EdgeInsets.only(top: 5),
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(Assets.myTariffLable),
-                          fit: BoxFit.fill)),
-                  child: Text(
-                    context.l.myTariff,
-                    style: AppFonts.body1bold.white,
+            padding: const EdgeInsets.fromLTRB(22, 18, 22, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (oldPrice != 0)
+                  Text(
+                    context.uahAmount(oldPrice),
+                    style: AppText.num.copyWith(
+                      color: Palette.textTertiary,
+                      decoration: TextDecoration.lineThrough,
+                    ),
                   ),
-                )),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 1),
-            child: Text(
-              (modelTariff.name ?? "").toUpperCase(),
-              style: AppFonts.tariffName.white,
+                Text.rich(TextSpan(children: [
+                  if (isByPiece)
+                    TextSpan(
+                        text: '${context.l.validFrom} ',
+                        style: AppText.title.copyWith(color: color)),
+                  TextSpan(
+                      text: modelTariff.price ?? '',
+                      style: AppText.numXL.copyWith(color: color)),
+                  TextSpan(
+                      text: ' ${modelTariff.currency ?? ''}',
+                      style: AppText.title.copyWith(color: color)),
+                ])),
+                if (isSet(modelTariff.pricePeriod))
+                  Text(modelTariff.pricePeriod!,
+                      style:
+                          AppText.label.copyWith(color: Palette.textSecondary)),
+              ],
             ),
           ),
-          const SizedBox(height: 60),
-          modelTariff.priceOld != 0
-             ?
-              Text(context.uahAmount(modelTariff.priceOld),
-                  style: AppFonts.tariffPrice
-                      .withColor(AppColors.grey3)
-                      .copyWith(
-                          decoration: TextDecoration.lineThrough, height: 1.0))
-              : const SizedBox(),
-          Stack(
-            alignment: Alignment.topRight,
-            children: [
-              Text('${isByPiece ? '${context.l.validFrom} ' : ''}${modelTariff.price} ${modelTariff.currency}',
-                  style: AppFonts.tariffPrice.withColor(modelTariff.color)),
-              Padding(
-                padding: const EdgeInsets.only(top: 40),
-                child: Text(
-                  modelTariff.pricePeriod ?? 'year', //TODO
-                  style: AppFonts.body1bold.withColor(modelTariff.color),
-                ),
-              )
-            ],
-          ),
-          const SizedBox(
-            height: 30,
-          ),
+          const Divider(height: 1),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  ...modelTariff.advantages.map((adv) => propItem(
-                      iconAsset: Assets.checkCircle,
-                      iconColor: modelTariff.color,
-                      text: adv)),
-                  ...modelTariff.disadvantages.map((disadv) => propItem(
-                      iconAsset: Assets.cancel,
-                      iconColor: AppColors.red,
-                      text: disadv)),
-                ],
-              ),
+            child: ListView(
+              padding: const EdgeInsets.fromLTRB(22, 14, 22, 20),
+              children: [
+                for (final a in modelTariff.advantages)
+                  _Feature(text: a, ok: true, color: color),
+                for (final d in modelTariff.disadvantages)
+                  _Feature(text: d, ok: false, color: color),
+              ],
             ),
           ),
-          const SizedBox(height: 10)
         ],
       ),
     );
   }
+}
 
-  Widget propItem(
-      {required String iconAsset,
-      required Color iconColor,
-      required String text}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        children: [
-          SvgPicture.asset(iconAsset,
-              colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn)),
-          const SizedBox(width: 10.0),
-          Expanded(
-              child: Text(
-            text,
-            style: AppFonts.tariffHeader.copyWith(color: AppColors.white),
-          )),
-        ],
-      ),
-    );
-  }
+class _Feature extends StatelessWidget {
+  const _Feature({required this.text, required this.ok, required this.color});
+
+  final String text;
+  final bool ok;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: ok ? color.withValues(alpha: 0.13) : Palette.redSoft,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(ok ? Icons.check_rounded : Icons.close_rounded,
+                  size: 16, color: ok ? color : Palette.red),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(text,
+                  style: AppText.bodyMedium.copyWith(
+                      color: ok ? Palette.textPrimary : Palette.textTertiary)),
+            ),
+          ],
+        ),
+      );
 }

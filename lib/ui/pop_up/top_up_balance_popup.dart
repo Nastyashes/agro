@@ -1,160 +1,180 @@
-import 'package:agro/ui/text_field/text_field.dart';
-import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/ui/components/app_button.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+/// Smallest top-up the payment provider accepts, in UAH.
+const int minTopUpAmount = 10;
+const List<int> topUpPresets = [100, 200, 500, 1000];
+
+/// Top-up bottom sheet. [onSelect] runs once, with a valid amount, after
+/// the sheet is closed; closing it any other way does nothing.
 void showTopUpDialog(BuildContext context, int? balance,
     final void Function(int amount) onSelect) {
-  final TextEditingController controller = TextEditingController();
-
-  int selectedAmount = 100;
-  bool isNoValidSum = false;
-  showDialog<int>(
+  showModalBottomSheet<void>(
     context: context,
-    builder: (context) {
-      return StatefulBuilder(
-        builder: (context, setState) {
-          void selectAmount(int amount) {
-            setState(() {
-              selectedAmount = amount;
-              controller.text = amount.toString();
-            });
-          }
+    isScrollControlled: true,
+    useSafeArea: true,
+    showDragHandle: true,
+    builder: (context) => TopUpSheet(balance: balance, onSelect: onSelect),
+  );
+}
 
-          return Dialog(
-            backgroundColor: AppColors.backgroundGradient1,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
+class TopUpSheet extends StatefulWidget {
+  const TopUpSheet({super.key, required this.balance, required this.onSelect});
+
+  final int? balance;
+  final void Function(int amount) onSelect;
+
+  @override
+  State<TopUpSheet> createState() => _TopUpSheetState();
+}
+
+class _TopUpSheetState extends State<TopUpSheet> {
+  final _input = TextEditingController();
+  int _amount = 200;
+  bool _invalid = false;
+  bool _paid = false;
+
+  @override
+  void dispose() {
+    _input.dispose();
+    super.dispose();
+  }
+
+  void _pick(int amount) => setState(() {
+        _amount = amount;
+        _invalid = false;
+        _input.clear();
+      });
+
+  void _pay() {
+    if (_paid) return;
+    if (_amount < minTopUpAmount) {
+      setState(() => _invalid = true);
+      return;
+    }
+    _paid = true;
+    Navigator.of(context).pop();
+    widget.onSelect(_amount);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+          20, 0, 20, 20 + MediaQuery.viewInsetsOf(context).bottom),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Expanded(
               child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// HEADER
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(context.l.topUpBalance,
-                          style: AppFonts.body1medium.white),
-                      IconButton(
-                        icon: const Icon(Icons.close),
-                        onPressed: () => Navigator.pop(context),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-
-                  Wrap(
-                    alignment: WrapAlignment.spaceAround,
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: [100, 200, 500, 1000].map((amount) {
-                      return GestureDetector(
-                        onTap: () => selectAmount(amount),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width / 2.5 - 30,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          decoration: BoxDecoration(
-                            color: selectedAmount == amount
-                                ? AppColors.backgroundGradient3
-                                : AppColors.backgroundGradient1,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(context.uahAmount(amount),
-                              style: selectedAmount == amount
-                                  ? AppFonts.body2medium.white
-                                  : AppFonts.body2medium.grey3),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  /// INPUT LABEL
-                  Text(context.l.orInputSum, style: AppFonts.body3medium.white),
-
-                  const SizedBox(height: 10),
-
-                  /// INPUT
-                  TextFieldWidget(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    borderRadius: BorderRadius.circular(100),
-                    border: Border.all(color: AppColors.mainGreen),
-                    text: context.l.sum,
-                    height: 54,
-                    textStyle: AppFonts.body1medium.white,
-                    hintStyle: AppFonts.body1medium.grey3,
-                    openKeyboardAuto: false,
-                    colorBg: AppColors.backgroundGradient1,
-                    controller: controller,
-                    onChanged: (value) {
-                      setState(() {
-                        selectedAmount = int.tryParse(value) ?? 0;
-                        isNoValidSum = false;
-                      });
-                    },
-                  ),
-                  if (isNoValidSum)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: Text(
-                        context.l.errorPaymant,
-                        style: AppFonts.body2bold.red,
-                      ),
-                    ),
-                  const SizedBox(height: 20),
-
-                  /// BUTTON
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            disabledBackgroundColor: AppColors.additionalGreen,
-                            backgroundColor: AppColors.mainGreen,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 30,
-                              vertical: 16,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                          ),
-                          onPressed: selectedAmount >= 10
-                              ? () {
-                                  print(
-                                    'topUp pay pressed amount=$selectedAmount',
-                                  );
-                                  Navigator.pop(context);
-                                  onSelect(selectedAmount);
-                                }
-                              : () {
-                                  print(
-                                    'topUp pay rejected amount=$selectedAmount',
-                                  );
-                                  setState(() {
-                                    isNoValidSum = true;
-                                  });
-                                },
-                          child: Text(
-                            context.l.onPay,
-                            style: AppFonts.body2bold.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
+                  Text(l.topUpTitle, style: AppText.title),
+                  Text(l.balanceNow,
+                      style: AppText.caption
+                          .copyWith(color: Palette.textTertiary)),
                 ],
               ),
             ),
-          );
-        },
+            Text(context.uahAmount(widget.balance ?? 0),
+                style: AppText.numL.copyWith(color: Palette.textSecondary)),
+          ]),
+          const SizedBox(height: 18),
+          Center(
+            child: Text.rich(TextSpan(children: [
+              TextSpan(text: '$_amount', style: AppText.numXL),
+              TextSpan(
+                  text: ' ${l.uahShort}',
+                  style: AppText.title.copyWith(color: Palette.textSecondary)),
+            ])),
+          ),
+          const SizedBox(height: 18),
+          Row(children: [
+            for (final a in topUpPresets) ...[
+              if (a != topUpPresets.first) const SizedBox(width: 8),
+              Expanded(
+                child: _Preset(
+                  amount: a,
+                  selected: _amount == a && _input.text.isEmpty,
+                  onTap: () => _pick(a),
+                ),
+              ),
+            ],
+          ]),
+          const SizedBox(height: 14),
+          TextField(
+            controller: _input,
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(6),
+            ],
+            style: AppText.bodyMedium,
+            decoration: InputDecoration(
+              hintText: l.orInputSum,
+              errorText: _invalid ? l.errorPaymant : null,
+            ),
+            onChanged: (v) => setState(() {
+              _amount = int.tryParse(v) ?? 0;
+              _invalid = false;
+            }),
+          ),
+          const SizedBox(height: 18),
+          AppButton(
+            label: l.payAmount(context.uahAmount(_amount)),
+            onPressed: _pay,
+          ),
+          const SizedBox(height: 12),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Icon(Icons.lock_outline_rounded,
+                size: 14, color: Palette.textTertiary),
+            const SizedBox(width: 6),
+            Text(l.securePayment,
+                style: AppText.caption.copyWith(color: Palette.textTertiary)),
+          ]),
+        ],
+      ),
+    );
+  }
+}
+
+class _Preset extends StatelessWidget {
+  const _Preset(
+      {required this.amount, required this.selected, required this.onTap});
+
+  final int amount;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Material(
+        color: selected ? Palette.textPrimary : Palette.bg2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: selected
+              ? BorderSide.none
+              : const BorderSide(color: Palette.line),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Center(
+              child: Text('$amount',
+                  style: AppText.num.copyWith(
+                      color: selected
+                          ? Palette.textInverse
+                          : Palette.textPrimary)),
+            ),
+          ),
+        ),
       );
-    },
-  );
 }

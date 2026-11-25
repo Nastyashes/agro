@@ -15,9 +15,5 @@ class Assets {
   static const String bgZerno = 'picture/background_app.png';
   static const String profile = 'picture/app/account/profile.svg';
   static const String qrScan = 'picture/app/account/qr_code_scan.svg';
-  static const String hedTariff = 'picture/app/account/hed_tariff.png';
-  static const String checkCircle = 'picture/components/check-circle.svg';
-  static const String cancel = 'picture/components/cancel.svg';
-  static const String myTariffLable = 'picture/app/account/my_tariff.png';
   static const String newBadge = 'picture/components/new_badge.png';
 }

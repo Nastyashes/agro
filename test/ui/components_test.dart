@@ -51,6 +51,15 @@ void main() {
       expect(ink.onTap, isNull);
     });
 
+    testWidgets('does not grow to fill unbounded height', (tester) async {
+      await tester.pumpWidget(app(Column(children: [
+        Flexible(child: AppButton(label: 'Так', onPressed: () {})),
+      ])));
+      // Flexible gives it a loose max height; it must stay about 54.
+      final size = tester.getSize(find.byType(InkWell));
+      expect(size.height, lessThan(80));
+    });
+
     testWidgets('large button is at least 54 tall, small at least 40',
         (tester) async {
       await tester

@@ -840,4 +840,48 @@ class AppLocalizationsUk extends AppLocalizations {
   String harvestOf(String year) {
     return 'урожай $year';
   }
+
+  @override
+  String get conditions => 'Умови';
+
+  @override
+  String get services => 'Послуги';
+
+  @override
+  String get sellerLocked => 'ПІБ, телефон і адреса — після відкриття контакту';
+
+  @override
+  String get harvest => 'Урожай';
+
+  @override
+  String get payment => 'Оплата';
+
+  @override
+  String get delivery => 'Доставка';
+
+  @override
+  String get qualityAnalysis => 'Аналіз якості';
+
+  @override
+  String get confirmAnalysisTitle => 'Замовити аналіз якості?';
+
+  @override
+  String get confirmAnalysisBody => 'Вартість спишеться з вашого балансу.';
+
+  @override
+  String get order => 'Замовити';
+
+  @override
+  String get topUpTitle => 'Поповнення';
+
+  @override
+  String get balanceNow => 'Баланс зараз';
+
+  @override
+  String payAmount(String amount) {
+    return 'Оплатити $amount';
+  }
+
+  @override
+  String get securePayment => 'Безпечна оплата карткою';
 }

@@ -1,4 +1,4 @@
-import 'package:agro/ui/theme/colors.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:flutter/material.dart';
 
 class ModelTariff {
@@ -50,11 +50,11 @@ extension TariffExt on ModelTariff {
   Color get color {
     switch (name) {
       case 'VIP':
-        return AppColors.tariffVip;
+        return Palette.tariffVip;
       case 'Premium':
-        return AppColors.tariffPremium;
+        return Palette.tariffPremium;
       default:
-        return AppColors.tariffBezlim;
+        return Palette.tariffUnlim;
     }
   }
 }

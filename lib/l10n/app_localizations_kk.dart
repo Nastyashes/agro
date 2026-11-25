@@ -841,4 +841,49 @@ class AppLocalizationsKk extends AppLocalizations {
   String harvestOf(String year) {
     return '$year өнімі';
   }
+
+  @override
+  String get conditions => 'Шарттар';
+
+  @override
+  String get services => 'Қызметтер';
+
+  @override
+  String get sellerLocked =>
+      'Аты-жөні, телефон мен мекенжай байланыс ашылғаннан кейін көрінеді';
+
+  @override
+  String get harvest => 'Өнім';
+
+  @override
+  String get payment => 'Төлем';
+
+  @override
+  String get delivery => 'Жеткізу';
+
+  @override
+  String get qualityAnalysis => 'Сапа талдауы';
+
+  @override
+  String get confirmAnalysisTitle => 'Сапа талдауына тапсырыс беру керек пе?';
+
+  @override
+  String get confirmAnalysisBody => 'Құны балансыңыздан шегеріледі.';
+
+  @override
+  String get order => 'Тапсырыс беру';
+
+  @override
+  String get topUpTitle => 'Толықтыру';
+
+  @override
+  String get balanceNow => 'Ағымдағы баланс';
+
+  @override
+  String payAmount(String amount) {
+    return '$amount төлеу';
+  }
+
+  @override
+  String get securePayment => 'Картамен қауіпсіз төлем';
 }
