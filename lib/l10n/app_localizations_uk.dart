@@ -84,9 +84,6 @@ class AppLocalizationsUk extends AppLocalizations {
   String get bidDetails => 'Деталі заявки';
 
   @override
-  String get menuItemNew => ' (Нове)';
-
-  @override
   String get from => 'від:';
 
   @override
@@ -382,7 +379,7 @@ class AppLocalizationsUk extends AppLocalizations {
   String get paymentFormF2 => '2ф. (готівка)';
 
   @override
-  String get scanQrCode => 'Cканувати QR-код';
+  String get scanQrCode => 'Сканувати QR-код';
 
   @override
   String get failedScan => 'Не вдалося сканувати QR-код';
@@ -788,4 +785,59 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get secondsShort => 'с';
+
+  @override
+  String get balance => 'Баланс';
+
+  @override
+  String get comingSoon => 'Незабаром';
+
+  @override
+  String get comingSoonHint => 'Цей розділ скоро з\'явиться';
+
+  @override
+  String get newBadge => 'Нове';
+
+  @override
+  String get intake => 'Прийомка';
+
+  @override
+  String get myBids => 'Мої заявки';
+
+  @override
+  String get savedBids => 'Збережені';
+
+  @override
+  String get messages => 'Повідомлення';
+
+  @override
+  String get openContact => 'Відкрити контакт';
+
+  @override
+  String get freshShort => 'Свіжі';
+
+  @override
+  String get freshBid => 'Свіжа';
+
+  @override
+  String get typeGrain => 'Зерно';
+
+  @override
+  String get typeFertilizer => 'Добрива';
+
+  @override
+  String get typeSeeds => 'Насіння';
+
+  @override
+  String get typeOil => 'Олія';
+
+  @override
+  String tariffUntil(String date) {
+    return 'до $date';
+  }
+
+  @override
+  String harvestOf(String year) {
+    return 'урожай $year';
+  }
 }

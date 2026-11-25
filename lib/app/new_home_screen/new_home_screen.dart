@@ -9,17 +9,16 @@ import 'package:agro/app/new_home_screen/drawer/app_menu_drawer.dart';
 import 'package:agro/app/new_home_screen/banner_in_list.dart';
 import 'package:agro/app/new_home_screen/drawer/bid_list_item.dart';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
-import 'package:agro/app/new_home_screen/new_menu_header.dart';
+import 'package:agro/app/new_home_screen/widgets/home_header.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/app/profile/components/account_session_actions.dart';
 import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/controllers/app_controller.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/routes/app_pages.dart';
-import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/app_components/complete_widget.dart';
 import 'package:agro/ui/load/footer_load.dart';
-import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:agro/ui/pop_up/confirm_pop_up.dart';
@@ -69,7 +68,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Palette.bg0,
 
       // =========================
       // DRAWER
@@ -79,12 +78,19 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
         width: MediaQuery.of(context).size.width > 500
             ? 380
             : MediaQuery.of(context).size.width * 0.85,
+        backgroundColor: Palette.bg1,
+        clipBehavior: Clip.antiAlias,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.horizontal(right: Radius.circular(24)),
+        ),
         child: Obx(
           () => AppMenuDrawer(
             userName:
                 controller.mainController.userfield['name']?.toString() ?? '',
             phone: controller.modelUser.phone ?? '',
             tariffLabel: _tariffLabel(),
+            balance: controller.balance,
+            onComingSoon: () => notification(text: context.l.comingSoonHint),
             adsPrice: AppConstants.adsPrice,
             showDisableAds: controller.shouldShowAds,
             showMyPrice: controller.modelUser.isTraider &&
@@ -150,76 +156,52 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
         ),
       ),
 
-      body: Stack(children: [
-        const AppBackground(),
-        SafeArea(
-          bottom: false,
-          child: Column(
-            children: [
-              // =========================
-              // HEADER
-              // =========================
-
-              Padding(
-                padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Builder(
-                        builder: (drawerContext) {
-                          return Obx(
-                            () => NewHomeHeader(
-                              baslance: controller.balance,
-                              tariff: controller.mainController.tariff,
-                              unreadCount: controller.unreadInformCount.value,
-                              isSearchOpen: controller.isSearchOpen.value,
-                              searchController: controller.searchController,
-                              searchFocusNode: controller.searchFocusNode,
-                              onToggleSearch: controller.toggleSearch,
-                              onSearchChanged: (_) => controller.onSearch(),
-                              onPressed: () {
-                                Scaffold.of(drawerContext).openDrawer();
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+      body: SafeArea(
+        bottom: false,
+        child: Column(
+          children: [
+            Builder(
+              builder: (drawerContext) => Obx(
+                () => HomeHeader(
+                  balance: controller.balance,
+                  tariff: controller.mainController.tariff,
+                  unreadCount: controller.unreadInformCount.value,
+                  isSearchOpen: controller.isSearchOpen.value,
+                  searchController: controller.searchController,
+                  searchFocusNode: controller.searchFocusNode,
+                  onMenu: () => Scaffold.of(drawerContext).openDrawer(),
+                  onTopUp: _showTopUp,
+                  onToggleSearch: controller.toggleSearch,
+                  onSearchChanged: (_) => controller.onSearch(),
                 ),
               ),
+            ),
 
-              // =========================
-              // SEARCH
-              // only All applications
-              // =========================
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Obx(() => HomeTabs(
-                      allCount: controller.mainController.tariff?.orderCount,
-                      selectedTab: controller.selectedTab.value,
-                      showFresh: controller.isFree,
-                      onChanged: controller.selectTab,
-                    )),
-              ),
-              //        const SizedBox(height: 8),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Obx(() => HomeTabs(
+                    allCount: controller.mainController.tariff?.orderCount,
+                    selectedTab: controller.selectedTab.value,
+                    showFresh: controller.isFree,
+                    onChanged: controller.selectTab,
+                  )),
+            ),
 
-              // =========================
-              // CONTENT
-              // =========================
+            // =========================
+            // CONTENT
+            // =========================
 
-              Expanded(
-                child: Obx(() =>
-                    controller.selectedTab.value == NewHomeTab.fresh &&
-                            controller.isFree
-                        ? _buildFreshList()
-                        : _buildAllList()),
-              ),
-            ],
-          ),
+            Expanded(
+              child: Obx(() =>
+                  controller.selectedTab.value == NewHomeTab.fresh &&
+                          controller.isFree
+                      ? _buildFreshList()
+                      : _buildAllList()),
+            ),
+          ],
         ),
-      ]),
+      ),
     );
   }
 
@@ -238,7 +220,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
       footer: const FooterLoad(),
       header: const WaterDropHeader(
         complete: CompleteWidget(),
-        waterDropColor: AppColors.mainGreen,
+        waterDropColor: Palette.green,
       ),
       child: ListView(
         key: const PageStorageKey(
@@ -275,7 +257,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
         footer: const FooterLoad(),
         header: const WaterDropHeader(
           complete: CompleteWidget(),
-          waterDropColor: AppColors.mainGreen,
+          waterDropColor: Palette.green,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -367,7 +349,6 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
       context,
       controller.balance,
       (amount) {
-        print('topUp selected amount=$amount');
         payBalance(amount, context);
       },
     );

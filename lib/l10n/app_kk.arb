@@ -23,7 +23,6 @@
   "read": "Оқу",
   "applicationNo": "Қолданбасы №",
   "bidDetails": "Өтінім мәліметтері",
-  "menuItemNew": " (Жаңа)",
   "from": "мынадан:",
   "expired": "Мерзімі өтіп кеткен",
   "copiedToClipboard": "Аралық сақтағышқа көшірілген деректерге тапсырыс беру",
@@ -271,5 +270,22 @@
 
 
   "@save": {},
-  "@@locale": "kk"
+  "@@locale": "kk",
+  "balance": "Баланс",
+  "comingSoon": "Жақында",
+  "comingSoonHint": "Бұл бөлім жақында қосылады",
+  "newBadge": "Жаңа",
+  "intake": "Қабылдау",
+  "myBids": "Менің өтінімдерім",
+  "savedBids": "Сақталғандар",
+  "messages": "Хабарламалар",
+  "openContact": "Байланысты ашу",
+  "freshShort": "Жаңалары",
+  "freshBid": "Жаңа",
+  "typeGrain": "Астық",
+  "typeFertilizer": "Тыңайтқыштар",
+  "typeSeeds": "Тұқым",
+  "typeOil": "Май",
+  "tariffUntil": "{date} дейін",
+  "harvestOf": "{year} өнімі"
 }
