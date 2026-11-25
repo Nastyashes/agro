@@ -1,4 +1,4 @@
-import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
+import 'package:agro/app/new_home_screen/home_actions.dart';
 import 'package:agro/ui/pop_up/top_up_balance_popup.dart';
 import 'package:agro/controllers/main_controler.dart';
 import 'package:agro/model/my_price/my_price_result.dart';

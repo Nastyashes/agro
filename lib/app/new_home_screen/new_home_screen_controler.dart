@@ -12,15 +12,10 @@ import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/routes/app_pages.dart';
-import 'package:agro/server/api/api.dart';
-import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/vars/app_constants.dart';
-import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 
 enum NewHomeTab {
   all,
@@ -52,7 +47,6 @@ class NewHomeController extends BaseController {
 
   final Rx<NewHomeTab> selectedTab = NewHomeTab.all.obs;
 
-
   // =========================
   // ALL BIDS
   // =========================
@@ -68,8 +62,7 @@ class NewHomeController extends BaseController {
   /// (e.g. an older search query) are discarded.
   int _allRequestId = 0;
 
-  bool get hasMoreBids =>
-      _bidsTotal == null || bids.length < _bidsTotal!;
+  bool get hasMoreBids => _bidsTotal == null || bids.length < _bidsTotal!;
 
   // =========================
   // FRESH BIDS
@@ -196,7 +189,6 @@ class NewHomeController extends BaseController {
       _bidsTotal = page.total;
 
       _updateUserfield(page.userfield);
-
     } catch (e, stackTrace) {
       if (requestId != _allRequestId) return;
 
@@ -258,7 +250,6 @@ class NewHomeController extends BaseController {
       _freshTotal = page.total;
 
       _updateUserfield(page.userfield);
-
     } catch (e, stackTrace) {
       log(
         'NewHomeController loadFreshBids error: $e',
@@ -302,7 +293,7 @@ class NewHomeController extends BaseController {
     _searchDebounce?.cancel();
 
     _searchDebounce = Timer(
-       AppConstants.searchDebounce,
+      AppConstants.searchDebounce,
       () async {
         try {
           await loadAllBids(reset: true);
@@ -470,75 +461,5 @@ class NewHomeController extends BaseController {
     freshScrollController.dispose();
 
     super.onClose();
-  }
-}
-
-/// Runs [NewHomeController.disableAds] and shows its outcome.
-Future<void> disableAdsWithFeedback(BuildContext context) async {
-  final message = await Get.find<NewHomeController>().disableAds();
-  if (!context.mounted) return;
-  if (message == null) {
-    notification(text: context.l.somethingWentWrong);
-  } else {
-    inAppNotification(text: message, c: context);
-  }
-}
-
-Future<void> payBalance(int amount, BuildContext context) async {
-  try {
-    final payUrl = await AccountRepository().topUpPaymentUrl(amount);
-    final opened = await openPaymentUrl(payUrl);
-    if (!opened && context.mounted) {
-      notification(text: context.l.somethingWentWrong);
-    }
-  } catch (e, stackTrace) {
-    log('payBalance failed: $e', error: e, stackTrace: stackTrace);
-    if (context.mounted) {
-      notification(text: context.l.somethingWentWrong);
-    }
-  }
-}
-
-Future<bool> openPaymentUrl(String rawUrl) async {
-  var value = rawUrl.trim();
-  if (value.startsWith('//')) {
-    value = 'https:$value';
-  } else if (!value.contains('://')) {
-    final base = Api.baseUrl();
-    value = '$base${value.startsWith('/') ? value.substring(1) : value}';
-  }
-
-  final uri = Uri.tryParse(value);
-  print('openPaymentUrl raw=$rawUrl parsed=$uri');
-  if (uri == null || !(uri.isScheme('http') || uri.isScheme('https'))) {
-    print('openPaymentUrl rejected scheme=${uri?.scheme}');
-    return false;
-  }
-
-  try {
-    final canLaunch = await canLaunchUrl(uri);
-    print('openPaymentUrl canLaunchUrl=$canLaunch');
-  } catch (e) {
-    print('openPaymentUrl canLaunchUrl error: $e');
-  }
-
-  try {
-    final launched = await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    );
-    print('openPaymentUrl externalApplication=$launched');
-    if (launched) return true;
-  } catch (e) {
-    print('openPaymentUrl externalApplication error: $e');
-  }
-
-  try {
-    final launched = await launchUrl(uri);
-    print('openPaymentUrl platformDefault=$launched');
-    return launched;
-  } catch (e) {
-    print('openPaymentUrl platformDefault error: $e');
-    return false;
   }
 }
