@@ -1,3 +1,5 @@
+import 'package:agro/app/new_home_screen/widgets/home_tabs.dart';
+import 'package:agro/app/new_home_screen/home_actions.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/data/session_storage.dart';
 import 'package:agro/ui/app_components/empty_list_widget.dart';
@@ -77,71 +79,71 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
             : MediaQuery.of(context).size.width * 0.85,
         child: Obx(
           () => AppMenuDrawer(
-          userName:
-              controller.mainController.userfield['name']?.toString() ?? '',
-          phone: controller.modelUser.phone ?? '',
-          tariffLabel: _tariffLabel(),
-          adsPrice: AppConstants.adsPrice,
-          showDisableAds: controller.shouldShowAds,
-          showMyPrice: controller.modelUser.isTraider &&
-              controller.mainController.myPriceEnabled.value,
-          showDeals: controller.modelUser.isTraider &&
-              controller.mainController.myPriceEnabled.value,
-          showTariffs: controller.modelUser.isTraider ||
-              SessionStorage.instance.country == Country.ukraine.name,
-          onTariffs: () {
-            Navigator.pop(context);
-            AccountSessionActions.openTariffs();
-          },
-          onQrScan: () {
-            Navigator.pop(context);
-            AccountSessionActions.openQrScan();
-          },
-          onSite: () {
-            Navigator.pop(context);
-            AccountSessionActions.openSite();
-          },
-          onSupport: () {
-            Navigator.pop(context);
-            AccountSessionActions.openSupport();
-          },
-          onPrivacy: () {
-            Navigator.pop(context);
-            AccountSessionActions.openPrivacy();
-          },
-          onLogout: () {
-            Navigator.pop(context);
-            AccountSessionActions.confirmLogout(context);
-          },
-          onDeleteAccount: () {
-            Navigator.pop(context);
-            AccountSessionActions.confirmDeleteAccount(context);
-          },
-          onDisableAds: () {
-            Navigator.pop(context);
-            showDisableAdsConfirm(
-              context,
-              amount: AppConstants.adsPrice,
-              onConfirm: () => disableAdsWithFeedback(context),
-            );
-          },
-          onTopUp: () {
-            Navigator.pop(context);
-            _showTopUp();
-          },
-          onMyPrice: () {
-            Navigator.pop(context);
-            Get.toNamed(Routes.myPrice);
-          },
-          onDeals: () {
-            Navigator.pop(context);
-            Get.toNamed(Routes.myPriceDeals);
-          },
-          unreadNotifications: controller.unreadInformCount.value,
-          onInfoMessages: () {
-            Navigator.pop(context);
-            Get.toNamed(Routes.informMessages);
-          },
+            userName:
+                controller.mainController.userfield['name']?.toString() ?? '',
+            phone: controller.modelUser.phone ?? '',
+            tariffLabel: _tariffLabel(),
+            adsPrice: AppConstants.adsPrice,
+            showDisableAds: controller.shouldShowAds,
+            showMyPrice: controller.modelUser.isTraider &&
+                controller.mainController.myPriceEnabled.value,
+            showDeals: controller.modelUser.isTraider &&
+                controller.mainController.myPriceEnabled.value,
+            showTariffs: controller.modelUser.isTraider ||
+                SessionStorage.instance.country == Country.ukraine.name,
+            onTariffs: () {
+              Navigator.pop(context);
+              AccountSessionActions.openTariffs();
+            },
+            onQrScan: () {
+              Navigator.pop(context);
+              AccountSessionActions.openQrScan();
+            },
+            onSite: () {
+              Navigator.pop(context);
+              AccountSessionActions.openSite();
+            },
+            onSupport: () {
+              Navigator.pop(context);
+              AccountSessionActions.openSupport();
+            },
+            onPrivacy: () {
+              Navigator.pop(context);
+              AccountSessionActions.openPrivacy();
+            },
+            onLogout: () {
+              Navigator.pop(context);
+              AccountSessionActions.confirmLogout(context);
+            },
+            onDeleteAccount: () {
+              Navigator.pop(context);
+              AccountSessionActions.confirmDeleteAccount(context);
+            },
+            onDisableAds: () {
+              Navigator.pop(context);
+              showDisableAdsConfirm(
+                context,
+                amount: AppConstants.adsPrice,
+                onConfirm: () => disableAdsWithFeedback(context),
+              );
+            },
+            onTopUp: () {
+              Navigator.pop(context);
+              _showTopUp();
+            },
+            onMyPrice: () {
+              Navigator.pop(context);
+              Get.toNamed(Routes.myPrice);
+            },
+            onDeals: () {
+              Navigator.pop(context);
+              Get.toNamed(Routes.myPriceDeals);
+            },
+            unreadNotifications: controller.unreadInformCount.value,
+            onInfoMessages: () {
+              Navigator.pop(context);
+              Get.toNamed(Routes.informMessages);
+            },
           ),
         ),
       ),
@@ -189,28 +191,28 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
               // SEARCH
               // only All applications
               // =========================
-             const SizedBox(height: 8),
+              const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Obx(() => _HomeTabs(
+                child: Obx(() => HomeTabs(
                       allCount: controller.mainController.tariff?.orderCount,
                       selectedTab: controller.selectedTab.value,
                       showFresh: controller.isFree,
                       onChanged: controller.selectTab,
                     )),
               ),
-      //        const SizedBox(height: 8),
+              //        const SizedBox(height: 8),
 
               // =========================
               // CONTENT
               // =========================
 
               Expanded(
-                child: Obx(() => controller.selectedTab.value ==
-                            NewHomeTab.fresh &&
-                        controller.isFree
-                    ? _buildFreshList()
-                    : _buildAllList()),
+                child: Obx(() =>
+                    controller.selectedTab.value == NewHomeTab.fresh &&
+                            controller.isFree
+                        ? _buildFreshList()
+                        : _buildAllList()),
               ),
             ],
           ),
@@ -286,9 +288,14 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
               bottom: 24,
             ),
             children: controller.bidsFresh.isEmpty
-                ? [ emptyListDefault(  context.l.noFreshApplications, AppColors.dobriva.withValues(alpha: 0.4),)]
-           //         _EmptyFreshApplications(),
-                  
+                ? [
+                    emptyListDefault(
+                      context.l.noFreshApplications,
+                      AppColors.dobriva.withValues(alpha: 0.4),
+                    )
+                  ]
+                //         _EmptyFreshApplications(),
+
                 : _buildBidWidgets(
                     controller.bidsFresh,
                     isFresh: true,
@@ -339,10 +346,10 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
           bidCounter % AppConstants.adEveryBids == 0) {
         result.add(
           BannerItemForList(
-            imageUrl:
-                controller.adBanner.value?.image ?? AppConstants.fallbackAdImage,
-            phoneNumber:
-                controller.adBanner.value?.phone ?? AppConstants.fallbackAdPhone,
+            imageUrl: controller.adBanner.value?.image ??
+                AppConstants.fallbackAdImage,
+            phoneNumber: controller.adBanner.value?.phone ??
+                AppConstants.fallbackAdPhone,
           ),
         );
       }
@@ -380,110 +387,6 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
     }
 
     return '';
-  }
-}
-
-// ============================================================
-// TABS
-// ============================================================
-class _HomeTabs extends StatelessWidget {
-  final NewHomeTab selectedTab;
-  final bool showFresh;
-  final ValueChanged<NewHomeTab> onChanged;
-  final int? allCount;
-  final int? freshCount;
-
-  const _HomeTabs({
-    this.allCount,
-    this.freshCount,
-    required this.selectedTab,
-    required this.showFresh,
-    required this.onChanged,
-  });
-
-  String _title(String text, int? count) {
-    return count != null ? '$text ($count)' : text;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!showFresh) {
-      return Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          _title(context.l.allApplications, allCount),
-          style: AppFonts.title2.withColor(
-            AppColors.mainGreen,
-          ),
-        ),
-      );
-    }
-
-    return Container(
-      height: 50,
-      padding: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        color:  AppColors.mainGreen.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(100),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _TabItem(
-              text: _title(context.l.allApplications, allCount),
-              selected: selectedTab == NewHomeTab.all,
-              onPressed: () {
-                onChanged(NewHomeTab.all);
-              },
-            ),
-          ),
-          Expanded(
-            child: _TabItem(
-              text: _title(context.l.freshApplications, freshCount),
-              selected: selectedTab == NewHomeTab.fresh,
-              onPressed: () {
-                onChanged(NewHomeTab.fresh);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TabItem extends StatelessWidget {
-  final String text;
-  final bool selected;
-  final VoidCallback onPressed;
-
-  const _TabItem({
-    required this.text,
-    required this.selected,
-    required this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onPressed,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: selected ? AppColors.mainGreen : Colors.transparent,
-          borderRadius: BorderRadius.circular(100),
-        ),
-        child: Text(
-          text,
-          style: AppFonts.body1medium.copyWith(
-            color: selected ? AppColors.white : AppColors.mainGreen,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-          ),
-        ),
-      ),
-    );
   }
 }
 

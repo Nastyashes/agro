@@ -47,6 +47,9 @@ class BidItemController extends BaseController {
   final Rx<BidItem> bid = BidItem().obs;
   final RxBool loadPage = false.obs;
   final RxBool contactOpened = false.obs;
+
+  /// True while a (possibly paid) contact request is in flight.
+  final RxBool openingContact = false.obs;
   final RxBool orderingCarrier = false.obs;
   final RxBool carrierOrdered = false.obs;
   final RxBool orderingAnalysis = false.obs;
@@ -89,7 +92,8 @@ class BidItemController extends BaseController {
   /// Free-tariff users without ad-free pay for a free contact by watching
   /// an ad; everyone else opens it directly (it may be charged).
   Future<void> onContactClick() async {
-    if (bidItem.isOpened) return;
+    if (bidItem.isOpened || openingContact.value) return;
+    openingContact.value = true;
     try {
       final main = _main;
       final shouldShowAd = (bidItem.contactPrice ?? 0) == 0 &&
@@ -113,6 +117,8 @@ class BidItemController extends BaseController {
     } catch (e) {
       log('contact open failed: $e');
       ui.notify(BidNotice.openContactRetry);
+    } finally {
+      openingContact.value = false;
     }
   }
 
