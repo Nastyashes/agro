@@ -1,65 +1,67 @@
 import 'dart:developer';
 
-import 'package:agro/data/repositories/farmer_orders_repository.dart';
-import 'package:agro/app/home/order/components/set_answer.dart.dart';
-import 'package:agro/ui/pop_up/banner_dialog.dart';
-import 'package:agro/ui/pop_up/inform_pop_up.dart';
-import 'package:agro/app/bid_detail/components/launch_phone.dart';
-import 'package:agro/app/my_price/components/my_price_dialogs.dart';
-import 'package:agro/app/my_price/components/my_price_error.dart';
+import 'package:agro/app/bid_detail/components/bid_detail_ui.dart';
+import 'package:agro/app/my_price/components/my_price_error.dart'
+    show MyPriceErrorAction;
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
-import 'package:agro/model/new_models_bids/bids_item_model.dart';
-import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:agro/data/repositories/bids_repository.dart';
-import 'package:agro/model/call_result/call_result.dart';
-import 'package:agro/repository/local_storage_repository.dart';
+import 'package:agro/data/repositories/farmer_orders_repository.dart';
+import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
+import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/routes/app_pages.dart';
-import 'package:agro/server/api/api.dart';
-import 'package:agro/ui/local_notification/local_notification.dart';
-import 'package:agro/vars/helper.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:agro/server/api/controller/my_price.dart';
 import 'package:get/get.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
+/// Bid detail: contact (paid or for an ad), carrier, analysis (paid), deal
+/// (paid). Holds no BuildContext; everything shown goes through [ui].
 class BidItemController extends BaseController {
-  final BidsRepository _bids = BidsRepository();
+  BidItemController({
+    BidsRepository? bids,
+    MyPriceApi? myPrice,
+    FarmerOrdersRepository? farmerOrders,
+    MainController? mainController,
+    Future<void> Function(Future<void> Function() action)? withLoader,
+    void Function(BidItem item)? onBidUpdated,
+  })  : _bids = bids ?? BidsRepository(),
+        _myPrice = myPrice ?? MyPriceApi(),
+        _farmerOrders = farmerOrders ?? FarmerOrdersRepository(),
+        _mainController = mainController,
+        _withLoader = withLoader,
+        _onBidUpdated = onBidUpdated ?? _updateHomeList;
 
-  late Function(VoidCallback fn) setState;
-  late BidItem bidItem;
-  bool loadPage = false;
-  bool orderingCarrier = false;
-  bool carrierOrdered = false;
-  bool orderingAnalysis = false;
-  bool analysisOrdered = false;
-  CallResult? result;
-  bool contactOpened = false;
-  bool isProcessingContact = false;
+  final BidsRepository _bids;
+  final MyPriceApi _myPrice;
+  final FarmerOrdersRepository _farmerOrders;
+  final MainController? _mainController;
+  final Future<void> Function(Future<void> Function() action)? _withLoader;
+  final void Function(BidItem item) _onBidUpdated;
 
-  final _localStorageRepository = LocalStorageRepository();
-  NewHomeController? get _homeController =>
-      Get.isRegistered<NewHomeController>()
-          ? Get.find<NewHomeController>()
-          : null;
+  late BidDetailUi ui;
 
-  void initPage({
-    required BuildContext context,
-    required Function(VoidCallback fn) set,
-    BidItem? item,
-    int? orderId,
-  }) async {
-    setState = set;
-    bidItem = item ?? BidItem(orderId: orderId);
-    if (bidItem.isOpened) contactOpened = true;
+  MainController? get _main =>
+      _mainController ??
+      (Get.isRegistered<MainController>() ? Get.find<MainController>() : null);
 
-    result =
-        await _localStorageRepository.getResult(bidItem.orderId.toString());
+  final Rx<BidItem> bid = BidItem().obs;
+  final RxBool loadPage = false.obs;
+  final RxBool contactOpened = false.obs;
+  final RxBool orderingCarrier = false.obs;
+  final RxBool carrierOrdered = false.obs;
+  final RxBool orderingAnalysis = false.obs;
+  final RxBool analysisOrdered = false.obs;
 
+  BidItem get bidItem => bid.value;
+
+  Future<void> _loading(Future<void> Function() action) =>
+      (_withLoader ?? loadIfValid)(action);
+
+  Future<void> initPage({BidItem? item, int? orderId}) async {
+    bid.value = item ?? BidItem(orderId: orderId);
+    if (bidItem.isOpened) contactOpened.value = true;
     await refreshOrderView();
-
-    await Future.delayed(const Duration(milliseconds: 100));
-    setState(() => loadPage = true);
+    loadPage.value = true;
   }
 
   Future<void> refreshOrderView() async {
@@ -68,286 +70,163 @@ class BidItemController extends BaseController {
     try {
       final view = await _bids.view(orderId);
       if (view.item != null) {
-        bidItem = view.item!;
+        bid.value = view.item!;
       } else if (view.myPrice != null) {
-        bidItem = bidItem.copyWith(myPrice: view.myPrice);
+        bid.value = bidItem.copyWith(myPrice: view.myPrice);
       }
-      if (bidItem.isOpened) contactOpened = true;
+      if (bidItem.isOpened) contactOpened.value = true;
       final meta = bidItem.myPrice;
       if (meta != null && meta.canAcknowledge && meta.matchId != null) {
-        await Api().myPrice.matchAck(meta.matchId!);
+        await _myPrice.matchAck(meta.matchId!);
       }
     } catch (e) {
       log('refreshOrderView error: $e');
     }
   }
 
-  Future<void> onContactClick(BuildContext context) async {
+  // --- Contact ---
+
+  /// Free-tariff users without ad-free pay for a free contact by watching
+  /// an ad; everyone else opens it directly (it may be charged).
+  Future<void> onContactClick() async {
     if (bidItem.isOpened) return;
-
     try {
-      final contactPrice = bidItem.contactPrice ?? 0;
-      final main = Get.isRegistered<MainController>()
-          ? Get.find<MainController>()
-          : null;
-      final isFree = main?.isFree == true;
-      final isAdsDisabled = main?.isAdsDisabled == true;
-      final shouldShowAd = contactPrice == 0 && isFree && !isAdsDisabled;
-
-      String adsPrice = context.adsPriceLabel();
-
+      final main = _main;
+      final shouldShowAd = (bidItem.contactPrice ?? 0) == 0 &&
+          main?.isFree == true &&
+          main?.isAdsDisabled != true;
       if (!shouldShowAd) {
-        await _openContact(context);
+        await _openContact();
         return;
       }
 
-      // 🔥 окремий try/catch саме навколо запиту банера —
-      // будь-яка помилка тут (мережа, тайм-аут, невалідний JSON) не блокує відкриття контакту
-      OpenContactsAdResponse? res;
+      AdBannerModel? ad;
       try {
-        res = await _bids.contactAd(bidItem.orderId!);
+        final res = await _bids.contactAd(bidItem.orderId!);
+        ad = res.status == true ? res.adBanner : null;
       } catch (e) {
         log('openContactsAd failed, fallback to direct open: $e');
-        await _openContact(context);
-        return;
       }
-
-      if (res.status != true) {
-        await _openContact(context);
-        return;
-      }
-
-      final ad = res.adBanner;
-      if (ad == null) {
-        await _openContact(context);
-        return;
-      }
-
-      final watched = await showAdBannerDialog(
-        context,
-        imageUrl: ad.image,
-        phone: ad.phone,
-        price: adsPrice,
-        onDisableAds: () async {
-          await _homeController?.disableAds(context);
-        },
-      );
-
-      if (watched == true) {
-        await _openContact(context);
+      if (ad == null || await ui.watchContactAd(ad)) {
+        await _openContact();
       }
     } catch (e) {
-      log("contact open failed: $e");
-      notification(text: context.l.failedOpenContactRetry);
+      log('contact open failed: $e');
+      ui.notify(BidNotice.openContactRetry);
     }
   }
 
-  Future<void> _openContact(BuildContext context) async {
+  Future<void> _openContact() async {
     try {
       final result = await _bids.openContact(bidItem.orderId!);
-
-      if (result.status == OpenContactStatus.opened) {
-        // Paid: record it even if the user already left the screen.
-        final contact = result.contact!;
-        bidItem = bidItem.copyWith(
-          opened: 1,
-          openedPhon: contact.phone,
-          fermerCompany: contact.company,
-          fermerName: contact.name,
-          fermerPhone: contact.phone,
-          fermerEmail: contact.email,
-          contacts: contact.contacts,
-        );
-        _homeController?.updateBidItem(bidItem);
-        contactOpened = true;
-        setState(() {});
-        return;
+      switch (result.status) {
+        case OpenContactStatus.opened:
+          // Paid: record it even if the user already left the screen.
+          final contact = result.contact!;
+          bid.value = bidItem.copyWith(
+            opened: 1,
+            openedPhon: contact.phone,
+            fermerCompany: contact.company,
+            fermerName: contact.name,
+            fermerPhone: contact.phone,
+            fermerEmail: contact.email,
+            contacts: contact.contacts,
+          );
+          _onBidUpdated(bidItem);
+          contactOpened.value = true;
+        case OpenContactStatus.insufficient:
+          ui.notify(BidNotice.insufficientBalance, serverText: result.message);
+        case OpenContactStatus.failed:
+          ui.notify(BidNotice.failedOpenContact, serverText: result.message);
       }
-
-      if (!context.mounted) return;
-      notification(
-        text: result.message ??
-            (result.status == OpenContactStatus.insufficient
-                ? context.l.insufficientBalance
-                : context.l.failedOpenContact),
-      );
     } catch (e) {
-      log("_openContact error: $e");
-      if (context.mounted) {
-        notification(text: context.l.connectionErrorRetry);
-      }
+      log('_openContact error: $e');
+      ui.notify(BidNotice.connectionErrorRetry);
     }
   }
 
-  Future<void> onOrderCarrier(BuildContext context) async {
-    if (orderingCarrier || carrierOrdered) return;
+  // --- Carrier ---
 
-    setState(() => orderingCarrier = true);
-
+  Future<void> onOrderCarrier() async {
+    if (orderingCarrier.value || carrierOrdered.value) return;
+    orderingCarrier.value = true;
     try {
       final result = await _bids.orderCarrier();
-      final bool status = result.ok;
-      final String message = result.message;
-
-      setState(() {
-        orderingCarrier = false;
-        if (status) carrierOrdered = true;
-      });
-
-      if (context.mounted) {
-        showInformPoUp(
-          context,
-          status ? context.l.done : context.l.error,
-          message,
-        );
-      }
+      if (result.ok) carrierOrdered.value = true;
+      ui.showCarrierResult(result);
     } catch (e) {
       log('onOrderCarrier error: $e');
-      setState(() => orderingCarrier = false);
-      if (context.mounted) {
-        notification(text: context.l.errorTariffMail);
-      }
+      ui.notify(BidNotice.carrierError);
+    } finally {
+      orderingCarrier.value = false;
     }
   }
 
-  Future<void> onOrderAnalysis(BuildContext context) async {
-    if (orderingAnalysis || analysisOrdered) return;
+  // --- Analysis (paid) ---
 
-    setState(() => orderingAnalysis = true);
-
+  Future<void> onOrderAnalysis() async {
+    if (orderingAnalysis.value || analysisOrdered.value) return;
+    orderingAnalysis.value = true;
     try {
       final result = await _bids.orderAnalysis(bidItem.orderId!);
-
-      // Paid: mark it ordered even if the user already left the screen, so
-      // the button cannot charge twice.
-      setState(() {
-        orderingAnalysis = false;
-        if (result.status == AnalysisStatus.ordered) analysisOrdered = true;
-      });
-      if (!context.mounted) return;
-
-      switch (result.status) {
-        case AnalysisStatus.ordered:
-          showInformPoUp(
-            context,
-            context.l.done,
-            context.l.analysisOrderedMessage(result.balanceAfter ?? '—'),
-          );
-        case AnalysisStatus.insufficient:
-          showInformPoUp(
-            context,
-            context.l.error,
-            context.l
-                .insufficientFunds(result.balance ?? '—', result.price ?? '—'),
-          );
-        case AnalysisStatus.failed:
-          showInformPoUp(
-              context, context.l.error, result.message ?? context.l.error);
-          notification(text: context.l.failedOpenContact);
-      }
+      // Paid: mark it ordered first so the button cannot charge twice.
+      if (result.status == AnalysisStatus.ordered) analysisOrdered.value = true;
+      ui.showAnalysisResult(result);
     } catch (e) {
       log('onOrderAnalysis error: $e');
-      setState(() => orderingAnalysis = false);
-      if (context.mounted) {
-        notification(text: context.l.connectionErrorRetry);
-      }
+      ui.notify(BidNotice.connectionErrorRetry);
+    } finally {
+      orderingAnalysis.value = false;
     }
   }
 
-  void onLaunchPhone(BuildContext context, String? phone) =>
-      showCupertinoModalBottomSheet(
-        topRadius: const Radius.circular(30),
-        context: context,
-        builder: (c) => LaunchPhone(contact: phone),
-      );
+  // --- Deal (VIP, paid) ---
 
-  // --- Результат дзвінка ---
-  void onSetAnswer(BuildContext context) => showCupertinoModalBottomSheet(
-        topRadius: const Radius.circular(30),
-        context: context,
-        builder: (c) => SetAnswer(onAnswered: (p0) {
-          _localStorageRepository.addNew(p0, bidItem.orderId.toString());
-          result = p0;
-          setState(() {});
-          Navigator.pop(c);
-        }),
-      );
+  Future<void> onDeal() => _loading(_deal);
 
-  // --- Угода (VIP) ---
-  void onDeal(BuildContext context) => loadIfValid(() async {
-        final orderId = bidItem.orderId;
-        if (orderId == null) return;
+  Future<void> _deal() async {
+    final orderId = bidItem.orderId;
+    if (orderId == null) return;
 
-        var quoteResult = await Api().myPrice.dealQuote(orderId: orderId);
-        if (!quoteResult.ok || quoteResult.data == null) {
-          if (context.mounted) {
-            await showMyPriceError(
-              context,
-              quoteResult,
-              mainController: Get.isRegistered<MainController>()
-                  ? Get.find<MainController>()
-                  : null,
-            );
-          }
-          return;
-        }
+    final quoteResult = await _myPrice.dealQuote(orderId: orderId);
+    if (!quoteResult.ok || quoteResult.data == null) {
+      await ui.showMyPriceError(quoteResult);
+      return;
+    }
 
-        var quote = quoteResult.data!;
-        if (!quote.hasEnoughBalance && context.mounted) {
-          inAppNotification(
-            text: context.l.insufficientFunds(
-              '${quote.balance ?? 0}',
-              '${quote.amount ?? 0}',
-            ),
-            c: context,
-          );
-        }
+    final quote = quoteResult.data!;
+    if (!quote.hasEnoughBalance) ui.showDealInsufficient(quote);
+    if (!await ui.confirmDeal(quote)) return;
 
-        if (!context.mounted) return;
-        final amount = quote.amount ?? 0;
-        final confirmed = await showMyPriceConfirmDialog(
-          context: context,
-          title: context.l.confirmDealTitle,
-          body: context.l.confirmDealBody(amount.toString()),
-          confirmEnabled: quote.hasEnoughBalance,
-        );
-        if (!confirmed) return;
+    final confirmResult = await _myPrice.dealConfirm(
+      orderId: orderId,
+      expectedAmount: quote.amount ?? 0,
+    );
+    if (!confirmResult.ok) {
+      final action = await ui.showMyPriceError(confirmResult);
+      if (action == MyPriceErrorAction.retryQuote) await _deal();
+      return;
+    }
 
-        var confirmResult = await Api().myPrice.dealConfirm(
-              orderId: orderId,
-              expectedAmount: amount,
-            );
+    final data = confirmResult.data;
+    if (data is Map && data['balance_after'] != null) {
+      _main?.updateBalance(data['balance_after']);
+    }
+    await refreshOrderView();
+  }
 
-        if (!confirmResult.ok) {
-          final action = await showMyPriceError(
-            context,
-            confirmResult,
-            mainController: Get.isRegistered<MainController>()
-                ? Get.find<MainController>()
-                : null,
-          );
-          if (action == MyPriceErrorAction.retryQuote) {
-            onDeal(context);
-          }
-          return;
-        }
+  // --- Navigation ---
 
-        if (Get.isRegistered<MainController>()) {
-          final data = confirmResult.data;
-          if (data is Map && data['balance_after'] != null) {
-            Get.find<MainController>().updateBalance(data['balance_after']);
-          }
-        }
-        await refreshOrderView();
-        setState(() {});
-      });
-  // --- Відгуки ---
   void onReview() => Get.toNamed(Routes.review, arguments: bidItem.orderId);
 
-  void onSell() => loadIfValid(() async {
-        // після закриття повертаємось назад
-        if (await FarmerOrdersRepository().closeOrder(bidItem.orderId!)) {
-          Get.back();
-        }
+  Future<void> onSell() => _loading(() async {
+        // Back to the list once the order is closed.
+        if (await _farmerOrders.closeOrder(bidItem.orderId!)) Get.back();
       });
+
+  static void _updateHomeList(BidItem item) {
+    if (Get.isRegistered<NewHomeController>()) {
+      Get.find<NewHomeController>().updateBidItem(item);
+    }
+  }
 }

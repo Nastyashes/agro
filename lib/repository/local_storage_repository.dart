@@ -1,42 +1,13 @@
-import 'package:agro/data/session_storage.dart';
-import 'dart:developer';
-
 import 'package:agro/model/answer/answer.dart';
-import 'package:agro/model/call_result/call_result.dart';
-import 'package:agro/model/model_user/model_user.dart';
 import 'package:hive/hive.dart';
 
+/// Legacy per-order call results stored on the device. Nothing writes them
+/// any more; logout still clears what older versions saved.
 class LocalStorageRepository {
-  addNew(CallResult result, String orderId) async {
-    ModelUser? modelUser = SessionStorage.instance.user;
-    final box = await Hive.openBox<Answer>(_answers);
-    box.put("${modelUser?.id}$orderId",
-        Answer(userId: modelUser?.id, orderId: orderId, result: result));
-    box.close;
-    log("answer saved: ${modelUser?.id}$orderId");
-  }
-
-  Future<CallResult?> getResult(String orderId) async {
-    ModelUser? modelUser = SessionStorage.instance.user;
-    final box = await Hive.openBox<Answer>(_answers);
-    Answer? data = box.get("${modelUser?.id}$orderId");
-    log("answer get: ${data.toString()}");
-    box.close();
-    return data?.result;
-  }
-
-  Future<List<Answer>> getAll() async {
-    final box = await Hive.openBox<Answer>(_answers);
-    List<Answer> data = box.values.toList();
-    log("answer get: ${data.toString()}");
-    box.close();
-    return data;
-  }
-
   Future<void> clear() async {
     final box = await Hive.openBox<Answer>(_answers);
-    box.clear();
-    box.close();
+    await box.clear();
+    await box.close();
   }
 
   static const String _answers = "answers";
