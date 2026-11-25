@@ -3,17 +3,13 @@ import 'package:agro/ui/pop_up/confirm_pop_up.dart';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/controllers/app_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
-import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/repository/local_storage_repository.dart';
 import 'package:agro/routes/app_pages.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
-import 'package:agro/vars/model_notifier/bottom_menu_notifier/bottom_menu_notifier.dart';
-import 'package:agro/vars/model_notifier/user_notifier/user_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AccountSessionActions {
@@ -40,8 +36,6 @@ class AccountSessionActions {
 
         if (!context.mounted) return;
 
-        context.read<UserNotifier>().setModelUser(val: ModelUser());
-        context.read<BottomMenuNotifier>().setActiveButtMenu(val: 0, upd: false);
         inAppNotification(
           text: context.l.profileCancelActionLog,
           c: context,
@@ -61,9 +55,6 @@ class AccountSessionActions {
         await LocalStorageRepository().clear();
 
         if (!context.mounted) return;
-
-        context.read<UserNotifier>().setModelUser(val: ModelUser());
-        context.read<BottomMenuNotifier>().setActiveButtMenu(val: 0, upd: false);
 
         _resetSessionAndRestart();
       },
