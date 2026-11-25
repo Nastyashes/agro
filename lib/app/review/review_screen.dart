@@ -5,6 +5,9 @@ import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+
+import 'add_review.dart';
 
 import '../../model/model_review/model_review.dart';
 import 'package:agro/ui/app_components/block_page_screen.dart';
@@ -17,59 +20,29 @@ class ReviewScreen extends StatefulWidget {
 }
 
 class _ReviewScreenState extends State<ReviewScreen> {
+  final ReviewController controller = Get.find();
 
-  ReviewController controller = Get.find();
-  @override
-  void initState() {
-    controller.initPage(context: context, set: setState);
-    super.initState();
-  }
+  void _openAddReview() => showCupertinoModalBottomSheet(
+      topRadius: const Radius.circular(30),
+      context: context,
+      builder: (_) => const AddReviewScreen());
 
   @override
   Widget build(BuildContext context) {
     return BlockPageScreen(
         header: context.l.reviews,
         isBack: true,
-        endWidget: BTransparentScalableButton(onPressed: controller.onAddReviewPage, scale: ScaleFormat.big, child: const Icon(Icons.add, color: Color(0xffFCD300), size: 40)),
+        endWidget: BTransparentScalableButton(
+            onPressed: _openAddReview,
+            scale: ScaleFormat.big,
+            child: const Icon(Icons.add, color: Color(0xffFCD300), size: 40)),
         theme: SystemUiOverlayStyle.dark,
-        child: Column(
-          children: [
-
-            for(final ModelReview i in controller.modelReview)...[
-
-              BlockReview(modelReview: i)
-
-            ]
-            // TextFieldWidget(
-            //     padding: const EdgeInsets.only(top: 15),
-            //     borderRadius: BorderRadius.circular(10),
-            //     border: Border.all(color: Colors.transparent),
-            //     text: 'Пошук',
-            //     openKeyboardAuto: true,
-            //     colorBg: const Color(0xffF8F8F8),
-            //     controller: controller.searchController,
-            //     onChanged: (_) => controller.onSearch()),
-            // Expanded(
-            //     child: SmartRefresher(
-            //         controller: controller.controllerLoading,
-            //         scrollController: controller.controllerScroll,
-            //         enablePullUp: true,
-            //         enablePullDown: false,
-            //         onLoading: controller.onLoadData,
-            //         footer: const FooterLoad(),
-            //         header: const WaterDropHeader(waterDropColor: Color(0xffFF7D5C)),
-            //         child: ListView.separated(
-            //             physics: const ClampingScrollPhysics(),
-            //             itemCount: 1,
-            //             separatorBuilder: (c, i) {
-            //               return Container();
-            //             },
-            //             itemBuilder: (_, e) => Column(
-            //                   children: [
-            //                     for (ModelOrder i in controller.modelOrder) ...[BlockOrder(modelOrder: i, onPressed: controller.onPageOrderFermer)]
-            //                   ],
-            //                 ))))
-          ],
-        ));
+        child: Obx(() => Column(
+              children: [
+                for (final ModelReview i in controller.reviews) ...[
+                  BlockReview(modelReview: i)
+                ]
+              ],
+            )));
   }
 }
