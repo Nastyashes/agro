@@ -179,7 +179,7 @@ Future<T?> showMyPricePicker<T>({
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: filtered.length,
-                      separatorBuilder: (_, __) =>  Divider(
+                      separatorBuilder: (_, __) => Divider(
                         height: 1,
                         color: AppColors.mainGreen.withValues(alpha: 0.1),
                       ),

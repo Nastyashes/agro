@@ -1,37 +1,52 @@
-import 'package:agro/app/my_price/components/my_price_error.dart';
+import 'package:agro/app/my_price/components/my_price_ui.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
 import 'package:agro/model/my_price/my_price_models.dart';
-import 'package:agro/server/api/api.dart';
+import 'package:agro/server/api/controller/my_price.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+/// Edit price / team member of a combination or reservation.
 class EditMyPriceController extends BaseController {
-  late BuildContext context;
-  late Function(VoidCallback fn) setState;
+  EditMyPriceController({
+    MyPriceApi? api,
+    MainController? mainController,
+    Future<void> Function(Future<void> Function() action)? withLoader,
+    void Function(dynamic result)? close,
+    Map<dynamic, dynamic>? arguments,
+  })  : _api = api ?? MyPriceApi(),
+        _mainController = mainController,
+        _withLoader = withLoader,
+        _close = close ?? ((result) => Get.back(result: result)),
+        _arguments = arguments;
+
+  final MyPriceApi _api;
+  final MainController? _mainController;
+  final Future<void> Function(Future<void> Function() action)? _withLoader;
+  final void Function(dynamic result) _close;
+  final Map<dynamic, dynamic>? _arguments;
+
+  late MyPriceUi ui;
+
+  MainController get mainController =>
+      _mainController ?? Get.find<MainController>();
 
   late MyPriceOverview overview;
   late MyPriceEntry entry;
   late String targetType;
   late TextEditingController priceController;
-  int? teamUserId;
+  final RxnInt teamUserId = RxnInt();
 
-  final MainController mainController = Get.find<MainController>();
-
-  void initPage({
-    required BuildContext context,
-    required Function(VoidCallback fn) set,
-  }) {
-    this.context = context;
-    setState = set;
-    final args = (Get.arguments as Map?) ?? {};
+  @override
+  void onInit() {
+    super.onInit();
+    final args = _arguments ?? (Get.arguments as Map?) ?? const {};
     overview = args['overview'] as MyPriceOverview? ?? const MyPriceOverview();
     entry = args['entry'] as MyPriceEntry? ?? const MyPriceEntry();
     targetType = args['targetType'] as String? ?? 'combination';
-    teamUserId = entry.teamUserId;
-    priceController = TextEditingController(
-      text: entry.pricePerTon?.toString() ?? '',
-    );
+    teamUserId.value = entry.teamUserId;
+    priceController =
+        TextEditingController(text: entry.pricePerTon?.toString() ?? '');
   }
 
   @override
@@ -43,24 +58,18 @@ class EditMyPriceController extends BaseController {
   Future<void> onSave() async {
     if (entry.id == null) return;
     final price = double.tryParse(priceController.text.replaceAll(',', '.'));
-    await loadIfValid(() async {
-      final result = await Api().myPrice.update(
+    await (_withLoader ?? loadIfValid)(() async {
+      final result = await _api.update(
         targetType: targetType,
         targetId: entry.id!,
         pricePerTon: price,
-        teamUserId: teamUserId,
+        teamUserId: teamUserId.value,
       );
       if (!result.ok) {
-        if (context.mounted) {
-          await showMyPriceError(
-            context,
-            result,
-            mainController: mainController,
-          );
-        }
+        await ui.showError(result);
         return;
       }
-      Get.back(result: true);
+      _close(true);
     });
   }
 }

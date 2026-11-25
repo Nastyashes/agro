@@ -35,6 +35,11 @@ void main() {
       expect(await repo.balance(), 150);
     });
 
+    test('decimal balance is rounded instead of becoming 0', () async {
+      serve('{"balance":"29.6"}');
+      expect(await repo.balance(), 30);
+    });
+
     test('missing balance is 0', () async {
       serve('{"status":"+"}');
       expect(await repo.balance(), 0);

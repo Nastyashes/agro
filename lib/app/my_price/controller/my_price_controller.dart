@@ -1,103 +1,86 @@
-import 'package:agro/data/session_storage.dart';
-import 'dart:developer';
-
-import 'package:agro/app/my_price/components/my_price_error.dart';
+import 'package:agro/app/my_price/components/my_price_ui.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
-import 'package:agro/model/my_price/my_price_models.dart';
+import 'package:agro/data/session_storage.dart';
 import 'package:agro/model/model_user/model_user.dart';
+import 'package:agro/model/my_price/my_price_models.dart';
 import 'package:agro/routes/app_pages.dart';
-import 'package:agro/server/api/api.dart';
-import 'package:flutter/material.dart';
+import 'package:agro/server/api/controller/my_price.dart';
 import 'package:get/get.dart';
 
+/// "My combinations / reservations" list. No BuildContext: dialogs go
+/// through [MyPriceUi].
 class MyPriceController extends BaseController {
-  late BuildContext context;
-  late Function(VoidCallback fn) setState;
+  MyPriceController({MyPriceApi? api, MainController? mainController})
+      : _api = api ?? MyPriceApi(),
+        _mainController = mainController;
 
-  MyPriceOverview overview = const MyPriceOverview();
-  int tabIndex = 0;
-  bool loadPage = false;
+  final MyPriceApi _api;
+  final MainController? _mainController;
 
-  final MainController mainController = Get.find<MainController>();
+  late MyPriceUi ui;
 
-  ModelUser get modelUser =>
-      SessionStorage.instance.user ?? ModelUser();
+  MainController get mainController =>
+      _mainController ?? Get.find<MainController>();
 
-  void initPage({
-    required BuildContext context,
-    required Function(VoidCallback fn) set,
-  }) {
-    this.context = context;
-    setState = set;
+  final Rx<MyPriceOverview> overview = const MyPriceOverview().obs;
+
+  /// 0 = combinations, 1 = reservations.
+  final RxInt tabIndex = 0.obs;
+
+  /// False until the first load finished (success or error).
+  final RxBool loadPage = false.obs;
+
+  ModelUser get modelUser => SessionStorage.instance.user ?? ModelUser();
+
+  List<MyPriceEntry> get visibleEntries => tabIndex.value == 1
+      ? overview.value.reservations
+      : overview.value.combinations;
+
+  @override
+  void onReady() {
+    super.onReady();
     loadOverview();
   }
 
   Future<void> loadOverview() async {
-    log('MyPrice loadOverview start');
-    final result = await Api().myPrice.overview();
-    log(
-      'MyPrice loadOverview result ok=${result.ok} '
-      'error=${result.errorCode} message=${result.message}',
-    );
-    if (!result.ok || result.data == null) {
-      if (context.mounted) {
-        await showMyPriceError(
-          context,
-          result,
-          mainController: mainController,
-        );
-      }
-      setState(() => loadPage = true);
-      return;
+    final result = await _api.overview();
+    if (result.ok && result.data != null) {
+      overview.value = result.data!;
+    } else {
+      await ui.showError(result);
     }
-    overview = result.data!;
-    _logEntries('combinations', overview.combinations);
-    _logEntries('reservations', overview.reservations);
-    _logDuplicateIds(overview.combinations);
-    setState(() => loadPage = true);
+    loadPage.value = true;
   }
 
-  void _logEntries(String label, List<MyPriceEntry> entries) {
-    log('MyPrice $label count=${entries.length}');
-    for (var i = 0; i < entries.length; i++) {
-      final e = entries[i];
-      log(
-        'MyPrice $label[$i] id=${e.id} slotId=${e.slotId} status="${e.status}" '
-        'isActive=${e.isActive} productId=${e.productId} regionId=${e.regionId} '
-        'payment=${e.paymentType} price=${e.pricePerTon} '
-        'startsAt=${e.startsAt} endsAt=${e.endsAt} queue=${e.queuePosition}',
-      );
-    }
-  }
+  void selectTab(int index) => tabIndex.value = index;
 
-  void _logDuplicateIds(List<MyPriceEntry> entries) {
-    final ids = <int, int>{};
-    for (final e in entries) {
-      final id = e.id;
-      if (id == null) continue;
-      ids[id] = (ids[id] ?? 0) + 1;
-    }
-    final duplicates = ids.entries.where((e) => e.value > 1).toList();
-    if (duplicates.isNotEmpty) {
-      log('MyPrice combinations duplicate ids=$duplicates');
-    }
-  }
-
-  void onCreate() async {
-    await Get.toNamed(Routes.myPriceCreate, arguments: overview);
+  Future<void> onCreate() async {
+    await Get.toNamed(Routes.myPriceCreate, arguments: overview.value);
     await loadOverview();
   }
 
-  void onEdit(MyPriceEntry entry, {required bool reservation}) async {
+  Future<void> onEdit(MyPriceEntry entry, {required bool reservation}) async {
     await Get.toNamed(
       Routes.myPriceEdit,
       arguments: {
-        'overview': overview,
+        'overview': overview.value,
         'entry': entry,
         'targetType': reservation ? 'reservation' : 'combination',
       },
     );
+    await loadOverview();
+  }
+
+  /// Deletes a combination after the user confirms.
+  Future<void> deleteEntry(MyPriceEntry entry) async {
+    if (entry.id == null) return;
+    if (!await ui.confirmDelete()) return;
+    final result = await _api.deleteCombination(entry.id!);
+    if (!result.ok) {
+      await ui.showError(result);
+      return;
+    }
     await loadOverview();
   }
 }

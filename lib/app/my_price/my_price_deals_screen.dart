@@ -1,8 +1,8 @@
-import 'package:agro/app/my_price/components/my_price_error.dart';
+import 'package:agro/app/my_price/components/my_price_ui.dart';
+import 'package:agro/app/my_price/controller/my_price_deals_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
 import 'package:agro/model/my_price/my_price_models.dart';
 import 'package:agro/routes/app_pages.dart';
-import 'package:agro/server/api/api.dart';
 import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/app_components/appbar_with_back.dart';
 import 'package:agro/ui/app_components/empty_list_widget.dart';
@@ -20,54 +20,20 @@ class MyPriceDealsScreen extends StatefulWidget {
 }
 
 class _MyPriceDealsScreenState extends State<MyPriceDealsScreen> {
-  final List<MyPriceDealItem> items = [];
-  bool loading = true;
-  bool loadingMore = false;
-  int offset = 0;
-  static const int limit = 50;
-  bool hasMore = true;
+  late final MyPriceDealsController controller;
 
   @override
   void initState() {
     super.initState();
-    _load(reset: true);
+    controller = Get.put(MyPriceDealsController());
+    controller.ui =
+        ScreenMyPriceUi(context, mainController: Get.find<MainController>());
   }
 
-  Future<void> _load({bool reset = false}) async {
-    if (reset) {
-      offset = 0;
-      hasMore = true;
-      items.clear();
-      setState(() => loading = true);
-    } else {
-      setState(() => loadingMore = true);
-    }
-
-    final result = await Api().myPrice.dealsList(limit: limit, offset: offset);
-    if (!result.ok || result.data == null) {
-      if (mounted) {
-        await showMyPriceError(
-          context,
-          result,
-          mainController: Get.find<MainController>(),
-        );
-        setState(() {
-          loading = false;
-          loadingMore = false;
-        });
-      }
-      return;
-    }
-    final page = result.data!;
-    items.addAll(page.items);
-    offset += page.items.length;
-    hasMore = page.items.length >= limit;
-    if (mounted) {
-      setState(() {
-        loading = false;
-        loadingMore = false;
-      });
-    }
+  @override
+  void dispose() {
+    Get.delete<MyPriceDealsController>();
+    super.dispose();
   }
 
   @override
@@ -80,32 +46,34 @@ class _MyPriceDealsScreenState extends State<MyPriceDealsScreen> {
           SafeArea(
             child: Column(
               children: [
-              appBarBack(context.l.deals),
+                appBarBack(context.l.deals),
                 Expanded(
-                  child: loading
+                  child: Obx(() => controller.loading.value
                       ? const Center(child: CircularProgressIndicator())
-                      : items.isEmpty
-                          ? emptyListDefault(  l.emptyDeals, AppColors.darkGreen)
+                      : controller.items.isEmpty
+                          ? emptyListDefault(l.emptyDeals, AppColors.darkGreen)
                           : NotificationListener<ScrollNotification>(
                               onNotification: (notification) {
                                 if (notification.metrics.pixels >
                                         notification.metrics.maxScrollExtent -
                                             80 &&
-                                    hasMore &&
-                                    !loadingMore) {
-                                  _load();
+                                    controller.hasMore &&
+                                    !controller.loadingMore.value) {
+                                  controller.loadDeals();
                                 }
                                 return false;
                               },
                               child: RefreshIndicator(
-                                onRefresh: () => _load(reset: true),
+                                onRefresh: () =>
+                                    controller.loadDeals(reset: true),
                                 child: ListView.separated(
                                   padding: const EdgeInsets.all(16),
-                                  itemCount: items.length + (loadingMore ? 1 : 0),
+                                  itemCount: controller.items.length +
+                                      (controller.loadingMore.value ? 1 : 0),
                                   separatorBuilder: (_, __) =>
                                       const SizedBox(height: 12),
                                   itemBuilder: (_, index) {
-                                    if (index >= items.length) {
+                                    if (index >= controller.items.length) {
                                       return const Center(
                                         child: Padding(
                                           padding: EdgeInsets.all(16),
@@ -113,11 +81,11 @@ class _MyPriceDealsScreenState extends State<MyPriceDealsScreen> {
                                         ),
                                       );
                                     }
-                                    return _dealCard(items[index]);
+                                    return _dealCard(controller.items[index]);
                                   },
                                 ),
                               ),
-                            ),
+                            )),
                 ),
               ],
             ),
