@@ -290,5 +290,19 @@
   "typeSeeds": "Seeds",
   "typeOil": "Oil",
   "tariffUntil": "until {date}",
-  "harvestOf": "harvest {year}"
+  "harvestOf": "harvest {year}",
+  "conditions": "Conditions",
+  "services": "Services",
+  "sellerLocked": "Name, phone and address appear once you open the contact",
+  "harvest": "Harvest",
+  "payment": "Payment",
+  "delivery": "Delivery",
+  "qualityAnalysis": "Quality analysis",
+  "confirmAnalysisTitle": "Order a quality analysis?",
+  "confirmAnalysisBody": "The cost will be charged to your balance.",
+  "order": "Order",
+  "topUpTitle": "Top up",
+  "balanceNow": "Current balance",
+  "payAmount": "Pay {amount}",
+  "securePayment": "Secure card payment"
 }

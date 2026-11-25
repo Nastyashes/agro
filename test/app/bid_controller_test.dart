@@ -83,6 +83,7 @@ class FakeMain extends MainController {
 class FakeUi implements BidDetailUi {
   bool watched = true;
   bool confirm = true;
+  bool confirmAnalysisAnswer = true;
   MyPriceErrorAction errorAction = MyPriceErrorAction.message;
   final List<String> log = [];
 
@@ -98,6 +99,12 @@ class FakeUi implements BidDetailUi {
 
   @override
   void showCarrierResult(CarrierResult result) => log.add('carrier');
+
+  @override
+  Future<bool> confirmAnalysis() async {
+    log.add('confirmAnalysis');
+    return confirmAnalysisAnswer;
+  }
 
   @override
   void showAnalysisResult(AnalysisResult result) =>
@@ -242,7 +249,17 @@ void main() {
       expect(bids.analyses, 1);
       expect(c.analysisOrdered.value, isTrue);
       expect(c.orderingAnalysis.value, isFalse);
-      expect(ui.log, ['analysis:ordered']);
+      expect(ui.log, ['confirmAnalysis', 'analysis:ordered']);
+    });
+
+    test('declining the confirm charges nothing', () async {
+      ui.confirmAnalysisAnswer = false;
+
+      await c.onOrderAnalysis();
+
+      expect(bids.analyses, 0);
+      expect(c.analysisOrdered.value, isFalse);
+      expect(c.orderingAnalysis.value, isFalse);
     });
 
     test('insufficient can be retried', () async {

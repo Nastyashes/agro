@@ -840,4 +840,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String harvestOf(String year) {
     return 'harvest $year';
   }
+
+  @override
+  String get conditions => 'Conditions';
+
+  @override
+  String get services => 'Services';
+
+  @override
+  String get sellerLocked =>
+      'Name, phone and address appear once you open the contact';
+
+  @override
+  String get harvest => 'Harvest';
+
+  @override
+  String get payment => 'Payment';
+
+  @override
+  String get delivery => 'Delivery';
+
+  @override
+  String get qualityAnalysis => 'Quality analysis';
+
+  @override
+  String get confirmAnalysisTitle => 'Order a quality analysis?';
+
+  @override
+  String get confirmAnalysisBody => 'The cost will be charged to your balance.';
+
+  @override
+  String get order => 'Order';
+
+  @override
+  String get topUpTitle => 'Top up';
+
+  @override
+  String get balanceNow => 'Current balance';
+
+  @override
+  String payAmount(String amount) {
+    return 'Pay $amount';
+  }
+
+  @override
+  String get securePayment => 'Secure card payment';
 }

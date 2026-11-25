@@ -1,12 +1,10 @@
-import 'package:agro/ui/app_components/appbar_with_back.dart';
+import 'package:agro/ui/components/app_top_bar.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/app/profile/tariffs/tariff_item.dart';
 import 'package:agro/app/profile/tariffs/tariffs_controller.dart';
-import 'package:agro/model/tariff/model_tariff.dart';
 import 'package:agro/model/tariff/tariff.dart';
-import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class TariffsScreen extends StatefulWidget {
@@ -37,96 +35,63 @@ class TariffsScreenState extends State<TariffsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-            backgroundColor: AppColors.backgroundGradient1,
-            body: Column(
-              children: [
-                appBarBack(
-                  context.l.tariffs,
-                ),
-                Expanded(
-                    child: Obx(() => PageView(
-                            controller: _pageViewController,
-                            onPageChanged: (int page) {
-                              tariffsController.onPageChanged(page);
-                            },
-                            children: [
-                              ...tariffsController.tariffs
-                                  .asMap()
-                                  .entries
-                                  .map((entry) {
-                                int index = entry.key;
-                                ModelTariff item = entry.value;
-                                return TariffItem(
-                                  modelTariff: item,
-                                  isMyTariff: getMyLabelVisible(
-                                      index, tariffsController.tariff),
-                                );
-                              }).toList(),
-                            ]))),
-                const SizedBox(height: 10),
-                Obx(() => Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: _buildPageIndicator(),
-                    )),
-                const SizedBox(height: 20),
-                const SizedBox(height: 30)
-              ],
-            )));
-  }
-
-  Widget _indicator(bool isActive) {
-    return SizedBox(
-      height: 10,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        margin: const EdgeInsets.symmetric(horizontal: 4.0),
-        height: isActive ? 10 : 8.0,
-        width: isActive ? 12 : 8.0,
-        decoration: BoxDecoration(
-          boxShadow: [
-            isActive
-                ? BoxShadow(
-                    color: AppColors.mainGreen.withOpacity(0.72),
-                    blurRadius: 4.0,
-                    spreadRadius: 1.0,
-                    offset: const Offset(
-                      0.0,
-                      0.0,
-                    ),
-                  )
-                : const BoxShadow(
-                    color: Colors.transparent,
-                  )
+    return Scaffold(
+      backgroundColor: Palette.bg0,
+      body: SafeArea(
+        child: Column(
+          children: [
+            AppTopBar(title: context.l.tariffs),
+            Expanded(
+              child: Obx(() => PageView(
+                    controller: _pageViewController,
+                    onPageChanged: tariffsController.onPageChanged,
+                    children: [
+                      for (final entry
+                          in tariffsController.tariffs.asMap().entries)
+                        TariffItem(
+                          modelTariff: entry.value,
+                          isMyTariff: getMyLabelVisible(
+                              entry.key, tariffsController.tariff),
+                        ),
+                    ],
+                  )),
+            ),
+            const SizedBox(height: 14),
+            Obx(() => _PageDots(
+                  count: tariffsController.tariffs.length,
+                  current: tariffsController.currentPageIndex.value,
+                )),
+            const SizedBox(height: 24),
           ],
-          shape: BoxShape.circle,
-          color: isActive ? AppColors.mainGreen : AppColors.grey2,
         ),
       ),
     );
   }
-
-  List<Widget> _buildPageIndicator() {
-    List<Widget> list = [];
-    for (int i = 0; i < 3; i++) {
-      list.add(i == tariffsController.currentPageIndex.value
-          ? _indicator(true)
-          : _indicator(false));
-    }
-    return list;
-  }
 }
 
-bool isDateBetween(DateTime date, DateTime startDate, DateTime endDate) {
-  // Ensure that the startDate is before the endDate
-  if (startDate.isAfter(endDate)) {
-    throw ArgumentError('Start date must be before end date');
-  }
+class _PageDots extends StatelessWidget {
+  const _PageDots({required this.count, required this.current});
 
-  return (date.isAfter(startDate) || date.isAtSameMomentAs(startDate)) &&
-      (date.isBefore(endDate) || date.isAtSameMomentAs(endDate));
+  final int count;
+  final int current;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          for (var i = 0; i < count; i++)
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              width: i == current ? 20 : 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: i == current ? Palette.green : Palette.lineStrong,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+        ],
+      );
 }
 
 bool getMyLabelVisible(int index, Tariff? tariff) {

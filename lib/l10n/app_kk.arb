@@ -287,5 +287,19 @@
   "typeSeeds": "Тұқым",
   "typeOil": "Май",
   "tariffUntil": "{date} дейін",
-  "harvestOf": "{year} өнімі"
+  "harvestOf": "{year} өнімі",
+  "conditions": "Шарттар",
+  "services": "Қызметтер",
+  "sellerLocked": "Аты-жөні, телефон мен мекенжай байланыс ашылғаннан кейін көрінеді",
+  "harvest": "Өнім",
+  "payment": "Төлем",
+  "delivery": "Жеткізу",
+  "qualityAnalysis": "Сапа талдауы",
+  "confirmAnalysisTitle": "Сапа талдауына тапсырыс беру керек пе?",
+  "confirmAnalysisBody": "Құны балансыңыздан шегеріледі.",
+  "order": "Тапсырыс беру",
+  "topUpTitle": "Толықтыру",
+  "balanceNow": "Ағымдағы баланс",
+  "payAmount": "{amount} төлеу",
+  "securePayment": "Картамен қауіпсіз төлем"
 }

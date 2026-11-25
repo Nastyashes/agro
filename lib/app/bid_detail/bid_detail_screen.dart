@@ -1,26 +1,34 @@
-import 'package:agro/data/session_storage.dart';
 import 'package:agro/app/bid_detail/bid_controller.dart';
 import 'package:agro/app/bid_detail/components/bid_detail_ui.dart';
+import 'package:agro/app/bid_detail/components/launch_phone.dart';
 import 'package:agro/app/my_price/components/my_price_match_style.dart';
-import 'package:agro/model/new_models_bids/bids_item_model.dart';
+import 'package:agro/data/session_storage.dart';
 import 'package:agro/model/model_user/model_user.dart';
-import 'package:agro/ui/app_components/app_background.dart';
-import 'package:agro/ui/app_components/appbar_with_back.dart';
-import 'package:agro/ui/buttons/button_styles.dart';
-import 'package:agro/ui/buttons/b_transparent_scalable_button.dart';
+import 'package:agro/model/new_models_bids/bids_item_model.dart';
+import 'package:agro/ui/components/app_button.dart';
+import 'package:agro/ui/components/app_icon_button.dart';
+import 'package:agro/ui/components/app_snackbar.dart';
+import 'package:agro/ui/components/app_tag.dart';
+import 'package:agro/ui/components/app_top_bar.dart';
+import 'package:agro/ui/components/info_group.dart';
+import 'package:agro/ui/components/product_type.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
-import 'package:agro/ui/text/read_text.dart';
-import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:agro/vars/trade_localizers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class BidDetailScreen extends StatefulWidget {
-  const BidDetailScreen({super.key});
+  const BidDetailScreen({super.key, this.controller, this.item});
+
+  /// Injected in tests; otherwise built here and read from route arguments.
+  final BidItemController? controller;
+  final BidItem? item;
 
   @override
   State<BidDetailScreen> createState() => _BidDetailScreenState();
@@ -35,9 +43,9 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
 
   @override
   void initState() {
-    controller = Get.put(BidItemController());
+    controller = widget.controller ?? Get.put(BidItemController());
 
-    BidItem? item;
+    BidItem? item = widget.item;
     int? orderId;
     final args = Get.arguments;
     if (args is List && args.isNotEmpty) {
@@ -64,269 +72,252 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
 
   @override
   void dispose() {
-    Get.delete<BidItemController>();
+    if (widget.controller == null) Get.delete<BidItemController>();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() => Scaffold(
-            body: Stack(children: [
-          const AppBackground(),
-          SafeArea(
-              child: Column(children: [
-            Padding(
-              padding: const EdgeInsetsGeometry.symmetric(horizontal: 16),
-              child: Row(children: [
-                Expanded(child: appBarBack(context.l.bidDetails)),
-                if (controller.loadPage.value)
-                  BTransparentScalableButton(
-                    onPressed: () {
-                      Clipboard.setData(ClipboardData(text: _toText(context)));
-                      inAppNotification(
-                          text: context.l.copiedToClipboard, c: context);
-                    },
-                    scale: ScaleFormat.big,
-                    child: const Icon(Icons.copy,
-                        color: AppColors.yellow, size: 24),
-                  )
-                else
-                  const SizedBox.shrink(),
-              ]),
+    return Obx(() {
+      final loaded = controller.loadPage.value;
+      final item = controller.bidItem;
+      return Scaffold(
+        backgroundColor: Palette.bg0,
+        bottomNavigationBar: loaded && _isTrader ? _bottomBar(context) : null,
+        body: SafeArea(
+          bottom: false,
+          child: Column(children: [
+            AppTopBar(
+              title: item.orderId == null
+                  ? context.l.bidDetails
+                  : '${context.l.applicationNo}${item.orderId}',
+              trailing: loaded
+                  ? AppIconButton(
+                      icon: Icons.content_copy_rounded,
+                      tooltip: context.l.copiedToClipboard,
+                      onPressed: () {
+                        Clipboard.setData(
+                            ClipboardData(text: _toText(context)));
+                        inAppNotification(
+                            text: context.l.copiedToClipboard,
+                            c: context,
+                            type: SnackType.success);
+                      },
+                    )
+                  : null,
             ),
             Expanded(
-              child: !controller.loadPage.value
+              child: !loaded
                   ? const Center(child: CircularProgressIndicator())
                   : SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _infoCard(context),
-                        ],
-                      ),
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                      child: _content(context, item),
                     ),
-            )
-          ]))
-        ])));
-  }
-
-  Widget _infoCard(BuildContext context) {
-    final item = controller.bidItem;
-    final meta = item.myPrice;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: matchCardColor(meta, AppColors.transparent),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (meta != null)
-            Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text(
-                    controller.loadPage.value
-                        ? '${context.l.applicationNo} ${controller.bidItem.orderId} '
-                            '${context.l.from} ${controller.bidItem.orderCreatedHum ?? ''}'
-                        : '',
-                    style: AppFonts.title2.white)),
-          _row(context.l.product, item.productTitle ?? '—'),
-          if (meta != null && meta.matched && meta.badge.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(meta.badge, style: AppFonts.body1bold.mainGreen),
-            ),
-          if (meta != null && meta.matched && meta.responseLabel.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child:
-                  Text(meta.responseLabel, style: AppFonts.body2medium.black),
-            ),
-          _row(context.l.region, item.regionName ?? '—'),
-          (item.contacts?.district != null &&
-                  item.contacts!.district!.isNotEmpty)
-              ? _row(context.l.district, item.contacts?.district ?? '—')
-              : const SizedBox(),
-          (item.contacts?.city != null && item.contacts!.city!.isNotEmpty)
-              ? _row(context.l.town, item.contacts?.city ?? '—')
-              : const SizedBox(),
-          (item.contacts?.addr != null && item.contacts!.addr!.isNotEmpty)
-              ? _row(context.l.address, item.contacts?.addr ?? '—')
-              : const SizedBox(),
-          (item.fermerCompany != null && item.fermerCompany!.isNotEmpty)
-              ? _row(context.l.company, item.fermerCompany ?? '—')
-              : const SizedBox(),
-          (item.fermerName != null && item.fermerName!.isNotEmpty)
-              ? _row(context.l.fullName, item.fermerName ?? '—')
-              : const SizedBox(),
-          _row(context.l.volume,
-              '${item.amount ?? AppConstants.emDash} ${context.l.tonShort}'),
-          _row(context.l.harvestYear, '${item.year ?? '—'}'),
-          _row(context.l.formOfPayment,
-              _paymentForm(context, item.ordPaymentType)),
-          _row(
-            context.l.typeOfDelivery,
-            localizeDeliveryType(item.deliveryType ?? '-', context),
-          ),
-          (item.contacts?.phone != null && item.contacts!.phone!.isNotEmpty)
-              ? _row(context.l.phoneNumber, item.contacts?.phone ?? '—')
-              : const SizedBox(),
-          (item.contacts?.email != null && item.contacts!.email!.isNotEmpty)
-              ? _row(context.l.eMail, item.contacts?.email ?? '—')
-              : const SizedBox(),
-          if (_isTrader) _traidersButtons(context),
-        ],
-      ),
-    );
-  }
-
-  Widget _traidersButtons(BuildContext context) {
-    final item = controller.bidItem;
-
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 16),
-          child: Row(children: [
-            // --- Купити контакт ---
-            if (!item.isOpened)
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: bStyle(
-                    text: item.contactPrice != null && item.contactPrice! > 0
-                        ? '${context.l.contacts} · ${item.contactPrice} ${AppConstants.currencySymbolUah}'
-                        : context.l.contacts,
-                    c: context,
-                    colorText: AppColors.yellow,
-                    vertical: 15,
-                    border: Border.all(color: AppColors.yellow, width: 1),
-                    colorButt: Colors.transparent,
-                    onPressed: () => controller.onContactClick(),
-                  ),
-                ),
-              ),
-
-            Expanded(
-              child: bStyle(
-                text: context.l.reviews,
-                c: context,
-                colorText: AppColors.yellow,
-                vertical: 15,
-                border: Border.all(color: AppColors.yellow, width: 1),
-                colorButt: Colors.transparent,
-                onPressed: controller.onReview,
-              ),
             ),
           ]),
         ),
-        if (item.isOpened)
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: Container(
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(100),
-              ),
-              child: Stack(
-                children: [
-                  bStyle(
-                    text: controller.orderingCarrier.value
-                        ? context.l.orderingCarrier
-                        : controller.carrierOrdered.value
-                            ? '✅️ ${context.l.carrierOrdered}'
-                            : context.l.bookCarrier,
-                    c: context,
-                    vertical: 15,
-                    active: !controller.orderingCarrier.value &&
-                        !controller.carrierOrdered.value,
-                    colorButt: !controller.orderingCarrier.value &&
-                            !controller.carrierOrdered.value
-                        ? AppColors.mainGreen
-                        : AppColors.greyGreen,
-                    onPressed: () {
-                      if (controller.orderingCarrier.value ||
-                          controller.carrierOrdered.value) return;
-                      controller.onOrderCarrier();
-                    },
-                  ),
-                  /*  Positioned(
-                            left: -7,
-                            top: -8,
-                            child: Container(
-                              height: 70,
-                              width: 70,
-                              decoration: const BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage(Assets.newBadge),
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ),
-                          ), */
-                ],
-              ),
+      );
+    });
+  }
+
+  Widget _content(BuildContext context, BidItem item) {
+    final meta = item.myPrice;
+    final matched = meta?.matched == true;
+    final type = ProductType.fromSphere(item.sphereId);
+    final c = item.contacts;
+    final phone = _phone(item);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(children: [
+          TypeBadge(type, size: 32),
+          const SizedBox(width: 10),
+          Text(type.label(context),
+              style: AppText.overline.copyWith(color: type.color)),
+          const SizedBox(width: 8),
+          if (isSet(item.dayLabel)) AppTag(item.dayLabel!),
+          if (matched && meta!.badge.isNotEmpty) ...[
+            const SizedBox(width: 6),
+            AppTag(meta.badge, color: Palette.green),
+          ],
+        ]),
+        const SizedBox(height: 12),
+        Text(item.productTitle ?? '—', style: AppText.display),
+        if (matched && meta!.responseLabel.isNotEmpty)
+          Container(
+            margin: const EdgeInsets.only(top: 12),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: matchCardColor(meta, Palette.bg1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: matchBorderColor(meta, Palette.line)),
             ),
-          ),
-        if (item.isOpened)
-          Padding(
-            padding: const EdgeInsets.only(top: 16),
-            child: bStyle(
-              colorText: AppColors.backgroundGradient1,
-              text: controller.orderingAnalysis.value
-                  ? context.l.orderingAnalysis
-                  : controller.analysisOrdered.value
-                      ? context.l.analysisOrdered
-                      : context.l.orderAnalysis,
-              c: context,
-              vertical: 15,
-              active: !controller.orderingAnalysis.value &&
-                  !controller.analysisOrdered.value,
-              colorButt: !controller.orderingAnalysis.value &&
-                      !controller.analysisOrdered.value
-                  ? AppColors.yellow
-                  : AppColors.daysYellow,
-              onPressed: () {
-                if (controller.orderingAnalysis.value ||
-                    controller.analysisOrdered.value) return;
-                controller.onOrderAnalysis();
-              },
-            ),
+            child: Text(meta.responseLabel, style: AppText.bodyMedium),
           ),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            Expanded(
-              child: bStyle(
-                text: context.l.agreement,
-                c: context,
-                colorText: AppColors.white,
-                vertical: 15,
-                onPressed: () => controller.onDeal(),
-              ),
+        Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          _keyFigure(
+            context.l.volume,
+            Text.rich(TextSpan(children: [
+              TextSpan(
+                  text: '${item.amount ?? AppConstants.emDash}',
+                  style: AppText.numXL),
+              TextSpan(
+                  text: ' ${context.l.tonShort}',
+                  style: AppText.title.copyWith(color: Palette.textSecondary)),
+            ])),
+          ),
+          const SizedBox(width: 24),
+          if (item.year != null)
+            _keyFigure(
+                context.l.harvest, Text('${item.year}', style: AppText.numL)),
+        ]),
+        SectionLabel(context.l.conditions),
+        InfoGroup(children: [
+          InfoRow(context.l.region, item.regionName ?? '—'),
+          if (isSet(c?.district)) InfoRow(context.l.district, c!.district!),
+          InfoRow(
+              context.l.payment, _paymentForm(context, item.ordPaymentType)),
+          InfoRow(context.l.delivery,
+              localizeDeliveryType(item.deliveryType ?? '-', context)),
+        ]),
+        if (item.isOpened) ...[
+          SectionLabel(context.l.seller),
+          InfoGroup(children: [
+            if (isSet(item.fermerName))
+              InfoRow(context.l.fullName, item.fermerName!),
+            if (isSet(item.fermerCompany))
+              InfoRow(context.l.company, item.fermerCompany!),
+            if (isSet(c?.city)) InfoRow(context.l.town, c!.city!),
+            if (isSet(c?.addr)) InfoRow(context.l.address, c!.addr!),
+            if (phone != null)
+              InfoRow(context.l.phoneNumber, phone,
+                  valueColor: Palette.green,
+                  onTap: () => _launchPhone(context, phone)),
+            if (isSet(c?.email)) InfoRow(context.l.eMail, c!.email!),
+          ]),
+        ] else if (_isTrader) ...[
+          SectionLabel(context.l.seller),
+          _LockedSeller(text: context.l.sellerLocked),
+        ],
+        if (_isTrader) ...[
+          SectionLabel(context.l.services),
+          InfoGroup(children: [
+            if (item.isOpened) _carrierRow(context),
+            if (item.isOpened) _analysisRow(context),
+            ActionRow(
+              icon: Icons.reviews_outlined,
+              title: context.l.reviews,
+              onTap: controller.onReview,
             ),
-          ],
-        ),
+          ]),
+        ],
       ],
     );
   }
 
-  Widget _row(String header, String text) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Row(children: [
-          readText(text: header, style: AppFonts.body1medium.grey3),
-          const SizedBox(width: 16),
-          Expanded(
-              child: readText(
-                  text: text,
-                  style: AppFonts.body1medium.white,
-                  align: TextAlign.end)),
-        ]),
+  Widget _keyFigure(String label, Widget value) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label,
+              style: AppText.caption.copyWith(color: Palette.textTertiary)),
+          value,
+        ],
       );
+
+  Widget _carrierRow(BuildContext context) {
+    final busy = controller.orderingCarrier.value;
+    final done = controller.carrierOrdered.value;
+    return ActionRow(
+      icon: Icons.local_shipping_outlined,
+      title: done ? context.l.carrierOrdered : context.l.bookCarrier,
+      trailing: busy ? context.l.orderingCarrier : null,
+      done: done,
+      onTap: busy || done ? null : controller.onOrderCarrier,
+    );
+  }
+
+  Widget _analysisRow(BuildContext context) {
+    final busy = controller.orderingAnalysis.value;
+    final done = controller.analysisOrdered.value;
+    return ActionRow(
+      icon: Icons.science_outlined,
+      title: context.l.qualityAnalysis,
+      trailing: busy ? '…' : null,
+      done: done,
+      onTap: busy || done ? null : controller.onOrderAnalysis,
+    );
+  }
+
+  Widget _bottomBar(BuildContext context) {
+    final item = controller.bidItem;
+    final price = item.contactPrice ?? 0;
+    final phone = _phone(item);
+    final Widget primary;
+    if (!item.isOpened) {
+      primary = AppButton(
+        label: price > 0
+            ? '${context.l.openContact} · $price ${AppConstants.currencySymbolUah}'
+            : context.l.openContact,
+        loading: controller.openingContact.value,
+        onPressed: controller.onContactClick,
+      );
+    } else if (phone != null) {
+      primary = AppButton(
+        label: context.l.call,
+        icon: Icons.call_rounded,
+        onPressed: () => _launchPhone(context, phone),
+      );
+    } else {
+      primary = const SizedBox.shrink();
+    }
+    final deal = AppButton(
+      label: context.l.agreement,
+      style: AppButtonStyle.secondary,
+      expand: false,
+      onPressed: controller.onDeal,
+    );
+    return Container(
+      decoration: const BoxDecoration(
+        color: Palette.bg0,
+        border: Border(top: BorderSide(color: Palette.line)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          child: Row(children: [
+            if (primary is SizedBox)
+              Expanded(child: deal)
+            else ...[
+              // Sized by its label (at least 110), so ru/kk do not wrap.
+              ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 110),
+                child: deal,
+              ),
+              const SizedBox(width: 8),
+              Expanded(child: primary),
+            ],
+          ]),
+        ),
+      ),
+    );
+  }
+
+  String? _phone(BidItem item) => [
+        item.contacts?.phone,
+        item.fermerPhone,
+        item.openedPhon,
+      ].firstWhere(isSet, orElse: () => null);
+
+  void _launchPhone(BuildContext context, String phone) {
+    showCupertinoModalBottomSheet(
+      topRadius: const Radius.circular(30),
+      context: context,
+      builder: (c) => LaunchPhone(contact: phone),
+    );
+  }
 
   String _paymentForm(BuildContext context, int? type) {
     if (type == 1) return context.l.paymentFormF1;
@@ -394,11 +385,8 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
       context.l.typeOfDelivery,
       localizeDeliveryType(item.deliveryType ?? '-', context),
     );
-    addRow(
-      context.l.phoneNumber,
-      contacts?.phone,
-      show: contacts?.phone != null && contacts!.phone!.isNotEmpty,
-    );
+    final phone = _phone(item);
+    addRow(context.l.phoneNumber, phone, show: phone != null);
     addRow(
       context.l.eMail,
       contacts?.email,
@@ -407,4 +395,48 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
 
     return lines.join('\n');
   }
+}
+
+/// Dashed box that says what opens with the contact.
+class _LockedSeller extends StatelessWidget {
+  const _LockedSeller({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => CustomPaint(
+        painter: _DashedBorder(),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          child: Row(children: [
+            const Icon(Icons.lock_outline_rounded,
+                size: 20, color: Palette.textTertiary),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(text,
+                  style: AppText.body.copyWith(color: Palette.textSecondary)),
+            ),
+          ]),
+        ),
+      );
+}
+
+class _DashedBorder extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rrect =
+        RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(16));
+    canvas.drawRRect(rrect, Paint()..color = Palette.bg1);
+    final paint = Paint()
+      ..color = Palette.lineStrong
+      ..style = PaintingStyle.stroke;
+    for (final metric in (Path()..addRRect(rrect)).computeMetrics()) {
+      for (double d = 0; d < metric.length; d += 9) {
+        canvas.drawPath(metric.extractPath(d, d + 5), paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

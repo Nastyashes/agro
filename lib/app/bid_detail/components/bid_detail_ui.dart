@@ -12,11 +12,12 @@ import 'package:agro/model/my_price/my_price_result.dart';
 import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/ui/pop_up/banner_dialog.dart';
+import 'package:agro/ui/components/confirm_dialog.dart';
 import 'package:agro/ui/pop_up/confirm_pop_up.dart';
 import 'package:agro/ui/pop_up/inform_pop_up.dart';
 import 'package:agro/vars/app_constants.dart';
 import 'package:agro/vars/helper.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 /// Fallback texts when the server gives none.
@@ -37,6 +38,9 @@ abstract class BidDetailUi {
   void notify(BidNotice fallback, {String? serverText});
 
   void showCarrierResult(CarrierResult result);
+
+  /// Asks before the paid analysis; true if the user confirms.
+  Future<bool> confirmAnalysis();
 
   void showAnalysisResult(AnalysisResult result);
 
@@ -102,6 +106,18 @@ class ScreenBidDetailUi implements BidDetailUi {
       context,
       result.ok ? context.l.done : context.l.error,
       result.message,
+    );
+  }
+
+  @override
+  Future<bool> confirmAnalysis() async {
+    if (!context.mounted) return false;
+    return showAppConfirm(
+      context,
+      title: context.l.confirmAnalysisTitle,
+      text: context.l.confirmAnalysisBody,
+      confirmLabel: context.l.order,
+      icon: Icons.science_outlined,
     );
   }
 

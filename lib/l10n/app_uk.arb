@@ -291,5 +291,20 @@
   "tariffUntil": "до {date}",
   "@tariffUntil": { "placeholders": { "date": { "type": "String" } } },
   "harvestOf": "урожай {year}",
-  "@harvestOf": { "placeholders": { "year": { "type": "String" } } }
+  "@harvestOf": { "placeholders": { "year": { "type": "String" } } },
+  "conditions": "Умови",
+  "services": "Послуги",
+  "sellerLocked": "ПІБ, телефон і адреса — після відкриття контакту",
+  "harvest": "Урожай",
+  "payment": "Оплата",
+  "delivery": "Доставка",
+  "qualityAnalysis": "Аналіз якості",
+  "confirmAnalysisTitle": "Замовити аналіз якості?",
+  "confirmAnalysisBody": "Вартість спишеться з вашого балансу.",
+  "order": "Замовити",
+  "topUpTitle": "Поповнення",
+  "balanceNow": "Баланс зараз",
+  "payAmount": "Оплатити {amount}",
+  "@payAmount": { "placeholders": { "amount": { "type": "String" } } },
+  "securePayment": "Безпечна оплата карткою"
 }

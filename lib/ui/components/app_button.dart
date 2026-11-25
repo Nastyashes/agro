@@ -90,7 +90,7 @@ class AppButton extends StatelessWidget {
             constraints: BoxConstraints(minHeight: large ? 54 : 40),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: large ? 20 : 14),
-              child: Center(widthFactor: 1, child: child),
+              child: Center(widthFactor: 1, heightFactor: 1, child: child),
             ),
           ),
         ),

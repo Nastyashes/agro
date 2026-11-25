@@ -447,7 +447,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get age => 'Возраст';
 
   @override
-  String get seller => 'Продовец';
+  String get seller => 'Продавец';
 
   @override
   String get freshApplications => 'Свежие заявки';
@@ -839,4 +839,48 @@ class AppLocalizationsRu extends AppLocalizations {
   String harvestOf(String year) {
     return 'урожай $year';
   }
+
+  @override
+  String get conditions => 'Условия';
+
+  @override
+  String get services => 'Услуги';
+
+  @override
+  String get sellerLocked => 'ФИО, телефон и адрес — после открытия контакта';
+
+  @override
+  String get harvest => 'Урожай';
+
+  @override
+  String get payment => 'Оплата';
+
+  @override
+  String get delivery => 'Доставка';
+
+  @override
+  String get qualityAnalysis => 'Анализ качества';
+
+  @override
+  String get confirmAnalysisTitle => 'Заказать анализ качества?';
+
+  @override
+  String get confirmAnalysisBody => 'Стоимость спишется с вашего баланса.';
+
+  @override
+  String get order => 'Заказать';
+
+  @override
+  String get topUpTitle => 'Пополнение';
+
+  @override
+  String get balanceNow => 'Баланс сейчас';
+
+  @override
+  String payAmount(String amount) {
+    return 'Оплатить $amount';
+  }
+
+  @override
+  String get securePayment => 'Безопасная оплата картой';
 }

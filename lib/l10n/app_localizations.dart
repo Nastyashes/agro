@@ -1685,6 +1685,90 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'урожай {year}'**
   String harvestOf(String year);
+
+  /// No description provided for @conditions.
+  ///
+  /// In uk, this message translates to:
+  /// **'Умови'**
+  String get conditions;
+
+  /// No description provided for @services.
+  ///
+  /// In uk, this message translates to:
+  /// **'Послуги'**
+  String get services;
+
+  /// No description provided for @sellerLocked.
+  ///
+  /// In uk, this message translates to:
+  /// **'ПІБ, телефон і адреса — після відкриття контакту'**
+  String get sellerLocked;
+
+  /// No description provided for @harvest.
+  ///
+  /// In uk, this message translates to:
+  /// **'Урожай'**
+  String get harvest;
+
+  /// No description provided for @payment.
+  ///
+  /// In uk, this message translates to:
+  /// **'Оплата'**
+  String get payment;
+
+  /// No description provided for @delivery.
+  ///
+  /// In uk, this message translates to:
+  /// **'Доставка'**
+  String get delivery;
+
+  /// No description provided for @qualityAnalysis.
+  ///
+  /// In uk, this message translates to:
+  /// **'Аналіз якості'**
+  String get qualityAnalysis;
+
+  /// No description provided for @confirmAnalysisTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Замовити аналіз якості?'**
+  String get confirmAnalysisTitle;
+
+  /// No description provided for @confirmAnalysisBody.
+  ///
+  /// In uk, this message translates to:
+  /// **'Вартість спишеться з вашого балансу.'**
+  String get confirmAnalysisBody;
+
+  /// No description provided for @order.
+  ///
+  /// In uk, this message translates to:
+  /// **'Замовити'**
+  String get order;
+
+  /// No description provided for @topUpTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Поповнення'**
+  String get topUpTitle;
+
+  /// No description provided for @balanceNow.
+  ///
+  /// In uk, this message translates to:
+  /// **'Баланс зараз'**
+  String get balanceNow;
+
+  /// No description provided for @payAmount.
+  ///
+  /// In uk, this message translates to:
+  /// **'Оплатити {amount}'**
+  String payAmount(String amount);
+
+  /// No description provided for @securePayment.
+  ///
+  /// In uk, this message translates to:
+  /// **'Безпечна оплата карткою'**
+  String get securePayment;
 }
 
 class _AppLocalizationsDelegate

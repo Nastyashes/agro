@@ -172,8 +172,10 @@ class BidItemController extends BaseController {
 
   Future<void> onOrderAnalysis() async {
     if (orderingAnalysis.value || analysisOrdered.value) return;
+    // Set before the dialog, so a second tap cannot open another one.
     orderingAnalysis.value = true;
     try {
+      if (!await ui.confirmAnalysis()) return;
       final result = await _bids.orderAnalysis(bidItem.orderId!);
       // Paid: mark it ordered first so the button cannot charge twice.
       if (result.status == AnalysisStatus.ordered) analysisOrdered.value = true;
