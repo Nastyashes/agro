@@ -1,5 +1,6 @@
 import 'package:agro/data/session_storage.dart';
 import 'package:agro/app/bid_detail/bid_controller.dart';
+import 'package:agro/app/bid_detail/components/bid_detail_ui.dart';
 import 'package:agro/app/my_price/components/my_price_match_style.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/model/model_user/model_user.dart';
@@ -52,9 +53,8 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
       item = args;
     }
 
+    controller.ui = ScreenBidDetailUi(context);
     controller.initPage(
-      context: context,
-      set: setState,
       item: item,
       orderId: orderId ?? item?.orderId,
     );
@@ -70,46 +70,46 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Stack(children: [
-      const AppBackground(),
-      SafeArea(
-          child: Column(children: [
-        Padding(
-          padding: const EdgeInsetsGeometry.symmetric(horizontal: 16),
-          child: Row(children: [
-            Expanded(child: appBarBack(context.l.bidDetails)),
-            if (controller.loadPage)
-              BTransparentScalableButton(
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(text: _toText(context)));
-                  inAppNotification(
-                      text: context.l.copiedToClipboard, c: context);
-                },
-                scale: ScaleFormat.big,
-                child:
-                    const Icon(Icons.copy, color: AppColors.yellow, size: 24),
-              )
-            else
-              const SizedBox.shrink(),
-          ]),
-        ),
-        Expanded(
-          child: !controller.loadPage
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _infoCard(context),
-                    ],
-                  ),
-                ),
-        )
-      ]))
-    ]));
+    return Obx(() => Scaffold(
+            body: Stack(children: [
+          const AppBackground(),
+          SafeArea(
+              child: Column(children: [
+            Padding(
+              padding: const EdgeInsetsGeometry.symmetric(horizontal: 16),
+              child: Row(children: [
+                Expanded(child: appBarBack(context.l.bidDetails)),
+                if (controller.loadPage.value)
+                  BTransparentScalableButton(
+                    onPressed: () {
+                      Clipboard.setData(ClipboardData(text: _toText(context)));
+                      inAppNotification(
+                          text: context.l.copiedToClipboard, c: context);
+                    },
+                    scale: ScaleFormat.big,
+                    child: const Icon(Icons.copy,
+                        color: AppColors.yellow, size: 24),
+                  )
+                else
+                  const SizedBox.shrink(),
+              ]),
+            ),
+            Expanded(
+              child: !controller.loadPage.value
+                  ? const Center(child: CircularProgressIndicator())
+                  : SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _infoCard(context),
+                        ],
+                      ),
+                    ),
+            )
+          ]))
+        ])));
   }
 
   Widget _infoCard(BuildContext context) {
@@ -129,7 +129,7 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
             Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Text(
-                    controller.loadPage
+                    controller.loadPage.value
                         ? '${context.l.applicationNo} ${controller.bidItem.orderId} '
                             '${context.l.from} ${controller.bidItem.orderCreatedHum ?? ''}'
                         : '',
@@ -206,7 +206,7 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
                     vertical: 15,
                     border: Border.all(color: AppColors.yellow, width: 1),
                     colorButt: Colors.transparent,
-                    onPressed: () => controller.onContactClick(context),
+                    onPressed: () => controller.onContactClick(),
                   ),
                 ),
               ),
@@ -235,23 +235,23 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
               child: Stack(
                 children: [
                   bStyle(
-                    text: controller.orderingCarrier
+                    text: controller.orderingCarrier.value
                         ? context.l.orderingCarrier
-                        : controller.carrierOrdered
+                        : controller.carrierOrdered.value
                             ? '✅️ ${context.l.carrierOrdered}'
                             : context.l.bookCarrier,
                     c: context,
                     vertical: 15,
-                    active: !controller.orderingCarrier &&
-                        !controller.carrierOrdered,
-                    colorButt: !controller.orderingCarrier &&
-                            !controller.carrierOrdered
+                    active: !controller.orderingCarrier.value &&
+                        !controller.carrierOrdered.value,
+                    colorButt: !controller.orderingCarrier.value &&
+                            !controller.carrierOrdered.value
                         ? AppColors.mainGreen
                         : AppColors.greyGreen,
                     onPressed: () {
-                      if (controller.orderingCarrier ||
-                          controller.carrierOrdered) return;
-                      controller.onOrderCarrier(context);
+                      if (controller.orderingCarrier.value ||
+                          controller.carrierOrdered.value) return;
+                      controller.onOrderCarrier();
                     },
                   ),
                   /*  Positioned(
@@ -277,23 +277,23 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
             padding: const EdgeInsets.only(top: 16),
             child: bStyle(
               colorText: AppColors.backgroundGradient1,
-              text: controller.orderingAnalysis
+              text: controller.orderingAnalysis.value
                   ? context.l.orderingAnalysis
-                  : controller.analysisOrdered
+                  : controller.analysisOrdered.value
                       ? context.l.analysisOrdered
                       : context.l.orderAnalysis,
               c: context,
               vertical: 15,
-              active:
-                  !controller.orderingAnalysis && !controller.analysisOrdered,
-              colorButt:
-                  !controller.orderingAnalysis && !controller.analysisOrdered
-                      ? AppColors.yellow
-                      : AppColors.daysYellow,
+              active: !controller.orderingAnalysis.value &&
+                  !controller.analysisOrdered.value,
+              colorButt: !controller.orderingAnalysis.value &&
+                      !controller.analysisOrdered.value
+                  ? AppColors.yellow
+                  : AppColors.daysYellow,
               onPressed: () {
-                if (controller.orderingAnalysis || controller.analysisOrdered)
-                  return;
-                controller.onOrderAnalysis(context);
+                if (controller.orderingAnalysis.value ||
+                    controller.analysisOrdered.value) return;
+                controller.onOrderAnalysis();
               },
             ),
           ),
@@ -306,7 +306,7 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
                 c: context,
                 colorText: AppColors.white,
                 vertical: 15,
-                onPressed: () => controller.onDeal(context),
+                onPressed: () => controller.onDeal(),
               ),
             ),
           ],
