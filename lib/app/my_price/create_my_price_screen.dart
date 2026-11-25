@@ -1,4 +1,5 @@
 import 'package:agro/app/my_price/components/my_price_dialogs.dart';
+import 'package:agro/app/my_price/components/my_price_ui.dart';
 import 'package:agro/app/my_price/controller/create_my_price_controller.dart';
 import 'package:agro/model/my_price/my_price_models.dart';
 import 'package:agro/ui/app_components/app_background.dart';
@@ -25,7 +26,8 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
   void initState() {
     super.initState();
     controller = Get.put(CreateMyPriceController());
-    controller.initPage(context: context, set: setState);
+    controller.ui =
+        ScreenMyPriceUi(context, mainController: controller.mainController);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.ensureOverview();
     });
@@ -50,130 +52,133 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
               children: [
                 appBarBack(l.createCombinationTitle),
                 Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
-                    children: [
-                      _selectField(
-                        l.selectCrop,
-                        controller.overview.nameOf(
-                                  controller.overview.products,
-                                  controller.productId,
-                                ) ==
-                                '—'
-                            ? ''
-                            : controller.overview.nameOf(
-                                controller.overview.products,
-                                controller.productId,
-                              ),
-                        () async {
-                          final selected = await showMyPricePicker(
-                            context: context,
-                            title: l.selectCrop,
-                            items: controller.overview.products,
-                            label: (item) => item.name,
-                            enableSearch: true,
-                          );
-                          if (selected != null) {
-                            setState(() => controller.productId = selected.id);
-                          }
-                        },
-                        error: controller.fieldErrors['product_id'] != null,
-                      ),
-                      _selectField(
-                        l.selectRegion,
-                        controller.overview.nameOf(
-                                  controller.overview.regions,
-                                  controller.regionId,
-                                ) ==
-                                '—'
-                            ? ''
-                            : controller.overview.nameOf(
-                                controller.overview.regions,
-                                controller.regionId,
-                              ),
-                        () async {
-                          final selected = await showMyPricePicker(
-                            context: context,
-                            title: l.selectRegion,
-                            items: controller.overview.regions,
-                            label: (item) => item.name,
-                          );
-                          if (selected != null) {
-                            setState(() => controller.regionId = selected.id);
-                          }
-                        },
-                        error: controller.fieldErrors['region_id'] != null,
-                      ),
-                      _selectField(
-                        l.paymentForm,
-                        controller.paymentType == null
-                            ? ''
-                            : controller.overview.nameOf(
-                                controller.overview.paymentTypes,
-                                controller.paymentType,
-                              ),
-                        () async {
-                          final selected = await showMyPricePicker(
-                            context: context,
-                            title: l.paymentForm,
-                            items: controller.overview.paymentTypes,
-                            label: (item) => item.name,
-                          );
-                          if (selected != null) {
-                            setState(
-                                () => controller.paymentType = selected.id);
-                          }
-                        },
-                        error: controller.fieldErrors['payment_type'] != null,
-                      ),
-                      _selectField(
-                        l.enterPricePerTon,
-                        null,
-                        null,
-                        controller: controller.priceController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        error: controller.fieldErrors['price_per_ton'] != null,
-                      ),
-                      _selectField(
-                        l.contactPerson,
-                        controller.teamUserId == null
-                            ? ''
-                            : controller.overview.team
-                                .firstWhere(
-                                  (e) => e.id == controller.teamUserId,
-                                  orElse: () => const MyPriceTeamMember(),
-                                )
-                                .label,
-                        () async {
-                          final selected = await showMyPricePicker(
-                            context: context,
-                            title: l.teamNumber,
-                            items: controller.overview.team,
-                            label: (item) => item.label,
-                          );
-                          if (selected != null) {
-                            setState(() => controller.teamUserId = selected.id);
-                          }
-                        },
-                        error: controller.fieldErrors['team_user_id'] != null,
-                      ),
-                      _selectField(
-                        l.promoCodeOptional,
-                        null,
-                        null,
-                        controller: controller.promoController,
-                      ),
-                      const SizedBox(height: 20),
-                      bStyle(
-                        text: l.confirm,
-                        c: context,
-                        vertical: 16,
-                        onPressed: controller.onSubmit,
-                      ),
-                    ],
-                  ),
+                  child: Obx(() => ListView(
+                        padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
+                        children: [
+                          _selectField(
+                            l.selectCrop,
+                            controller.overview.value.nameOf(
+                                      controller.overview.value.products,
+                                      controller.productId.value,
+                                    ) ==
+                                    '—'
+                                ? ''
+                                : controller.overview.value.nameOf(
+                                    controller.overview.value.products,
+                                    controller.productId.value,
+                                  ),
+                            () async {
+                              final selected = await showMyPricePicker(
+                                context: context,
+                                title: l.selectCrop,
+                                items: controller.overview.value.products,
+                                label: (item) => item.name,
+                                enableSearch: true,
+                              );
+                              if (selected != null) {
+                                controller.productId.value = selected.id;
+                              }
+                            },
+                            error: controller.fieldErrors['product_id'] != null,
+                          ),
+                          _selectField(
+                            l.selectRegion,
+                            controller.overview.value.nameOf(
+                                      controller.overview.value.regions,
+                                      controller.regionId.value,
+                                    ) ==
+                                    '—'
+                                ? ''
+                                : controller.overview.value.nameOf(
+                                    controller.overview.value.regions,
+                                    controller.regionId.value,
+                                  ),
+                            () async {
+                              final selected = await showMyPricePicker(
+                                context: context,
+                                title: l.selectRegion,
+                                items: controller.overview.value.regions,
+                                label: (item) => item.name,
+                              );
+                              if (selected != null) {
+                                controller.regionId.value = selected.id;
+                              }
+                            },
+                            error: controller.fieldErrors['region_id'] != null,
+                          ),
+                          _selectField(
+                            l.paymentForm,
+                            controller.paymentType.value == null
+                                ? ''
+                                : controller.overview.value.nameOf(
+                                    controller.overview.value.paymentTypes,
+                                    controller.paymentType.value,
+                                  ),
+                            () async {
+                              final selected = await showMyPricePicker(
+                                context: context,
+                                title: l.paymentForm,
+                                items: controller.overview.value.paymentTypes,
+                                label: (item) => item.name,
+                              );
+                              if (selected != null) {
+                                controller.paymentType.value = selected.id;
+                              }
+                            },
+                            error:
+                                controller.fieldErrors['payment_type'] != null,
+                          ),
+                          _selectField(
+                            l.enterPricePerTon,
+                            null,
+                            null,
+                            controller: controller.priceController,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            error:
+                                controller.fieldErrors['price_per_ton'] != null,
+                          ),
+                          _selectField(
+                            l.contactPerson,
+                            controller.teamUserId.value == null
+                                ? ''
+                                : controller.overview.value.team
+                                    .firstWhere(
+                                      (e) =>
+                                          e.id == controller.teamUserId.value,
+                                      orElse: () => const MyPriceTeamMember(),
+                                    )
+                                    .label,
+                            () async {
+                              final selected = await showMyPricePicker(
+                                context: context,
+                                title: l.teamNumber,
+                                items: controller.overview.value.team,
+                                label: (item) => item.label,
+                              );
+                              if (selected != null) {
+                                controller.teamUserId.value = selected.id;
+                              }
+                            },
+                            error:
+                                controller.fieldErrors['team_user_id'] != null,
+                          ),
+                          _selectField(
+                            l.promoCodeOptional,
+                            null,
+                            null,
+                            controller: controller.promoController,
+                          ),
+                          const SizedBox(height: 20),
+                          bStyle(
+                            text: l.confirm,
+                            c: context,
+                            vertical: 16,
+                            onPressed: controller.onSubmit,
+                          ),
+                        ],
+                      )),
                 ),
               ],
             ),

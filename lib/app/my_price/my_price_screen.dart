@@ -1,10 +1,8 @@
 import 'dart:developer';
 
-import 'package:agro/app/my_price/components/my_price_dialogs.dart';
-import 'package:agro/app/my_price/components/my_price_error.dart';
+import 'package:agro/app/my_price/components/my_price_ui.dart';
 import 'package:agro/app/my_price/controller/my_price_controller.dart';
 import 'package:agro/model/my_price/my_price_models.dart';
-import 'package:agro/server/api/api.dart';
 import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/app_components/appbar_with_back.dart';
 import 'package:agro/ui/app_components/empty_list_widget.dart';
@@ -29,7 +27,8 @@ class _MyPriceScreenState extends State<MyPriceScreen> {
   void initState() {
     super.initState();
     controller = Get.put(MyPriceController());
-    controller.initPage(context: context, set: setState);
+    controller.ui =
+        ScreenMyPriceUi(context, mainController: controller.mainController);
   }
 
   @override
@@ -41,66 +40,68 @@ class _MyPriceScreenState extends State<MyPriceScreen> {
   @override
   Widget build(BuildContext context) {
     final l = context.l;
-    return Scaffold(
-      body: Stack(
-        children: [
-          const AppBackground(),
-          SafeArea(
-            child: Column(
-              children: [
-                appBarBack(
-                  controller.tabIndex == 0 ? l.myCombinations : l.reservations,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: bStyle(
-                    colorButt: AppColors.yellow,
-                    vertical: 12,
-                    text: l.createCombination,
-                    colorText: AppColors.backgroundGradient1,
-                    c: context,
-                    onPressed: controller.onCreate,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Container(
-                      height: 50,
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: AppColors.mainGreen.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(100),
+    return Obx(() => Scaffold(
+          body: Stack(
+            children: [
+              const AppBackground(),
+              SafeArea(
+                child: Column(
+                  children: [
+                    appBarBack(
+                      controller.tabIndex.value == 0
+                          ? l.myCombinations
+                          : l.reservations,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: bStyle(
+                        colorButt: AppColors.yellow,
+                        vertical: 12,
+                        text: l.createCombination,
+                        colorText: AppColors.backgroundGradient1,
+                        c: context,
+                        onPressed: controller.onCreate,
                       ),
-                      child: Row(
-                        children: [
-                          _tab(l.myCombinations, 0),
-                          _tab(l.reservations, 1),
-                        ],
-                      ),
-                    )),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: !controller.loadPage
-                      ? const Center(child: CircularProgressIndicator())
-                      : RefreshIndicator(
-                          onRefresh: controller.loadOverview,
-                          child: _list(),
-                        ),
+                    ),
+                    const SizedBox(height: 16),
+                    Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Container(
+                          height: 50,
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: AppColors.mainGreen.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Row(
+                            children: [
+                              _tab(l.myCombinations, 0),
+                              _tab(l.reservations, 1),
+                            ],
+                          ),
+                        )),
+                    const SizedBox(height: 12),
+                    Expanded(
+                      child: !controller.loadPage.value
+                          ? const Center(child: CircularProgressIndicator())
+                          : RefreshIndicator(
+                              onRefresh: controller.loadOverview,
+                              child: _list(),
+                            ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 
   Widget _tab(String title, int index) {
-    final selected = controller.tabIndex == index;
+    final selected = controller.tabIndex.value == index;
     return Expanded(
         child: GestureDetector(
-      onTap: () => setState(() => controller.tabIndex = index),
+      onTap: () => controller.selectTab(index),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
@@ -120,10 +121,10 @@ class _MyPriceScreenState extends State<MyPriceScreen> {
   }
 
   Widget _list() {
-    final isReservations = controller.tabIndex == 1;
+    final isReservations = controller.tabIndex.value == 1;
     final items = isReservations
-        ? controller.overview.reservations
-        : controller.overview.combinations;
+        ? controller.overview.value.reservations
+        : controller.overview.value.combinations;
     log(
       'MyPrice _list tab=${isReservations ? 'reservations' : 'combinations'} '
       'shown=${items.length} '
@@ -145,7 +146,7 @@ class _MyPriceScreenState extends State<MyPriceScreen> {
   }
 
   Widget _card(MyPriceEntry entry, {required bool reservation}) {
-    final overview = controller.overview;
+    final overview = controller.overview.value;
     final l = context.l;
     final deleted = !reservation && entry.isDeleted;
     final cardColor = reservation
@@ -199,7 +200,7 @@ class _MyPriceScreenState extends State<MyPriceScreen> {
               ),
               const Spacer(),
               TextButton.icon(
-                onPressed: () => _delete(entry),
+                onPressed: () => controller.deleteEntry(entry),
                 icon: const Icon(
                   Icons.delete_outline,
                   color: AppColors.daysRed,
@@ -234,37 +235,5 @@ class _MyPriceScreenState extends State<MyPriceScreen> {
         ],
       ),
     );
-  }
-
-  Future<void> _delete(MyPriceEntry entry) async {
-    if (entry.id == null) return;
-    log(
-      'MyPrice delete tap id=${entry.id} slotId=${entry.slotId} '
-      'status="${entry.status}" isActive=${entry.isActive}',
-    );
-    final confirmed = await showMyPriceConfirmDialog(
-      context: context,
-      title: context.l.deleteCombinationTitle,
-      body: context.l.deleteCombinationBody,
-      confirmText: context.l.delete,
-    );
-    log('MyPrice delete confirmed=$confirmed id=${entry.id}');
-    if (!confirmed) return;
-    final result = await Api().myPrice.deleteCombination(entry.id!);
-    log(
-      'MyPrice delete result ok=${result.ok} error=${result.errorCode} '
-      'message=${result.message} raw=${result.raw}',
-    );
-    if (!result.ok) {
-      if (mounted) {
-        await showMyPriceError(
-          context,
-          result,
-          mainController: controller.mainController,
-        );
-      }
-      return;
-    }
-    await controller.loadOverview();
   }
 }

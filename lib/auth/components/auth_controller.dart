@@ -1,56 +1,65 @@
-import 'package:agro/ui/local_notification/local_notification.dart';
-import 'package:agro/vars/helper.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:agro/controllers/abstract/from_controller.dart';
+import 'package:agro/data/repositories/auth_repository.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:agro/data/repositories/auth_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:agro/controllers/abstract/from_controller.dart';
 import '../../../routes/app_pages.dart';
 import '../../controllers/app_input_controller.dart';
 
+/// Phone step of sign-in. Holds no BuildContext: the screen observes
+/// [phone] / [errorNumber] and shows a message on each [rejected] event.
 class AuthController extends FormController {
-  late Function(VoidCallback fn) setState;
-  late BuildContext c;
+  AuthController({
+    AuthRepository? repository,
+    void Function(String route)? navigate,
+  })  : _repository = repository ?? AuthRepository(),
+        _navigate = navigate ?? Get.offAllNamed;
+
+  final AuthRepository _repository;
+  final void Function(String route) _navigate;
+
   late TextEditingController numberController;
-  List<MaskTextInputFormatter> maskFormatterNumber = [
+
+  final List<MaskTextInputFormatter> maskFormatterNumber = [
     MaskTextInputFormatter(
         mask: '### ## ###-##-##', filter: {"#": RegExp(r'\d')})
   ];
-  String? errorNumber;
+
+  final RxString phone = ''.obs;
+  final RxnString errorNumber = RxnString();
+
+  /// Incremented when the server does not know the number.
+  final RxInt rejected = 0.obs;
+
+  bool get canSubmit => phone.value.length == 16;
 
   @override
   void onInit() {
     numberController = AppInputController();
-
     super.onInit();
   }
 
-  void initPage(
-      {required BuildContext context,
-      required Function(VoidCallback fn) set}) async {
-    c = context;
-    setState = set;
+  void onPhoneChanged(String value) {
+    phone.value = value;
+    errorNumber.value = null;
   }
-
-  void updScreenError(_) => setState(() => errorNumber = null);
 
   void onContactTelegram() => launchUrl(Uri.parse('https://t.me/uagro_admin'));
 
   void onContactViber() => launchUrl(
       Uri.parse('viber://chat?number=${Uri.encodeComponent('+380990026222')}'));
 
-  void onLogin(BuildContext context) => loadIfValid(() async {
-        final bool success = await AuthRepository().requestCode(
-            '+${numberController.text.replaceAll(RegExp('\\D'), '')}');
+  void onLogin() => loadIfValid(submit);
 
-        if (success) {
-          Get.offAllNamed(Routes.authConfirm);
-        } else {
-          context.mounted
-              ? notification(text: context.l.numberNoRegistered)
-              : {};
-        }
-      },);
+  /// Requests the SMS code for the entered number.
+  Future<void> submit() async {
+    final digits = numberController.text.replaceAll(RegExp(r'\D'), '');
+    if (await _repository.requestCode('+$digits')) {
+      _navigate(Routes.authConfirm);
+    } else {
+      rejected.value++;
+    }
+  }
 }

@@ -3,6 +3,7 @@ import 'package:agro/app/inform_messages/inform_messages_controller.dart';
 import 'package:agro/ui/app_components/app_background.dart';
 import 'package:agro/ui/app_components/appbar_with_back.dart';
 import 'package:agro/ui/app_components/empty_list_widget.dart';
+import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
@@ -18,24 +19,26 @@ class InformMessagesScreen extends StatefulWidget {
 
 class _InformMessagesScreenState extends State<InformMessagesScreen> {
   late final InformMessagesController controller;
+  late final Worker _failureWorker;
 
   @override
   void initState() {
     super.initState();
     controller = Get.put(InformMessagesController());
-    controller.initPage(context: context, set: setState);
+    _failureWorker = ever(controller.failures, (_) {
+      if (mounted) notification(text: context.l.somethingWentWrong);
+    });
   }
 
   @override
   void dispose() {
+    _failureWorker.dispose();
     Get.delete<InformMessagesController>();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final messages = controller.sortedMessages;
-
     return Scaffold(
       body: Stack(
         children: [
@@ -54,24 +57,28 @@ class _InformMessagesScreenState extends State<InformMessagesScreen> {
                       complete: _RefreshComplete(),
                       waterDropColor: AppColors.mainGreen,
                     ),
-                    child: messages.isEmpty
-                        ? emptyListDefault(
-                            context.l.emptyInformMessages, AppColors.darkGreen)
-                        : ListView.separated(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                            itemCount: messages.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: 10),
-                            itemBuilder: (context, index) {
-                              final message = messages[index];
-                              return InformMessageCard(
-                                key: ValueKey('msg_${message.id}'),
-                                message: message,
-                                onRead: () => controller.onReadMessage(message),
-                              );
-                            },
-                          ),
+                    child: Obx(() {
+                      final messages = controller.sortedMessages;
+                      return messages.isEmpty
+                          ? emptyListDefault(context.l.emptyInformMessages,
+                              AppColors.darkGreen)
+                          : ListView.separated(
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                              itemCount: messages.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: 10),
+                              itemBuilder: (context, index) {
+                                final message = messages[index];
+                                return InformMessageCard(
+                                  key: ValueKey('msg_${message.id}'),
+                                  message: message,
+                                  onRead: () =>
+                                      controller.onReadMessage(message),
+                                );
+                              },
+                            );
+                    }),
                   ),
                 ),
               ],

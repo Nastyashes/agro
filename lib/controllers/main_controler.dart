@@ -23,11 +23,9 @@ class MainController extends BaseController {
 
   bool get isVip => tariff?.isVip == true;
 
-  bool get isAdsDisabled =>
-      _isTruthy(_userfield['is_ads_disabled']);
+  bool get isAdsDisabled => _isTruthy(_userfield['is_ads_disabled']);
 
-  bool get shouldShowAds =>
-      isFree && !isAdsDisabled;
+  bool get shouldShowAds => isFree && !isAdsDisabled;
 
   int get adsDisabledUntil =>
       int.tryParse(
@@ -105,9 +103,9 @@ class MainController extends BaseController {
     _userfield.addAll(value);
   }
 
+  /// Accepts int, double ("50.0") or numeric strings from the backend.
   void updateBalance(dynamic value) {
-    _balance.value =
-        int.tryParse('${value ?? 0}') ?? 0;
+    _balance.value = (num.tryParse('${value ?? 0}') ?? 0).round();
   }
 
   void updateTariff(Tariff value) {

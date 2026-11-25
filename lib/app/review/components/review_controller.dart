@@ -1,99 +1,65 @@
-import 'package:agro/data/repositories/farmer_orders_repository.dart';
-import 'package:agro/model/model_user/model_user.dart';
-import 'package:agro/vars/helper.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:provider/provider.dart';
-
 import 'package:agro/controllers/abstract/from_controller.dart';
+import 'package:agro/data/repositories/farmer_orders_repository.dart';
+import 'package:flutter/widgets.dart';
+import 'package:get/get.dart';
+
 import '../../../controllers/app_input_controller.dart';
 import '../../../model/model_review/model_review.dart';
-import '../../../ui/local_notification/local_notification.dart';
-import '../../../vars/model_notifier/user_notifier/user_notifier.dart';
-import '../add_review.dart';
 
+enum ReviewSubmitResult { emptyComment, added, failed }
+
+/// Reviews of an order. No BuildContext: the add-review sheet turns the
+/// [ReviewSubmitResult] into navigation and messages.
 class ReviewController extends FormController {
-  late Function(VoidCallback fn) setState;
-  late BuildContext c;
-  late BuildContext context;
+  ReviewController({FarmerOrdersRepository? repository, int? orderId})
+      : _repository = repository ?? FarmerOrdersRepository(),
+        _orderId = orderId;
+
+  final FarmerOrdersRepository _repository;
+  final int? _orderId;
+
   late int orderId;
-  late ModelUser modelUser;
-  bool loadPage = false;
   late TextEditingController reviewController;
-  double countStar = 5;
-  List<ModelReview> modelReview = [];
+
+  final RxList<ModelReview> reviews = <ModelReview>[].obs;
+  final RxDouble countStar = 5.0.obs;
+  final RxBool loadPage = false.obs;
 
   @override
   void onInit() {
     reviewController = AppInputController();
+    orderId = _orderId ?? Get.arguments as int;
     super.onInit();
   }
 
-  void initPage(
-      {required BuildContext context,
-      required Function(VoidCallback fn) set}) async {
-    c = context;
-    setState = set;
-    modelUser = c.read<UserNotifier>().modelUser;
-
-    await Future.delayed(const Duration(milliseconds: 100));
-    if (c.mounted) {
-      orderId = ModalRoute.of(c)!.settings.arguments as int;
-      await Future.delayed(const Duration(milliseconds: 100));
-      // onLoadInfoUser();
-      modelReview = [];
-      onLoadReview();
-
-      setState(() => loadPage = true);
-    }
+  @override
+  void onReady() {
+    super.onReady();
+    loadIfValid(loadReviews);
   }
 
-  void onLoadReview() async => loadIfValid(() async {
-        modelReview.addAll(await FarmerOrdersRepository().reviews(orderId));
-        setState(() {});
-      },);
+  Future<void> loadReviews() async {
+    reviews.assignAll(await _repository.reviews(orderId));
+    loadPage.value = true;
+  }
 
-  void onAddReviewPage() => showCupertinoModalBottomSheet(
-      topRadius: const Radius.circular(30),
-      context: c,
-      builder: (c) => const AddReviewScreen());
+  void onChangeStar(double value) => countStar.value = value;
 
-  void onAddReview(BuildContext context) => loadIfValid(() async {
-        final String needWriteReview = context.l.needWriteReview;
-        final String feedbackAdded = context.l.feedbackAdded;
-        final String errorAddingReview = context.l.errorAddingReview;
-        if (reviewController.text == '') {
-          inAppNotification(text: needWriteReview, c: c);
-        }
+  /// Sends the review; an empty comment is never sent.
+  Future<ReviewSubmitResult> submitReview() async {
+    if (reviewController.text.trim().isEmpty) {
+      return ReviewSubmitResult.emptyComment;
+    }
+    final sent = await _repository.sendReview(
+      orderId: orderId,
+      rating: countStar.value.round(),
+      comment: reviewController.text,
+    );
+    if (!sent) return ReviewSubmitResult.failed;
 
-        final sent = await FarmerOrdersRepository().sendReview(
-            orderId: orderId,
-            rating: countStar.round(),
-            comment: reviewController.text);
-
-        if (sent) {
-          if (c.mounted) {
-            Navigator.pop(c);
-            inAppNotification(text: feedbackAdded, c: c);
-            reviewController.text = '';
-            countStar = 5;
-            modelReview = [];
-            onLoadReview();
-          }
-        } else {
-          if (c.mounted) {
-            inAppNotification(text: errorAddingReview, c: c);
-          }
-        }
-      },);
-
-  void onChangeStar(
-          {required double val, required Function(VoidCallback fn) set}) =>
-      set(() => countStar = val);
-//
-// void onBack() => Navigator.pop(c, modelOrder);
-//
-// void onContact() => showCupertinoModalBottomSheet(topRadius: const Radius.circular(30), context: c, builder: (c) => ContactScreen(modelOrder: modelOrder));
-//
-// void onAddPriceSave() {}
+    reviewController.text = '';
+    countStar.value = 5;
+    await loadReviews();
+    return ReviewSubmitResult.added;
+  }
 }

@@ -20,12 +20,11 @@ class TariffsScreen extends StatefulWidget {
 
 class TariffsScreenState extends State<TariffsScreen>
     with TickerProviderStateMixin {
-  TariffsController tariffsController = Get.find();
+  final TariffsController tariffsController = Get.find();
   late PageController _pageViewController;
 
   @override
   void initState() {
-    tariffsController.initPage(context: context, set: setState);
     super.initState();
     _pageViewController = PageController();
   }
@@ -47,45 +46,32 @@ class TariffsScreenState extends State<TariffsScreen>
                   context.l.tariffs,
                 ),
                 Expanded(
-                    child: PageView(
-                        controller: _pageViewController,
-                        onPageChanged: (int page) {
-                          tariffsController.onPageChanged(page);
-                        },
-                        children: [
-                      ...tariffsController.tariffs.asMap().entries.map((entry) {
-                        int index = entry.key;
-                        ModelTariff item = entry.value;
-                        return TariffItem(
-                          modelTariff: item,
-                          isMyTariff: getMyLabelVisible(
-                              index, tariffsController.tariff),
-                        );
-                      }).toList(),
-                    ])),
+                    child: Obx(() => PageView(
+                            controller: _pageViewController,
+                            onPageChanged: (int page) {
+                              tariffsController.onPageChanged(page);
+                            },
+                            children: [
+                              ...tariffsController.tariffs
+                                  .asMap()
+                                  .entries
+                                  .map((entry) {
+                                int index = entry.key;
+                                ModelTariff item = entry.value;
+                                return TariffItem(
+                                  modelTariff: item,
+                                  isMyTariff: getMyLabelVisible(
+                                      index, tariffsController.tariff),
+                                );
+                              }).toList(),
+                            ]))),
                 const SizedBox(height: 10),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: _buildPageIndicator(),
-                ),
+                Obx(() => Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: _buildPageIndicator(),
+                    )),
                 const SizedBox(height: 20),
-                /*      SizedBox(
-                height: 60,
-                child: tariffsController.buyButtonVisible
-                    ? bStyle(
-                        text: context.l.buyPackage,
-                        c: context,
-                        colorText: AppColors.white,
-                        vertical: 15,
-                        onPressed: () {
-                          tariffsController.onPayTariff(
-                              tariffsController
-                                  .tariffs[tariffsController.currentPageIndex],
-                              context);
-                        })
-                    : const SizedBox()),
-                    */
                 const SizedBox(height: 30)
               ],
             )));
@@ -125,7 +111,7 @@ class TariffsScreenState extends State<TariffsScreen>
   List<Widget> _buildPageIndicator() {
     List<Widget> list = [];
     for (int i = 0; i < 3; i++) {
-      list.add(i == tariffsController.currentPageIndex
+      list.add(i == tariffsController.currentPageIndex.value
           ? _indicator(true)
           : _indicator(false));
     }

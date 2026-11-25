@@ -4,5 +4,6 @@ import 'auth_confirmation_controller.dart';
 
 class AuthConfirmationBinding implements Bindings {
   @override
-  void dependencies() => Get.lazyPut<AuthConfirmationController>(() => AuthConfirmationController());
+  void dependencies() => Get.lazyPut<AuthConfirmationController>(
+      () => AuthConfirmationController());
 }

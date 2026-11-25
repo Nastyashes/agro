@@ -37,7 +37,7 @@ class AccountRepository {
 
   Future<int> balance() async {
     final data = await _map(_api.common.getBalance());
-    return int.tryParse('${data['balance'] ?? 0}') ?? 0;
+    return (num.tryParse('${data['balance'] ?? 0}') ?? 0).round();
   }
 
   Future<Tariff> currentTariff() async {

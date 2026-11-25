@@ -3,5 +3,6 @@ import 'package:get/get.dart';
 
 class ReviewBinding implements Bindings {
   @override
-  void dependencies() => Get.lazyPut<ReviewController>(() => ReviewController());
+  void dependencies() =>
+      Get.lazyPut<ReviewController>(() => ReviewController());
 }

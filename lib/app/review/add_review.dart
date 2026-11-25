@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../../ui/buttons/button_styles.dart';
 import '../../../ui/text_field/text_field.dart';
+import 'package:agro/ui/local_notification/local_notification.dart';
 import 'components/review_controller.dart';
 
 class AddReviewScreen extends StatefulWidget {
@@ -45,8 +46,8 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                     padding: const EdgeInsets.only(bottom: 30))),
             Padding(
                 padding: const EdgeInsets.only(left: 15),
-                child: RatingStars(
-                    value: controller.countStar,
+                child: Obx(() => RatingStars(
+                    value: controller.countStar.value,
                     starBuilder: (index, color) =>
                         Icon(Icons.star, color: color, size: 40),
                     starCount: 5,
@@ -63,9 +64,8 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                         const EdgeInsets.symmetric(vertical: 1, horizontal: 8),
                     valueLabelMargin: const EdgeInsets.only(right: 8),
                     starOffColor: const Color(0xffe7e8ea),
-                    onValueChanged: (val) =>
-                        controller.onChangeStar(set: setState, val: val),
-                    starColor: const Color(0xffFEBF2F))),
+                    onValueChanged: controller.onChangeStar,
+                    starColor: const Color(0xffFEBF2F)))),
             TextFieldWidget(
                 height: 200,
                 padding: const EdgeInsets.all(15),
@@ -85,13 +85,25 @@ class _AddReviewScreenState extends State<AddReviewScreen> {
                 colorText: Colors.white,
                 vertical: 15,
                 colorButt: const Color(0xffFCD300),
-                onPressed: () {
-                  controller.onAddReview(context);
-                })
+                onPressed: () => controller.loadIfValid(_submit))
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _submit() async {
+    final result = await controller.submitReview();
+    if (!mounted) return;
+    switch (result) {
+      case ReviewSubmitResult.emptyComment:
+        inAppNotification(text: context.l.needWriteReview, c: context);
+      case ReviewSubmitResult.failed:
+        inAppNotification(text: context.l.errorAddingReview, c: context);
+      case ReviewSubmitResult.added:
+        Navigator.pop(context);
+        inAppNotification(text: context.l.feedbackAdded, c: context);
+    }
   }
 
   Widget orderInfo({required String header, required String text}) => Padding(

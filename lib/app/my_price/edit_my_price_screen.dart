@@ -1,4 +1,5 @@
 import 'package:agro/app/my_price/components/my_price_dialogs.dart';
+import 'package:agro/app/my_price/components/my_price_ui.dart';
 import 'package:agro/app/my_price/controller/edit_my_price_controller.dart';
 import 'package:agro/model/my_price/my_price_models.dart';
 import 'package:agro/ui/app_components/app_background.dart';
@@ -25,7 +26,8 @@ class _EditMyPriceScreenState extends State<EditMyPriceScreen> {
   void initState() {
     super.initState();
     controller = Get.put(EditMyPriceController());
-    controller.initPage(context: context, set: setState);
+    controller.ui =
+        ScreenMyPriceUi(context, mainController: controller.mainController);
   }
 
   @override
@@ -91,18 +93,18 @@ class _EditMyPriceScreenState extends State<EditMyPriceScreen> {
                           label: (item) => item.label,
                         );
                         if (selected != null) {
-                          setState(() => controller.teamUserId = selected.id);
+                          controller.teamUserId.value = selected.id;
                         }
                       },
-                      child: _readOnly(
+                      child: Obx(() => _readOnly(
                           l.teamNumber,
                           overview.team
                               .firstWhere(
-                                (e) => e.id == controller.teamUserId,
+                                (e) => e.id == controller.teamUserId.value,
                                 orElse: () => const MyPriceTeamMember(),
                               )
                               .label,
-                          false),
+                          false)),
                     ),
                     const SizedBox(height: 24),
                     bStyle(

@@ -7,8 +7,23 @@ import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-class QRScannerScreen extends StatelessWidget {
+class QRScannerScreen extends StatefulWidget {
   const QRScannerScreen({super.key});
+
+  @override
+  State<QRScannerScreen> createState() => _QRScannerScreenState();
+}
+
+class _QRScannerScreenState extends State<QRScannerScreen> {
+  /// The scanner reports the same code several times; handle it once.
+  bool _handled = false;
+
+  /// Closes the scanner (back to home) and shows [message] there.
+  void _closeWith(String message) {
+    if (!mounted) return;
+    Navigator.of(context).pop();
+    notification(text: message);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,18 +55,12 @@ class QRScannerScreen extends StatelessWidget {
               MobileScanner(
                 scanWindow: scanRect,
                 onDetect: (BarcodeCapture capture) async {
+                  if (_handled) return;
+                  _handled = true;
                   final List<Barcode> barcodes = capture.barcodes;
-                  debugPrint('Barcodes detected: ${barcodes.length}');
 
                   if (barcodes.isEmpty) {
-                    debugPrint('Failed to scan: No barcodes found');
-                    if (context.mounted) {
-                      Navigator.of(context).pushReplacementNamed('/profile');
-                      inAppNotification(
-                        text: context.l.qrNotValidForLogin,
-                        c: context,
-                      );
-                    }
+                    _closeWith(context.l.qrNotValidForLogin);
                     return;
                   }
 
@@ -59,14 +68,7 @@ class QRScannerScreen extends StatelessWidget {
                   final String? code = barcode.rawValue;
 
                   if (code == null) {
-                    debugPrint('Failed to scan: Barcode rawValue is null');
-                    if (context.mounted) {
-                      Navigator.of(context).pushReplacementNamed('/profile');
-                      inAppNotification(
-                        text: context.l.failedScan,
-                        c: context,
-                      );
-                    }
+                    _closeWith(context.l.failedScan);
                   } else {
                     bool success;
                     try {
@@ -75,16 +77,11 @@ class QRScannerScreen extends StatelessWidget {
                       success = false;
                     }
 
+                    if (!context.mounted) return;
                     if (success) {
-                      if (context.mounted) {
-                        Navigator.of(context).pushReplacementNamed('/profile');
-                        inAppNotification(
-                          text: context.l.loginSuccess,
-                          c: context,
-                        );
-                      }
-                    } else if (context.mounted) {
-                      showDialog(
+                      _closeWith(context.l.loginSuccess);
+                    } else {
+                      await showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
                           title: Text(context.l.error),
@@ -97,6 +94,7 @@ class QRScannerScreen extends StatelessWidget {
                           ],
                         ),
                       );
+                      _handled = false; // let the user scan again
                     }
                   }
                 },
