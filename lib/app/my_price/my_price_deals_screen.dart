@@ -48,7 +48,7 @@ class _MyPriceDealsScreenState extends State<MyPriceDealsScreen> {
               children: [
                 appBarBack(context.l.deals),
                 Expanded(
-                  child: Obx(() => controller.loading.value
+                  child: Obx(() => controller.initialLoading.value
                       ? const Center(child: CircularProgressIndicator())
                       : controller.items.isEmpty
                           ? emptyListDefault(l.emptyDeals, AppColors.darkGreen)

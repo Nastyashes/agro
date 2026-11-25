@@ -192,7 +192,7 @@ void main() {
       expect(api.offsets, [0, 50]);
       expect(c.items, hasLength(53));
       expect(c.hasMore, isFalse);
-      expect(c.loading.value, isFalse);
+      expect(c.initialLoading.value, isFalse);
     });
 
     test('reset reloads from zero', () async {

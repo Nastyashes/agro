@@ -15,7 +15,7 @@ class MyPriceDealsController extends BaseController {
   late MyPriceUi ui;
 
   final RxList<MyPriceDealItem> items = <MyPriceDealItem>[].obs;
-  final RxBool loading = true.obs;
+  final RxBool initialLoading = true.obs;
   final RxBool loadingMore = false.obs;
   bool hasMore = true;
   int _offset = 0;
@@ -31,7 +31,7 @@ class MyPriceDealsController extends BaseController {
       _offset = 0;
       hasMore = true;
       items.clear();
-      loading.value = true;
+      initialLoading.value = true;
     } else {
       if (!hasMore || loadingMore.value) return;
       loadingMore.value = true;
@@ -46,7 +46,7 @@ class MyPriceDealsController extends BaseController {
     } else {
       await ui.showError(result);
     }
-    loading.value = false;
+    initialLoading.value = false;
     loadingMore.value = false;
   }
 }
