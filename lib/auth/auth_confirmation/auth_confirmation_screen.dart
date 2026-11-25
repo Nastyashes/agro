@@ -22,13 +22,7 @@ class AuthConfirmScreen extends StatefulWidget {
 }
 
 class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
-  AuthConfirmationController controller = Get.find();
-
-  @override
-  void initState() {
-    controller.initPage(context: context, set: setState);
-    super.initState();
-  }
+  final AuthConfirmationController controller = Get.find();
 
   @override
   Widget build(BuildContext c) {
@@ -57,104 +51,107 @@ class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: Scaffold(
-          resizeToAvoidBottomInset: false,
-          backgroundColor: AppColors.backgroundGradient1,
-          body: Stack(
-        children: [
-          const AppBackground(), SafeArea(
-            bottom: false,
-            child: Stack(
-              alignment: Alignment.topCenter,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                            padding:
-                                const EdgeInsets.only(top: 120, bottom: 120),
-                            child: Center(
-                                child: Image.asset(Assets.pictureLogo,
-                                    width: MediaQuery.of(c).size.width / 1.2))),
-                        readText(
-                            text: context.l.enterCode,
-                            style: AppFonts.title2.white,
-                            padding:
-                                const EdgeInsets.only(bottom: 10, left: 7)),
-                        readText(
-                            text: context.l.codeWasSent,
-                            style: AppFonts.body1semibold.grey3,
-                            padding:
-                                const EdgeInsets.only(bottom: 10, left: 7)),
-                        Padding(
-                            padding: const EdgeInsets.only(top: 20),
-                            child: ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
-                                child: Pinput(
-                                  
-                                    controller: controller.codeController,
-                                    scrollPadding: EdgeInsets.zero,
-                                    defaultPinTheme: defaultPinTheme,
-                                    focusedPinTheme: focusPinTheme,
-                                    submittedPinTheme: defaultPinTheme,
-                                    length: 4,
-                                    pinputAutovalidateMode:
-                                        PinputAutovalidateMode.onSubmit,
-                                    showCursor: true,
-                                    onChanged: controller.updScreenError))),
-                        if (controller.errorCode != null) ...[
-                          Center(
-                              child: readText(
-                                  text: controller.errorCode!,
-                                  style: AppFonts.body2semibold.red,
-                                  align: TextAlign.center,
-                                  padding: const EdgeInsets.only(top: 10)))
-                        ],
-                        bStyle(
-                            key: UniqueKey(),
-                            padding: const EdgeInsets.only(top: 35),
-                            text: context.l.continue_,
-                            vertical: 18,
-                            c: c,
-                            active: controller.codeController.text.length == 4,
-                            onPressed: controller.onLogin),
-                        BTransparentScalableButton(
-                            onPressed: controller.onAuth,
-                            scale: ScaleFormat.small,
-                            child: Center(
-                                child: readText(
-                                    text: context.l.changeNumber,
-                                    style: AppFonts.body1semibold.grey3,
-                                    padding: const EdgeInsets.only(top: 20)))),
-                        const Spacer(),
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              BTransparentScalableButton(
-                                  onPressed: controller.onContactTelegram,
-                                  scale: ScaleFormat.small,
-                                  child: SvgPicture.asset(Assets.authTelegram,
-                                      width: 50)),
-                              const SizedBox(width: 20),
-                              BTransparentScalableButton(
-                                  onPressed: controller.onContactViber,
-                                  scale: ScaleFormat.small,
-                                  child: SvgPicture.asset(Assets.authViber,
-                                      width: 55))
-                            ]),
-                        Center(
-                            child: readText(
-                                text: context.l.needHelpSupport,
-                                style: AppFonts.body2medium.grey3,
+            resizeToAvoidBottomInset: false,
+            backgroundColor: AppColors.backgroundGradient1,
+            body: Stack(children: [
+              const AppBackground(),
+              SafeArea(
+                bottom: false,
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 120, bottom: 120),
+                                child: Center(
+                                    child: Image.asset(Assets.pictureLogo,
+                                        width: MediaQuery.of(c).size.width /
+                                            1.2))),
+                            readText(
+                                text: context.l.enterCode,
+                                style: AppFonts.title2.white,
                                 padding:
-                                    const EdgeInsets.only(bottom: 30, top: 15),
-                                align: TextAlign.center))
-                      ]),
-                )
-              ],
-            ),
-          ),
-       ] )));
+                                    const EdgeInsets.only(bottom: 10, left: 7)),
+                            readText(
+                                text: context.l.codeWasSent,
+                                style: AppFonts.body1semibold.grey3,
+                                padding:
+                                    const EdgeInsets.only(bottom: 10, left: 7)),
+                            Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Pinput(
+                                        controller: controller.codeController,
+                                        scrollPadding: EdgeInsets.zero,
+                                        defaultPinTheme: defaultPinTheme,
+                                        focusedPinTheme: focusPinTheme,
+                                        submittedPinTheme: defaultPinTheme,
+                                        length: 4,
+                                        pinputAutovalidateMode:
+                                            PinputAutovalidateMode.onSubmit,
+                                        showCursor: true,
+                                        onChanged: controller.onCodeChanged))),
+                            Obx(() => controller.errorCode.value == null
+                                ? const SizedBox.shrink()
+                                : Center(
+                                    child: readText(
+                                        text: controller.errorCode.value!,
+                                        style: AppFonts.body2semibold.red,
+                                        align: TextAlign.center,
+                                        padding:
+                                            const EdgeInsets.only(top: 10)))),
+                            Obx(() => bStyle(
+                                key: UniqueKey(),
+                                padding: const EdgeInsets.only(top: 35),
+                                text: context.l.continue_,
+                                vertical: 18,
+                                c: c,
+                                active: controller.canSubmit,
+                                onPressed: controller.onLogin)),
+                            BTransparentScalableButton(
+                                onPressed: controller.onAuth,
+                                scale: ScaleFormat.small,
+                                child: Center(
+                                    child: readText(
+                                        text: context.l.changeNumber,
+                                        style: AppFonts.body1semibold.grey3,
+                                        padding:
+                                            const EdgeInsets.only(top: 20)))),
+                            const Spacer(),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  BTransparentScalableButton(
+                                      onPressed: controller.onContactTelegram,
+                                      scale: ScaleFormat.small,
+                                      child: SvgPicture.asset(
+                                          Assets.authTelegram,
+                                          width: 50)),
+                                  const SizedBox(width: 20),
+                                  BTransparentScalableButton(
+                                      onPressed: controller.onContactViber,
+                                      scale: ScaleFormat.small,
+                                      child: SvgPicture.asset(Assets.authViber,
+                                          width: 55))
+                                ]),
+                            Center(
+                                child: readText(
+                                    text: context.l.needHelpSupport,
+                                    style: AppFonts.body2medium.grey3,
+                                    padding: const EdgeInsets.only(
+                                        bottom: 30, top: 15),
+                                    align: TextAlign.center))
+                          ]),
+                    )
+                  ],
+                ),
+              ),
+            ])));
   }
 }
