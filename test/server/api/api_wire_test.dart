@@ -63,8 +63,6 @@ void main() {
   });
 
   test('fermer', () async {
-    await api.fermer.getInfoPriceOrder(orderId: 1);
-    expectQuery('/apiapp.php', q('order.pricelist', {'order_id': '1'}));
     await api.fermer.closePriceOrder(orderId: 2);
     expectQuery('/apiapp.php', q('fermer.closeorder', {'order_id': '2'}));
     await api.fermer.viewReview(orderId: 3);
@@ -95,8 +93,6 @@ void main() {
     expectQuery('/apiapp.php', q('push.getall', {'type': 'MESSAGE'}));
     await t.readMessage(9);
     expectQuery('/apiapp.php', q('push.setreaded', {'push_id': '9'}));
-    await t.orderOpenContactFermer(orderId: 8);
-    expectQuery('/apiapp.php', q('order.opencontacts', {'order_id': '8'}));
     await t.openContactsAd(orderId: 8);
     expectQuery('/apiapp.php', q('order.opencontacts', {'order_id': '8'}));
     await t.getTariff();

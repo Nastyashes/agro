@@ -1,4 +1,5 @@
-import 'package:agro/server/api/controller/traider.dart';
+import 'package:agro/data/repositories/auth_repository.dart';
+import 'package:agro/server/api/api_client.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/ui/theme/colors.dart';
 import 'package:agro/ui/theme/fonts.dart';
@@ -11,7 +12,6 @@ class QRScannerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Traider traider = Traider();
 
     return Scaffold(
       appBar: AppBar(
@@ -68,11 +68,14 @@ class QRScannerScreen extends StatelessWidget {
                       );
                     }
                   } else {
-                    debugPrint('Code found: $code');
-                    final apiAnswer = await traider.loginWithQr(code);
-                    debugPrint('API Answer: ${apiAnswer.toString()}');
+                    bool success;
+                    try {
+                      success = await AuthRepository().loginWithQr(code);
+                    } on ApiException {
+                      success = false;
+                    }
 
-                    if (apiAnswer.code == 200) {
+                    if (success) {
                       if (context.mounted) {
                         Navigator.of(context).pushReplacementNamed('/profile');
                         inAppNotification(

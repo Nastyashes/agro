@@ -43,7 +43,7 @@ class _InformMessagesScreenState extends State<InformMessagesScreen> {
           SafeArea(
             child: Column(
               children: [
-              appBarBack( context.l.infoMessages),
+                appBarBack(context.l.infoMessages),
                 Expanded(
                   child: SmartRefresher(
                     controller: controller.refreshController,
@@ -55,8 +55,8 @@ class _InformMessagesScreenState extends State<InformMessagesScreen> {
                       waterDropColor: AppColors.mainGreen,
                     ),
                     child: messages.isEmpty
-                        ? emptyListDefault(context.l.emptyInformMessages, AppColors.darkGreen)
-                          
+                        ? emptyListDefault(
+                            context.l.emptyInformMessages, AppColors.darkGreen)
                         : ListView.separated(
                             physics: const AlwaysScrollableScrollPhysics(),
                             padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -68,8 +68,7 @@ class _InformMessagesScreenState extends State<InformMessagesScreen> {
                               return InformMessageCard(
                                 key: ValueKey('msg_${message.id}'),
                                 message: message,
-                                onRead: () =>
-                                    controller.onReadMessage(message),
+                                onRead: () => controller.onReadMessage(message),
                               );
                             },
                           ),

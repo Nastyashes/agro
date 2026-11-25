@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:agro/controllers/abstract/base_controller.dart';
+import 'package:agro/data/repositories/account_repository.dart';
+import 'package:agro/data/repositories/bids_repository.dart';
+import 'package:agro/data/repositories/messages_repository.dart';
 import 'package:agro/controllers/app_input_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
-import 'package:agro/model/message/message.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
@@ -30,6 +32,8 @@ class NewHomeController extends BaseController {
   late Function(VoidCallback fn) setState;
 
   final MainController mainController = Get.find<MainController>();
+
+  final BidsRepository _bidsRepository = BidsRepository();
 
   late final TextEditingController searchController;
   late final FocusNode searchFocusNode;
@@ -181,26 +185,15 @@ class NewHomeController extends BaseController {
     try {
       final offset = reset ? 0 : _bidsOffset;
 
-      final apiAnswer = await Api().traider.searchBids(
-        search: searchController.text,
+      final page = await _bidsRepository.search(
+        query: searchController.text,
         limit: AppConstants.bidsPageLimit,
         offset: offset,
       );
 
       if (requestId != _allRequestId) return;
 
-      log('NewHomeController loadAllBids bids: ${apiAnswer.data['bids']}');
-
-      if (apiAnswer.data['status'] == '-') {
-        throw Exception(
-          apiAnswer.data['error']?.toString() ??
-              'searchBids failed',
-        );
-      }
-
-      final response = BidsResponse.fromJson(apiAnswer.data);
-
-      final newItems = response.bids;
+      final newItems = page.items;
 
       if (reset) {
         bids
@@ -212,11 +205,9 @@ class NewHomeController extends BaseController {
 
       _bidsOffset = offset + newItems.length;
 
-      _bidsTotal = int.tryParse(
-        '${apiAnswer.data['bids_total'] ?? ''}',
-      );
+      _bidsTotal = page.total;
 
-      _updateUserfield(apiAnswer.data);
+      _updateUserfield(page.userfield);
 
       if (context.mounted) {
         setState(() {});
@@ -262,18 +253,12 @@ class NewHomeController extends BaseController {
         _freshTotal = null;
       }
 
-      final apiAnswer = await Api().traider.getAllBids(
+      final page = await _bidsRepository.fresh(
         limit: AppConstants.bidsPageLimit,
         offset: _freshOffset,
       );
 
-      log(
-        'NewHomeController loadFreshBids bids: ${apiAnswer.data['bids_fresh']}',
-      );
-
-      final response = BidsResponse.fromJson(apiAnswer.data);
-
-      final newItems = response.bidsFresh;
+      final newItems = page.items;
 
       if (reset) {
         bidsFresh
@@ -285,11 +270,9 @@ class NewHomeController extends BaseController {
 
       _freshOffset += newItems.length;
 
-      _freshTotal = int.tryParse(
-        '${apiAnswer.data['bids_fresh_total'] ?? ''}',
-      );
+      _freshTotal = page.total;
 
-      _updateUserfield(apiAnswer.data);
+      _updateUserfield(page.userfield);
 
       if (context.mounted) {
         setState(() {});
@@ -416,12 +399,7 @@ class NewHomeController extends BaseController {
 
   Future<void> loadUnreadInformMessages() async {
     try {
-      final apiAnswer = await Api().traider.getMessages();
-      if (apiAnswer.code != 200) return;
-
-      unreadInformCount.value = parseMessagesPayload(apiAnswer.data)
-          .where((message) => !message.isRead)
-          .length;
+      unreadInformCount.value = await MessagesRepository().unreadCount();
     } catch (e) {
       log('NewHomeController loadUnreadInformMessages error: $e');
     }
@@ -472,7 +450,7 @@ class NewHomeController extends BaseController {
 
   Future<void> loadAdBanner() async {
     try {
-      adBanner = await Api().traider.getAdBanner();
+      adBanner = await _bidsRepository.feedBanner();
 
       log(
         'NewHomeController ad banner: ${adBanner?.image}',
@@ -488,41 +466,22 @@ class NewHomeController extends BaseController {
 
   Future<void> disableAds(BuildContext context) async {
     try {
-      final result = await Api().traider.disableAds();
+      final result = await AccountRepository().disableAds();
 
-      if (result.data['status'] == '+') {
-        final payload = result.data is Map
-            ? Map<String, dynamic>.from(result.data as Map)
-            : <String, dynamic>{};
-        final nextUserfield = <String, dynamic>{
-          'is_ads_disabled': true,
-        };
-        final until = payload['ads_disabled_until'] ??
-            (payload['userfield'] is Map
-                ? payload['userfield']['ads_disabled_until']
-                : null);
-        if (until != null) {
-          nextUserfield['ads_disabled_until'] = until;
-        }
-        if (payload['userfield'] is Map) {
-          nextUserfield.addAll(
-            Map<String, dynamic>.from(payload['userfield'] as Map),
-          );
-          nextUserfield['is_ads_disabled'] = true;
-        }
-        mainController.patchUserfield(nextUserfield);
+      if (result.ok) {
+        mainController.patchUserfield(result.userfieldPatch);
 
         await Future.wait([
           loadAllBids(reset: true),
           if (isFree) loadFreshBids(reset: true),
         ]);
 
-        mainController.patchUserfield(nextUserfield);
+        mainController.patchUserfield(result.userfieldPatch);
       }
 
       if (context.mounted) {
         inAppNotification(
-          text: result.data['message']?.toString() ?? '',
+          text: result.message ?? '',
           c: context,
         );
       }
@@ -539,14 +498,8 @@ class NewHomeController extends BaseController {
     }
   }
 
-  void _updateUserfield(dynamic data) {
-    final value = data['userfield'];
-
-    if (value is Map) {
-      mainController.updateUserfield(
-        Map<String, dynamic>.from(value),
-      );
-    }
+  void _updateUserfield(Map<String, dynamic>? value) {
+    if (value != null) mainController.updateUserfield(value);
   }
 
   @override
@@ -567,71 +520,18 @@ class NewHomeController extends BaseController {
 }
 
 Future<void> payBalance(int amount, BuildContext context) async {
-  print('payBalance start amount=$amount');
   try {
-    final apiAnswer = await Api().common.balancePay(amount: amount);
-    print(
-      'payBalance response code=${apiAnswer.code} '
-      'dataType=${apiAnswer.data.runtimeType} data=${apiAnswer.data}',
-    );
-
-    if (apiAnswer.data == null || apiAnswer.data is! Map) {
-      print('payBalance invalid response');
-      if (context.mounted) {
-        notification(text: context.l.somethingWentWrong);
-      }
-      return;
-    }
-
-    final data = Map<String, dynamic>.from(apiAnswer.data as Map);
-    if (data['error'] != null) {
-      print('payBalance error=${data['error']}');
-      if (context.mounted) {
-        notification(text: context.l.somethingWentWrong);
-      }
-      return;
-    }
-
-    final payUrl = _paymentUrl(data);
-    print('payBalance orderId=${data['order_id']} payUrl=$payUrl');
-    if (payUrl == null) {
-      print('payBalance url missing keys=${data.keys.toList()}');
-      if (context.mounted) {
-        notification(text: context.l.somethingWentWrong);
-      }
-      return;
-    }
-
+    final payUrl = await AccountRepository().topUpPaymentUrl(amount);
     final opened = await openPaymentUrl(payUrl);
-    print('payBalance opened=$opened');
     if (!opened && context.mounted) {
       notification(text: context.l.somethingWentWrong);
     }
   } catch (e, stackTrace) {
-    print('payBalance exception: $e\n$stackTrace');
+    log('payBalance failed: $e', error: e, stackTrace: stackTrace);
     if (context.mounted) {
       notification(text: context.l.somethingWentWrong);
     }
   }
-}
-
-String? _paymentUrl(Map<String, dynamic> data) {
-  for (final key in ['url', 'pay_url', 'payment_url', 'link']) {
-    final value = data[key];
-    if (value is String && value.trim().isNotEmpty) {
-      return value.trim();
-    }
-  }
-
-  for (final key in ['data', 'payload', 'result']) {
-    final nested = data[key];
-    if (nested is Map) {
-      final url = _paymentUrl(Map<String, dynamic>.from(nested));
-      if (url != null) return url;
-    }
-  }
-
-  return null;
 }
 
 Future<bool> openPaymentUrl(String rawUrl) async {

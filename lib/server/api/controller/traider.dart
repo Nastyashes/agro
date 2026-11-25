@@ -65,9 +65,6 @@ class Traider extends Api {
     }
   }
 
-  Future<ApiAnswer> orderOpenContactFermer({required int orderId}) =>
-      send('order.opencontacts', query: {'order_id': '$orderId'});
-
   // Пошук / список заявок 1.0.26 (auth.bids.search)
   Future<ApiAnswer> searchBids({String? search, int? limit, int? offset}) {
     final trimmedSearch = search?.trim();

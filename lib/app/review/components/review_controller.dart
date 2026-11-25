@@ -1,10 +1,7 @@
-import 'dart:developer';
-
-import 'package:agro/model/model_review/struct_review.dart';
+import 'package:agro/data/repositories/farmer_orders_repository.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:agro/server/api/api.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
@@ -52,11 +49,7 @@ class ReviewController extends FormController {
   }
 
   void onLoadReview() async => loadIfValid(() async {
-        ApiAnswer apiAnswer = await Api().fermer.viewReview(orderId: orderId);
-        log('apiAnswer.data: ${apiAnswer.data}');
-        for (final i in apiAnswer.data['payload']['items']) {
-          modelReview.add(structReview(data: i));
-        }
+        modelReview.addAll(await FarmerOrdersRepository().reviews(orderId));
         setState(() {});
       },);
 
@@ -73,15 +66,12 @@ class ReviewController extends FormController {
           inAppNotification(text: needWriteReview, c: c);
         }
 
-        ApiAnswer apiAnswer = await Api().fermer.sendReviewFermer(
+        final sent = await FarmerOrdersRepository().sendReview(
             orderId: orderId,
             rating: countStar.round(),
             comment: reviewController.text);
 
-        log(orderId.toString());
-        log(apiAnswer.data.toString());
-
-        if (apiAnswer.data['status'].toString() == 'true') {
+        if (sent) {
           if (c.mounted) {
             Navigator.pop(c);
             inAppNotification(text: feedbackAdded, c: c);
@@ -100,44 +90,6 @@ class ReviewController extends FormController {
   void onChangeStar(
           {required double val, required Function(VoidCallback fn) set}) =>
       set(() => countStar = val);
-
-// void onSell() => loadIfValid(() async {
-//       ApiAnswer apiAnswer = await Api().fermer.closePriceOrder(c: c, orderId: modelOrder.id!);
-//       print(apiAnswer.data);
-//
-//       if (apiAnswer.data['status'].toString() == 'true') {
-//         setState(() => modelOrder.endDate = DateTime.now().subtract(const Duration(days: 1)));
-//       }
-//     }, c: c);
-//
-// void onReview() {}
-//
-// void onLoadPrice() => loadIfValid(() async {
-//       // ApiAnswer apiAnswer = await Api().fermer.getInfoPriceOrder(c: c, orderId: modelOrder.id!);
-//       ApiAnswer apiAnswer = await Api().fermer.getInfoPriceOrder(c: c, orderId: 99384);
-//       totalPrice = apiAnswer.data['payload']['total'];
-//
-//       for (final i in apiAnswer.data['payload']['prices']) {
-//         modelOrderPrice.add(structOrderData(data: i));
-//       }
-//
-//       setState(() {});
-//     }, c: c);
-//
-// void onAddPrice() => showCupertinoModalBottomSheet(topRadius: const Radius.circular(30), context: c, builder: (c) => const AddPriceScreen());
-//
-// void onLoadInfoUser() async {
-//   ApiAnswer apiAnswer = await Api().traider.orderOpenContactFermer(c: c, orderId: modelOrder.id!);
-//
-//   modelOrder.userName = apiAnswer.data['payload']['name'];
-//   modelOrder.userRegion = apiAnswer.data['payload']['region'];
-//   modelOrder.userDistrict = apiAnswer.data['payload']['district'];
-//   modelOrder.userCity = apiAnswer.data['payload']['city'];
-//   modelOrder.userEmail = apiAnswer.data['payload']['email'];
-//   modelOrder.userPhone = apiAnswer.data['payload']['phone'];
-//
-//   setState(() {});
-// }
 //
 // void onBack() => Navigator.pop(c, modelOrder);
 //

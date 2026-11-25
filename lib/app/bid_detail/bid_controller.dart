@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:agro/data/repositories/farmer_orders_repository.dart';
 import 'package:agro/app/home/order/components/set_answer.dart.dart';
 import 'package:agro/ui/pop_up/banner_dialog.dart';
 import 'package:agro/ui/pop_up/inform_pop_up.dart';
@@ -9,11 +10,10 @@ import 'package:agro/app/my_price/components/my_price_error.dart';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
-import 'package:agro/model/new_models_bids/bids_contacts_model.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
+import 'package:agro/data/repositories/bids_repository.dart';
 import 'package:agro/model/call_result/call_result.dart';
-import 'package:agro/model/my_price/my_price_order_meta.dart';
 import 'package:agro/repository/local_storage_repository.dart';
 import 'package:agro/routes/app_pages.dart';
 import 'package:agro/server/api/api.dart';
@@ -24,6 +24,8 @@ import 'package:get/get.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class BidItemController extends BaseController {
+  final BidsRepository _bids = BidsRepository();
+
   late Function(VoidCallback fn) setState;
   late BidItem bidItem;
   bool loadPage = false;
@@ -64,19 +66,11 @@ class BidItemController extends BaseController {
     final orderId = bidItem.orderId;
     if (orderId == null) return;
     try {
-      final apiAnswer = await Api().traider.getOrder(orderId: orderId);
-      final parsed = BidItem.fromOrderView(apiAnswer.data);
-      if (parsed != null) {
-        bidItem = parsed;
-      } else {
-        final data = apiAnswer.data;
-        if (data is Map && data['my_price'] != null) {
-          bidItem = bidItem.copyWith(
-            myPrice: MyPriceOrderMeta.fromJson(
-              Map<String, dynamic>.from(data['my_price'] as Map),
-            ),
-          );
-        }
+      final view = await _bids.view(orderId);
+      if (view.item != null) {
+        bidItem = view.item!;
+      } else if (view.myPrice != null) {
+        bidItem = bidItem.copyWith(myPrice: view.myPrice);
       }
       if (bidItem.isOpened) contactOpened = true;
       final meta = bidItem.myPrice;
@@ -111,8 +105,7 @@ class BidItemController extends BaseController {
       // будь-яка помилка тут (мережа, тайм-аут, невалідний JSON) не блокує відкриття контакту
       OpenContactsAdResponse? res;
       try {
-        res = await Api().traider.openContactsAd(orderId: bidItem.orderId!);
-        log('OPEN Contacts Ad: ${res.toJson()}');
+        res = await _bids.contactAd(bidItem.orderId!);
       } catch (e) {
         log('openContactsAd failed, fallback to direct open: $e');
         await _openContact(context);
@@ -151,45 +144,33 @@ class BidItemController extends BaseController {
 
   Future<void> _openContact(BuildContext context) async {
     try {
-      ApiAnswer apiAnswer = await Api().traider.openBidContact(
-            orderId: bidItem.orderId!,
-          );
+      final result = await _bids.openContact(bidItem.orderId!);
 
-      log(apiAnswer.data.toString());
-
-      if (apiAnswer.data['status'] == 'insufficient') {
-        final String message = apiAnswer.data['message']?.toString() ??
-            context.l.insufficientBalance;
-        notification(text: message);
-        return;
-      }
-
-      if (apiAnswer.data['status'] == '+') {
-        final payload = apiAnswer.data['payload'];
-
+      if (result.status == OpenContactStatus.opened) {
+        // Paid: record it even if the user already left the screen.
+        final contact = result.contact!;
         bidItem = bidItem.copyWith(
           opened: 1,
-          openedPhon: payload['phone']?.toString(),
-          fermerCompany: payload['company']?.toString(),
-          fermerName: payload['name']?.toString(),
-          fermerPhone: payload['phone']?.toString(),
-          fermerEmail: payload['email']?.toString(),
-          contacts: BidContacts.fromJson(payload),
+          openedPhon: contact.phone,
+          fermerCompany: contact.company,
+          fermerName: contact.name,
+          fermerPhone: contact.phone,
+          fermerEmail: contact.email,
+          contacts: contact.contacts,
         );
-
         _homeController?.updateBidItem(bidItem);
-
         contactOpened = true;
         setState(() {});
         return;
       }
 
-      // 🔥 будь-який інший статус — показуємо меседж з бекенду, якщо є
-      final String message =
-          apiAnswer.data['message']?.toString() ?? context.l.failedOpenContact;
-      if (context.mounted) {
-        notification(text: message);
-      }
+      if (!context.mounted) return;
+      notification(
+        text: result.message ??
+            (result.status == OpenContactStatus.insufficient
+                ? context.l.insufficientBalance
+                : context.l.failedOpenContact),
+      );
     } catch (e) {
       log("_openContact error: $e");
       if (context.mounted) {
@@ -204,11 +185,9 @@ class BidItemController extends BaseController {
     setState(() => orderingCarrier = true);
 
     try {
-      final ApiAnswer apiAnswer = await Api().traider.orderCarrier();
-      log('orderCarrier: ${apiAnswer.data}');
-
-      final bool status = apiAnswer.data['status'] == true;
-      final String message = apiAnswer.data['message']?.toString() ?? '';
+      final result = await _bids.orderCarrier();
+      final bool status = result.ok;
+      final String message = result.message;
 
       setState(() {
         orderingCarrier = false;
@@ -237,43 +216,34 @@ class BidItemController extends BaseController {
     setState(() => orderingAnalysis = true);
 
     try {
-      final ApiAnswer apiAnswer =
-          await Api().traider.orderAnalysis(orderId: bidItem.orderId!);
-      log('orderAnalysis: ${apiAnswer.data}');
+      final result = await _bids.orderAnalysis(bidItem.orderId!);
 
-      final String status = apiAnswer.data['status']?.toString() ?? '';
+      // Paid: mark it ordered even if the user already left the screen, so
+      // the button cannot charge twice.
+      setState(() {
+        orderingAnalysis = false;
+        if (result.status == AnalysisStatus.ordered) analysisOrdered = true;
+      });
+      if (!context.mounted) return;
 
-      setState(() => orderingAnalysis = false);
-
-      if (status == '+') {
-        setState(() => analysisOrdered = true);
-        if (context.mounted) {
+      switch (result.status) {
+        case AnalysisStatus.ordered:
           showInformPoUp(
             context,
             context.l.done,
-            context.l.analysisOrderedMessage(
-              apiAnswer.data['balance_after']?.toString() ?? '—',
-            ),
+            context.l.analysisOrderedMessage(result.balanceAfter ?? '—'),
           );
-        }
-      } else if (status == 'insufficient') {
-        if (context.mounted) {
+        case AnalysisStatus.insufficient:
           showInformPoUp(
             context,
             context.l.error,
-            context.l.insufficientFunds(
-              apiAnswer.data['balance']?.toString() ?? '—',
-              apiAnswer.data['price']?.toString() ?? '—',
-            ),
+            context.l
+                .insufficientFunds(result.balance ?? '—', result.price ?? '—'),
           );
-        }
-      } else {
-        final String message =
-            apiAnswer.data['message']?.toString() ?? context.l.error;
-        if (context.mounted) {
-          showInformPoUp(context, context.l.error, message);
+        case AnalysisStatus.failed:
+          showInformPoUp(
+              context, context.l.error, result.message ?? context.l.error);
           notification(text: context.l.failedOpenContact);
-        }
       }
     } catch (e) {
       log('onOrderAnalysis error: $e');
@@ -375,11 +345,8 @@ class BidItemController extends BaseController {
   void onReview() => Get.toNamed(Routes.review, arguments: bidItem.orderId);
 
   void onSell() => loadIfValid(() async {
-        ApiAnswer apiAnswer =
-            await Api().fermer.closePriceOrder(orderId: bidItem.orderId!);
-        log(apiAnswer.data.toString());
         // після закриття повертаємось назад
-        if (apiAnswer.data['status'].toString() == 'true') {
+        if (await FarmerOrdersRepository().closeOrder(bidItem.orderId!)) {
           Get.back();
         }
       });

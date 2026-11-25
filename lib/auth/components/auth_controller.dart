@@ -1,11 +1,9 @@
-import 'dart:developer';
-
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:agro/server/api/api.dart';
+import 'package:agro/data/repositories/auth_repository.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:agro/controllers/abstract/from_controller.dart';
@@ -44,12 +42,8 @@ class AuthController extends FormController {
       Uri.parse('viber://chat?number=${Uri.encodeComponent('+380990026222')}'));
 
   void onLogin(BuildContext context) => loadIfValid(() async {
-        ApiAnswer apiAnswer = await Api().auth.loginNumber(
-            number: '+${numberController.text.replaceAll(RegExp('\\D'), '')}');
-
-        log('apiAnswer.data: ${apiAnswer.data}');
-
-        final bool success = apiAnswer.data['status'] == true;
+        final bool success = await AuthRepository().requestCode(
+            '+${numberController.text.replaceAll(RegExp('\\D'), '')}');
 
         if (success) {
           Get.offAllNamed(Routes.authConfirm);

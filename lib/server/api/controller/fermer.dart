@@ -1,9 +1,6 @@
 import '../api.dart';
 
 class Fermer extends Api {
-  Future<ApiAnswer> getInfoPriceOrder({required int orderId}) =>
-      send('order.pricelist', query: {'order_id': '$orderId'});
-
   Future<ApiAnswer> closePriceOrder({required int orderId}) =>
       send('fermer.closeorder', query: {'order_id': '$orderId'});
 

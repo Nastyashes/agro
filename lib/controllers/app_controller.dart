@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:agro/data/repositories/account_repository.dart';
 import 'package:agro/routes/app_pages.dart';
-import 'package:agro/server/api/api.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -159,7 +159,7 @@ class AppController extends GetxController {
       throw Exception("Couldn't get FCM token");
     }
 
-    await Api().traider.sendDeviceToken(deviceToken: token);
+    await AccountRepository().registerDeviceToken(token);
 
     log("FCM token registered");
     askForPermissionIfNeeded();
