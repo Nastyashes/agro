@@ -30,7 +30,7 @@ class MenuItem extends StatelessWidget {
       onTap: onPressed,
       borderRadius: BorderRadius.circular(12),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 40),
+        constraints: const BoxConstraints(minHeight: 42),
         child: Row(children: [
           Icon(icon,
               size: 24, color: soon ? Palette.textTertiary : Palette.green),
@@ -39,6 +39,7 @@ class MenuItem extends StatelessWidget {
             child: Text(
               title,
               style: AppText.bodyMedium.copyWith(
+                  fontSize: 16,
                   color: soon ? Palette.textSecondary : Palette.textPrimary),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
