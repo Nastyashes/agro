@@ -26,9 +26,20 @@ class Tariff {
         int.tryParse(json['balance_contacts_day_osttk'].toString());
     tafiffId = int.tryParse(json['tariff_id'].toString());
 
-    DateFormat format = DateFormat('dd.MM.yyyy');
-    balanceEnd =
-        json['balance_end'] != null ? format.parse(json['balance_end']) : null;
+    balanceEnd = parseBalanceEnd(json['balance_end']);
+  }
+
+  /// `dd.MM.yyyy` from the API, ISO as a fallback. An unexpected format is
+  /// null instead of throwing, which used to drop the whole tariff and show
+  /// a paying user as Free (BUG-012).
+  static DateTime? parseBalanceEnd(dynamic value) {
+    final text = value?.toString().trim();
+    if (text == null || text.isEmpty) return null;
+    try {
+      return DateFormat('dd.MM.yyyy').parseStrict(text);
+    } on FormatException {
+      return DateTime.tryParse(text);
+    }
   }
 }
 

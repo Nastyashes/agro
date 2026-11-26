@@ -330,5 +330,10 @@
   "nothingFound": "Nothing found",
   "nothingFoundHint": "Try another crop, region or bid number.",
   "noBidsYet": "No bids yet",
-  "noBidsYetHint": "New bids will appear here. Pull down to refresh."
+  "noBidsYetHint": "New bids will appear here. Pull down to refresh.",
+  "cameraDenied": "No camera access",
+  "cameraDeniedHint": "Allow camera access in Settings to scan the QR code.",
+  "cameraUnavailable": "Camera unavailable",
+  "openSettings": "Open Settings",
+  "nomber": "Number"
 }

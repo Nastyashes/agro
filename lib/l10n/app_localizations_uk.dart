@@ -957,4 +957,17 @@ class AppLocalizationsUk extends AppLocalizations {
   @override
   String get noBidsYetHint =>
       'Нові заявки з\'являться тут. Потягніть вниз, щоб оновити.';
+
+  @override
+  String get cameraDenied => 'Немає доступу до камери';
+
+  @override
+  String get cameraDeniedHint =>
+      'Дозвольте доступ до камери в налаштуваннях, щоб сканувати QR-код.';
+
+  @override
+  String get cameraUnavailable => 'Камера недоступна';
+
+  @override
+  String get openSettings => 'Відкрити налаштування';
 }

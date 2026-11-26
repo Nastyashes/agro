@@ -1901,6 +1901,30 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Нові заявки з\'являться тут. Потягніть вниз, щоб оновити.'**
   String get noBidsYetHint;
+
+  /// No description provided for @cameraDenied.
+  ///
+  /// In uk, this message translates to:
+  /// **'Немає доступу до камери'**
+  String get cameraDenied;
+
+  /// No description provided for @cameraDeniedHint.
+  ///
+  /// In uk, this message translates to:
+  /// **'Дозвольте доступ до камери в налаштуваннях, щоб сканувати QR-код.'**
+  String get cameraDeniedHint;
+
+  /// No description provided for @cameraUnavailable.
+  ///
+  /// In uk, this message translates to:
+  /// **'Камера недоступна'**
+  String get cameraUnavailable;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In uk, this message translates to:
+  /// **'Відкрити налаштування'**
+  String get openSettings;
 }
 
 class _AppLocalizationsDelegate

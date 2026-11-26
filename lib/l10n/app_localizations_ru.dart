@@ -510,7 +510,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get amountTypeHectare => 'га';
 
   @override
-  String get call => 'Подзвонити';
+  String get call => 'Позвонить';
 
   @override
   String get closeBanner => 'Закрыть рекламу?';
@@ -956,4 +956,17 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get noBidsYetHint =>
       'Новые заявки появятся здесь. Потяните вниз, чтобы обновить.';
+
+  @override
+  String get cameraDenied => 'Нет доступа к камере';
+
+  @override
+  String get cameraDeniedHint =>
+      'Разрешите доступ к камере в настройках, чтобы сканировать QR-код.';
+
+  @override
+  String get cameraUnavailable => 'Камера недоступна';
+
+  @override
+  String get openSettings => 'Открыть настройки';
 }

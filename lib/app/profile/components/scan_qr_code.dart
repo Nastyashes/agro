@@ -1,8 +1,11 @@
 import 'package:agro/data/repositories/auth_repository.dart';
 import 'package:agro/server/api/api_client.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
-import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/ui/components/app_button.dart';
+import 'package:agro/ui/components/app_top_bar.dart';
+import 'package:agro/ui/components/empty_state.dart';
+import 'package:agro/ui/theme/palette.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
@@ -18,6 +21,17 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
   /// The scanner reports the same code several times; handle it once.
   bool _handled = false;
 
+  /// Owned here so the camera is started once and stopped on dispose; the
+  /// widget's own controller restarted after the permission prompt and
+  /// showed "already running" (BUG-038).
+  final MobileScannerController _scanner = MobileScannerController();
+
+  @override
+  void dispose() {
+    _scanner.dispose();
+    super.dispose();
+  }
+
   /// Closes the scanner (back to home) and shows [message] there.
   void _closeWith(String message) {
     if (!mounted) return;
@@ -28,19 +42,10 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          context.l.scanQrCode,
-          style: AppFonts.title2.white,
-        ),
-        leading: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: IconButton(
-            icon: const Icon(Icons.arrow_back_ios),
-            color: AppColors.white,
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
+      backgroundColor: Palette.bg0,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60),
+        child: SafeArea(child: AppTopBar(title: context.l.scanQrCode)),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -52,7 +57,9 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
             fit: StackFit.expand,
             children: [
               MobileScanner(
+                controller: _scanner,
                 scanWindow: scanRect,
+                errorBuilder: (context, error) => _ScannerError(error),
                 onDetect: (BarcodeCapture capture) async {
                   if (_handled) return;
                   _handled = true;
@@ -134,12 +141,12 @@ class _QrScannerOverlayPainter extends CustomPainter {
 
     canvas.drawPath(
       overlay,
-      Paint()..color = AppColors.black.withValues(alpha: 0.55),
+      Paint()..color = Palette.scrim,
     );
 
     const cornerLength = 28.0;
     final cornerPaint = Paint()
-      ..color = AppColors.white
+      ..color = Palette.green
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4
       ..strokeCap = StrokeCap.round
@@ -180,5 +187,41 @@ class _QrScannerOverlayPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant _QrScannerOverlayPainter oldDelegate) {
     return oldDelegate.scanRect != scanRect;
+  }
+}
+
+/// Localized camera error with a way to Settings when access was denied
+/// (BUG-034).
+class _ScannerError extends StatelessWidget {
+  const _ScannerError(this.error);
+
+  final MobileScannerException error;
+
+  @override
+  Widget build(BuildContext context) {
+    final denied = error.errorCode == MobileScannerErrorCode.permissionDenied;
+    return ColoredBox(
+      color: Palette.bg0,
+      child: Center(
+        child: SingleChildScrollView(
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            EmptyState(
+              icon: Icons.no_photography_outlined,
+              title:
+                  denied ? context.l.cameraDenied : context.l.cameraUnavailable,
+              text: denied ? context.l.cameraDeniedHint : null,
+            ),
+            if (denied)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: AppButton(
+                  label: context.l.openSettings,
+                  onPressed: openAppSettings,
+                ),
+              ),
+          ]),
+        ),
+      ),
+    );
   }
 }
