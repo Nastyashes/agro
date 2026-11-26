@@ -6,6 +6,9 @@ import 'package:agro/model/my_price/my_price_result.dart';
 import 'package:agro/server/api/api.dart';
 import 'package:agro/server/api/api_client.dart';
 
+/// Client-side code for a request that never reached the server.
+const myPriceNetworkError = 'network_error';
+
 class MyPriceApi extends Api {
   Future<MyPriceResult<T>> _post<T>(
     String method, {
@@ -29,10 +32,13 @@ class MyPriceApi extends Api {
         error: e,
         stackTrace: stackTrace,
       );
+      // Never show the raw exception to the user (BUG-006); a lost
+      // connection gets its own code and a localized text.
+      final offline = e is ApiException &&
+          (e.kind == ApiErrorKind.network || e.kind == ApiErrorKind.timeout);
       return MyPriceResult<T>(
         ok: false,
-        errorCode: 'database_error',
-        message: e.toString(),
+        errorCode: offline ? myPriceNetworkError : 'database_error',
       );
     }
   }

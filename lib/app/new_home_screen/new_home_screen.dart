@@ -39,6 +39,9 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
   late final NewHomeController controller;
   late final Worker _failureWorker;
 
+  /// Back from the payment page or another app: the balance may differ.
+  late final AppLifecycleListener _lifecycle;
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +55,9 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
     }
 
     controller.initPage();
+    _lifecycle = AppLifecycleListener(
+      onResume: () => controller.mainController.refreshUserData(),
+    );
     _failureWorker = ever(controller.failures, (_) {
       if (!mounted) return;
       // The empty no-connection state already offers a retry.
@@ -69,6 +75,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
 
   @override
   void dispose() {
+    _lifecycle.dispose();
     _failureWorker.dispose();
     super.dispose();
   }
@@ -321,8 +328,23 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
     required bool isFresh,
   }) {
     if (bids.isEmpty) {
-      return const [
-        SizedBox(height: 40),
+      if (isFresh || !controller.bidsLoaded.value) {
+        return const [SizedBox(height: 40)];
+      }
+      final searching = controller.searchController.text.trim().isNotEmpty;
+      return [
+        const SizedBox(height: 40),
+        searching
+            ? EmptyState(
+                icon: Icons.search_off_rounded,
+                title: context.l.nothingFound,
+                text: context.l.nothingFoundHint,
+              )
+            : EmptyState(
+                icon: Icons.inbox_rounded,
+                title: context.l.noBidsYet,
+                text: context.l.noBidsYetHint,
+              ),
       ];
     }
 

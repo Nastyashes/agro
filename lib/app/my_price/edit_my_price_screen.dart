@@ -8,6 +8,7 @@ import 'package:agro/ui/components/form_tile.dart';
 import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class EditMyPriceScreen extends StatefulWidget {
@@ -89,15 +90,20 @@ class _EditMyPriceScreenState extends State<EditMyPriceScreen> {
                     onTap: null,
                   ),
                   const SizedBox(height: 10),
-                  InputTile(
-                    icon: Icons.sell_outlined,
-                    label: l.pricePerTonLabel,
-                    controller: controller.priceController,
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
-                    suffix: '${l.uahShort} / ${l.tonShort}',
-                    big: true,
-                  ),
+                  Obx(() => InputTile(
+                        error: controller.priceError.value,
+                        icon: Icons.sell_outlined,
+                        label: l.pricePerTonLabel,
+                        controller: controller.priceController,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        suffix: '${l.uahShort} / ${l.tonShort}',
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+                          LengthLimitingTextInputFormatter(12),
+                        ],
+                        big: true,
+                      )),
                   const SizedBox(height: 10),
                   Obx(() => SelectTile(
                         icon: Icons.person_outline_rounded,

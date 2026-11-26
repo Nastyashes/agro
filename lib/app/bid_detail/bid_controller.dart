@@ -140,6 +140,8 @@ class BidItemController extends BaseController {
           );
           _onBidUpdated(bidItem);
           contactOpened.value = true;
+          // The contact may have been charged: show the new balance.
+          _main?.refreshUserData();
         case OpenContactStatus.insufficient:
           ui.notify(BidNotice.insufficientBalance, serverText: result.message);
         case OpenContactStatus.failed:
@@ -178,7 +180,12 @@ class BidItemController extends BaseController {
       if (!await ui.confirmAnalysis()) return;
       final result = await _bids.orderAnalysis(bidItem.orderId!);
       // Paid: mark it ordered first so the button cannot charge twice.
-      if (result.status == AnalysisStatus.ordered) analysisOrdered.value = true;
+      if (result.status == AnalysisStatus.ordered) {
+        analysisOrdered.value = true;
+        if (result.balanceAfter != null) {
+          _main?.updateBalance(result.balanceAfter);
+        }
+      }
       ui.showAnalysisResult(result);
     } catch (e) {
       log('onOrderAnalysis error: $e');

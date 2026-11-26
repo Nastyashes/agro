@@ -1,9 +1,7 @@
-import 'package:agro/data/session_storage.dart';
 import 'package:agro/ui/pop_up/confirm_pop_up.dart';
-import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/controllers/app_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
-import 'package:agro/repository/local_storage_repository.dart';
+import 'package:agro/controllers/session_end.dart';
 import 'package:agro/routes/app_pages.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/vars/app_constants.dart';
@@ -34,15 +32,11 @@ class AccountSessionActions {
       icon: Icons.delete_outline_rounded,
       destructive: true,
       () async {
-        await SessionStorage.instance.clear();
-
-        if (!context.mounted) return;
-
         inAppNotification(
           text: context.l.profileCancelActionLog,
           c: context,
         );
-        _resetSessionAndRestart();
+        await _restart();
       },
     );
   }
@@ -55,31 +49,18 @@ class AccountSessionActions {
       confirmLabel: context.l.logOut,
       icon: Icons.logout_rounded,
       destructive: true,
-      () async {
-        await SessionStorage.instance.clear();
-        await LocalStorageRepository().clear();
-
-        if (!context.mounted) return;
-
-        _resetSessionAndRestart();
-      },
+      () => _restart(),
     );
   }
 
-  static void _resetSessionAndRestart() {
-    if (Get.isRegistered<NewHomeController>()) {
-      Get.delete<NewHomeController>(force: true);
-    }
-    if (Get.isRegistered<MainController>()) {
-      Get.find<MainController>().invalidateUserData();
-      Get.find<MainController>().updateUserfield(null);
-    }
+  /// Logout and profile deletion forget the country too and start over.
+  static Future<void> _restart() {
     if (!Get.isRegistered<AppController>()) {
       Get.put<AppController>(AppController(), permanent: true);
     }
     if (!Get.isRegistered<MainController>()) {
       Get.put<MainController>(MainController(), permanent: true);
     }
-    Get.offAllNamed(Routes.splash);
+    return endSession(keepCountry: false, route: Routes.splash);
   }
 }

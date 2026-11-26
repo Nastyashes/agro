@@ -80,8 +80,10 @@ class CreateMyPriceController extends BaseController {
     }
   }
 
-  double? get _price =>
-      double.tryParse(priceController.text.replaceAll(',', '.'));
+  double? get _price => parsePricePerTon(priceController.text);
+
+  /// Parameters [requestId] was made for (BUG-007).
+  String? _requestIdentity;
 
   MyPriceActivateParams? buildParams() {
     final price = _price;
@@ -140,15 +142,21 @@ class CreateMyPriceController extends BaseController {
     final quote = quoteData.data!;
     if (!await ui.confirmActivation(quote)) return;
 
-    requestId ??= generateMyPriceRequestId();
     final activateParams = params;
     if (activateParams == null) return;
+    // Reuse the id only to repeat the very same request (e.g. after a lost
+    // connection); changed values are a new request.
+    if (requestId == null || _requestIdentity != activateParams.identity) {
+      requestId = generateMyPriceRequestId();
+      _requestIdentity = activateParams.identity;
+    }
     final amount = quote.pricing.chargedAmount ?? 0;
 
     MyPriceResult<MyPriceActivateResult>? activateResult;
     await _loading(() async {
       activateResult = await _activate(activateParams, quote.action, amount);
-      if (activateResult?.errorCode == 'database_error') {
+      final code = activateResult?.errorCode;
+      if (code == 'database_error' || code == myPriceNetworkError) {
         activateResult = await _activate(activateParams, quote.action, amount);
       }
     });

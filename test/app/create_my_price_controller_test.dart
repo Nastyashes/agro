@@ -212,4 +212,49 @@ void main() {
     expect(ui.errors.single.errorCode, 'insufficient_funds');
     expect(closed, isEmpty);
   });
+
+  test('changed values after a failure get a new request id (BUG-007)',
+      () async {
+    fillForm();
+    api.quotes
+      ..add(okQuote())
+      ..add(okQuote());
+    api.activations
+      ..add(fail('insufficient_funds'))
+      ..add(const MyPriceResult(ok: true));
+
+    await c.onSubmit();
+    c.priceController.text = '3900';
+    await c.onSubmit();
+
+    expect(api.activated, hasLength(2));
+    expect(api.activated[0].requestId, isNot(api.activated[1].requestId));
+  });
+
+  test('same values after a failure keep the request id', () async {
+    fillForm();
+    api.quotes
+      ..add(okQuote())
+      ..add(okQuote());
+    api.activations
+      ..add(fail('insufficient_funds'))
+      ..add(const MyPriceResult(ok: true));
+
+    await c.onSubmit();
+    await c.onSubmit();
+
+    expect(api.activated[0].requestId, api.activated[1].requestId);
+  });
+
+  for (final bad in ['', '0', '-5', 'NaN', 'Infinity', '1e9', 'abc', '1.234']) {
+    test('price "$bad" is flagged and nothing is sent (BUG-009)', () async {
+      fillForm();
+      c.priceController.text = bad;
+
+      await c.onSubmit();
+
+      expect(c.fieldErrors.containsKey('price_per_ton'), isTrue);
+      expect(api.activated, isEmpty);
+    });
+  }
 }

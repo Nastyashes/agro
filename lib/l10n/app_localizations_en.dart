@@ -406,7 +406,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get allApplications => 'All Orders';
 
   @override
-  String get nomber => 'Номер';
+  String get nomber => 'Number';
 
   @override
   String get requestingAddress => 'by requesting the farmer\'s address';
@@ -941,4 +941,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bidsUpdateFailed => 'Couldn\'t update the bids';
+
+  @override
+  String get loadFailedTitle => 'Couldn\'t load';
+
+  @override
+  String get nothingFound => 'Nothing found';
+
+  @override
+  String get nothingFoundHint => 'Try another crop, region or bid number.';
+
+  @override
+  String get noBidsYet => 'No bids yet';
+
+  @override
+  String get noBidsYetHint =>
+      'New bids will appear here. Pull down to refresh.';
+
+  @override
+  String get cameraDenied => 'No camera access';
+
+  @override
+  String get cameraDeniedHint =>
+      'Allow camera access in Settings to scan the QR code.';
+
+  @override
+  String get cameraUnavailable => 'Camera unavailable';
+
+  @override
+  String get openSettings => 'Open Settings';
 }

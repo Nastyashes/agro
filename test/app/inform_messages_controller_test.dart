@@ -85,6 +85,16 @@ void main() {
 
     expect(controller.messages.map((m) => m.id), [1]);
     expect(controller.failures.value, 1);
+    // There is a list to show, so no error state.
+    expect(controller.loadFailed.value, isFalse);
+  });
+
+  test('a failed first load is an error, not "no messages"', () async {
+    repo.fetchError = const ApiException(ApiErrorKind.network);
+
+    await controller.loadMessages();
+
+    expect(controller.loadFailed.value, isTrue);
   });
 
   test('a second load while one is running is ignored', () async {

@@ -1,3 +1,4 @@
+import 'package:agro/server/api/controller/my_price.dart';
 import 'package:agro/app/new_home_screen/home_actions.dart';
 import 'package:agro/ui/pop_up/top_up_balance_popup.dart';
 import 'package:agro/controllers/main_controler.dart';
@@ -133,6 +134,11 @@ MyPriceErrorOutcome resolveMyPriceError(
       return MyPriceErrorOutcome(
         action: MyPriceErrorAction.retrySameRequest,
         text: message,
+      );
+    case myPriceNetworkError:
+      return MyPriceErrorOutcome(
+        action: MyPriceErrorAction.retrySameRequest,
+        text: l.connectionErrorRetry,
       );
     default:
       return MyPriceErrorOutcome(

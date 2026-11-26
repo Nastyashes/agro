@@ -17,6 +17,9 @@ class MyPriceDealsController extends BaseController {
   final RxList<MyPriceDealItem> items = <MyPriceDealItem>[].obs;
   final RxBool initialLoading = true.obs;
   final RxBool loadingMore = false.obs;
+
+  /// The first page failed: show an error with a retry, not "no deals".
+  final RxBool loadFailed = false.obs;
   bool hasMore = true;
   int _offset = 0;
 
@@ -43,7 +46,10 @@ class MyPriceDealsController extends BaseController {
       items.addAll(page);
       _offset += page.length;
       hasMore = page.length >= limit;
+      loadFailed.value = false;
     } else {
+      if (items.isEmpty) loadFailed.value = true;
+      initialLoading.value = false;
       await ui.showError(result);
     }
     initialLoading.value = false;

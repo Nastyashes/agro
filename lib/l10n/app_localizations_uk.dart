@@ -940,4 +940,34 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get bidsUpdateFailed => 'Не вдалося оновити заявки';
+
+  @override
+  String get loadFailedTitle => 'Не вдалося завантажити';
+
+  @override
+  String get nothingFound => 'Нічого не знайдено';
+
+  @override
+  String get nothingFoundHint =>
+      'Спробуйте іншу назву культури, область чи номер заявки.';
+
+  @override
+  String get noBidsYet => 'Заявок поки немає';
+
+  @override
+  String get noBidsYetHint =>
+      'Нові заявки з\'являться тут. Потягніть вниз, щоб оновити.';
+
+  @override
+  String get cameraDenied => 'Немає доступу до камери';
+
+  @override
+  String get cameraDeniedHint =>
+      'Дозвольте доступ до камери в налаштуваннях, щоб сканувати QR-код.';
+
+  @override
+  String get cameraUnavailable => 'Камера недоступна';
+
+  @override
+  String get openSettings => 'Відкрити налаштування';
 }

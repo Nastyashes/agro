@@ -56,11 +56,20 @@ class _MyPriceDealsScreenState extends State<MyPriceDealsScreen> {
                           physics: const AlwaysScrollableScrollPhysics(),
                           padding: const EdgeInsets.only(top: 80),
                           children: [
-                            EmptyState(
-                              title: l.emptyDeals,
-                              text: l.emptyDealsText,
-                              icon: Icons.handshake_outlined,
-                            ),
+                            controller.loadFailed.value
+                                ? EmptyState(
+                                    icon: Icons.cloud_off_rounded,
+                                    title: l.loadFailedTitle,
+                                    text: l.checkInternet,
+                                    actionLabel: l.retry,
+                                    onAction: () =>
+                                        controller.loadDeals(reset: true),
+                                  )
+                                : EmptyState(
+                                    title: l.emptyDeals,
+                                    text: l.emptyDealsText,
+                                    icon: Icons.handshake_outlined,
+                                  ),
                           ],
                         )
                       : NotificationListener<ScrollNotification>(

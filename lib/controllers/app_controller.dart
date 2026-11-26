@@ -10,7 +10,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-
 @pragma('vm:entry-point')
 Future<void> backgroundNotificationHandler(RemoteMessage message) async {
   log("Push in background: ${message.data.toString()}");
@@ -61,6 +60,10 @@ class AppController extends GetxController {
     FirebaseMessaging.onBackgroundMessage(backgroundNotificationHandler);
 
     await _initializeLocalNotifications();
+
+    // Cold start from a tapped push: open its bid once (BUG-013).
+    final initial = await _firebaseMessaging.getInitialMessage();
+    if (initial != null) await openBidFromPushData(initial.data);
   }
 
   _handleTapOnPushNotification(RemoteMessage? remoteMessage) async {
@@ -136,62 +139,61 @@ class AppController extends GetxController {
     log("Did Receive Local Notification");
   }
 
-  Future _setupFCMToken() async {
-    await registerFCMToken();
+  Future<void> _setupFCMToken() async {
+    await _registerSafely();
     _firebaseMessaging.onTokenRefresh.listen((token) {
-      // Note: This callback is fired at each app startup and whenever a new
-      // token is generated.
+      // Fired at each app start and whenever a new token is generated
+      // (on iOS also once the APNS token arrives).
       log("FCM token refreshed");
-      registerFCMToken();
+      _registerSafely();
     }).onError((err) {
       log(err.toString());
     });
   }
 
-  /// Pass specific token or null to try getting it from Firebase
+  /// Push setup must never crash the app: offline start, no APNS yet
+  /// (BUG-027, BUG-037) are logged and retried on the next token refresh.
+  Future<void> _registerSafely() async {
+    try {
+      await registerFCMToken();
+    } catch (e) {
+      log('registerFCMToken failed: $e');
+    }
+  }
+
+  /// Asks for the notification permission first (so iOS shows the system
+  /// prompt even before the APNS token exists), then sends the FCM token.
   Future registerFCMToken() async {
     if (kIsWeb) {
       return;
     }
 
-    final token = await _firebaseMessaging.getToken();
-    if (token == null) {
-      throw Exception("Couldn't get FCM token");
+    await askForPermissionIfNeeded();
+
+    if (Platform.isIOS && await _firebaseMessaging.getAPNSToken() == null) {
+      log('APNS token not set yet; will register on token refresh');
+      return;
     }
 
-    await AccountRepository().registerDeviceToken(token);
+    final token = await _firebaseMessaging.getToken();
+    if (token == null) return;
 
+    await AccountRepository().registerDeviceToken(token);
     log("FCM token registered");
-    askForPermissionIfNeeded();
   }
 
   Future askForPermissionIfNeeded() async {
     if (await needToRequestPermission()) {
-      askForPermission();
+      await askForPermission();
     }
   }
 
+  /// Shows the system prompt only while it can still be shown. A user who
+  /// said no is not sent to Settings on every launch.
   Future askForPermission() async {
     final status = await Permission.notification.status;
-
-    switch (status) {
-      case PermissionStatus.denied:
-        await Permission.notification.request();
-        break;
-      case PermissionStatus.granted:
-        return;
-      case PermissionStatus.restricted:
-        openAppSettings();
-        break;
-      case PermissionStatus.limited:
-        openAppSettings();
-        break;
-      case PermissionStatus.permanentlyDenied:
-        openAppSettings();
-        break;
-      case PermissionStatus.provisional:
-        openAppSettings();
-        break;
+    if (status == PermissionStatus.denied) {
+      await Permission.notification.request();
     }
   }
 
@@ -202,12 +204,18 @@ class AppController extends GetxController {
   }
 
   Future<void> openBidFromPushData(dynamic data) async {
-    if (data is! Map) return;
-    final messageType = data['message_type']?.toString();
-    final legacyType = data['messagetype']?.toString();
-    if (messageType != 'MATCH' && legacyType != 'TENDER') return;
-    final orderId = int.tryParse('${data['tender_id'] ?? ''}');
+    final orderId = bidIdFromPush(data);
     if (orderId == null) return;
     await Get.toNamed(Routes.bidItemScreen, arguments: {'orderId': orderId});
   }
+}
+
+/// The bid a push opens: a Match (`uagro_message_type`, previously
+/// `message_type`) or a legacy TENDER push with a `tender_id` (BUG-022).
+int? bidIdFromPush(dynamic data) {
+  if (data is! Map) return null;
+  final type = (data['uagro_message_type'] ?? data['message_type'])?.toString();
+  final legacy = data['messagetype']?.toString();
+  if (type != 'MATCH' && legacy != 'TENDER') return null;
+  return int.tryParse('${data['tender_id'] ?? ''}');
 }

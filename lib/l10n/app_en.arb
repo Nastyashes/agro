@@ -325,5 +325,15 @@
   "noConnection": "No connection",
   "checkInternet": "Check your internet and try again.",
   "retry": "Retry",
-  "bidsUpdateFailed": "Couldn't update the bids"
+  "bidsUpdateFailed": "Couldn't update the bids",
+  "loadFailedTitle": "Couldn't load",
+  "nothingFound": "Nothing found",
+  "nothingFoundHint": "Try another crop, region or bid number.",
+  "noBidsYet": "No bids yet",
+  "noBidsYetHint": "New bids will appear here. Pull down to refresh.",
+  "cameraDenied": "No camera access",
+  "cameraDeniedHint": "Allow camera access in Settings to scan the QR code.",
+  "cameraUnavailable": "Camera unavailable",
+  "openSettings": "Open Settings",
+  "nomber": "Number"
 }

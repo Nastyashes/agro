@@ -1,14 +1,1 @@
-{
-  "en": [
-    "nomber"
-  ],
-
-  "kk": [
-    "nomber",
-    "edit"
-  ],
-
-  "ru": [
-    "call"
-  ]
-}
+{}

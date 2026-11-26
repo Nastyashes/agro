@@ -86,4 +86,18 @@ void main() {
     expect(storage.user, isNull);
     expect(storage.token, '');
   });
+
+  test('signOut keeps country and language (BUG-001)', () async {
+    await storage.saveUser(ModelUser(token: 't'));
+    await storage.saveCountry('kazakh');
+    await storage.saveLanguage('kk');
+
+    await storage.signOut();
+
+    expect(storage.user, isNull);
+    expect(storage.token, '');
+    expect(storage.country, 'kazakh');
+    expect(storage.language, 'kk');
+    expect(storage.hasSession, isFalse);
+  });
 }

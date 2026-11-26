@@ -407,7 +407,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get allApplications => 'Барлық қосымшалар';
 
   @override
-  String get nomber => 'Номер';
+  String get nomber => 'Нөмір';
 
   @override
   String get requestingAddress => 'фермердің мекен-жайын сұрату арқылы';
@@ -685,7 +685,7 @@ class AppLocalizationsKk extends AppLocalizations {
   String get editCombination => 'Комбинацияны өзгерту';
 
   @override
-  String get edit => 'Редагувати';
+  String get edit => 'Өңдеу';
 
   @override
   String get willTakeEffect => 'Күшіне енеді';
@@ -942,4 +942,34 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get bidsUpdateFailed => 'Өтінімдерді жаңарту мүмкін болмады';
+
+  @override
+  String get loadFailedTitle => 'Жүктеу мүмкін болмады';
+
+  @override
+  String get nothingFound => 'Ештеңе табылмады';
+
+  @override
+  String get nothingFoundHint =>
+      'Басқа дақылды, өңірді немесе өтінім нөмірін көріңіз.';
+
+  @override
+  String get noBidsYet => 'Әзірге өтінімдер жоқ';
+
+  @override
+  String get noBidsYetHint =>
+      'Жаңа өтінімдер осында шығады. Жаңарту үшін төмен тартыңыз.';
+
+  @override
+  String get cameraDenied => 'Камераға рұқсат жоқ';
+
+  @override
+  String get cameraDeniedHint =>
+      'QR-кодты сканерлеу үшін баптауларда камераға рұқсат беріңіз.';
+
+  @override
+  String get cameraUnavailable => 'Камера қолжетімсіз';
+
+  @override
+  String get openSettings => 'Баптауларды ашу';
 }

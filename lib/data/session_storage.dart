@@ -43,4 +43,8 @@ class SessionStorage {
 
   /// Signs out and forgets country and language.
   Future<void> clear() => _box.clear();
+
+  /// Ends the session but keeps the country and language, so the next
+  /// sign-in goes to the right backend (kz/ua) in the same language.
+  Future<void> signOut() => _box.delete(_userKey);
 }

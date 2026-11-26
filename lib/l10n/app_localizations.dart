@@ -1871,6 +1871,60 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Не вдалося оновити заявки'**
   String get bidsUpdateFailed;
+
+  /// No description provided for @loadFailedTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Не вдалося завантажити'**
+  String get loadFailedTitle;
+
+  /// No description provided for @nothingFound.
+  ///
+  /// In uk, this message translates to:
+  /// **'Нічого не знайдено'**
+  String get nothingFound;
+
+  /// No description provided for @nothingFoundHint.
+  ///
+  /// In uk, this message translates to:
+  /// **'Спробуйте іншу назву культури, область чи номер заявки.'**
+  String get nothingFoundHint;
+
+  /// No description provided for @noBidsYet.
+  ///
+  /// In uk, this message translates to:
+  /// **'Заявок поки немає'**
+  String get noBidsYet;
+
+  /// No description provided for @noBidsYetHint.
+  ///
+  /// In uk, this message translates to:
+  /// **'Нові заявки з\'являться тут. Потягніть вниз, щоб оновити.'**
+  String get noBidsYetHint;
+
+  /// No description provided for @cameraDenied.
+  ///
+  /// In uk, this message translates to:
+  /// **'Немає доступу до камери'**
+  String get cameraDenied;
+
+  /// No description provided for @cameraDeniedHint.
+  ///
+  /// In uk, this message translates to:
+  /// **'Дозвольте доступ до камери в налаштуваннях, щоб сканувати QR-код.'**
+  String get cameraDeniedHint;
+
+  /// No description provided for @cameraUnavailable.
+  ///
+  /// In uk, this message translates to:
+  /// **'Камера недоступна'**
+  String get cameraUnavailable;
+
+  /// No description provided for @openSettings.
+  ///
+  /// In uk, this message translates to:
+  /// **'Відкрити налаштування'**
+  String get openSettings;
 }
 
 class _AppLocalizationsDelegate

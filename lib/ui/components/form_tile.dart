@@ -1,6 +1,7 @@
 import 'package:agro/ui/theme/app_text.dart';
 import 'package:agro/ui/theme/palette.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 BoxDecoration _box({required bool error, bool focus = false}) => BoxDecoration(
       color: Palette.bg1,
@@ -92,8 +93,10 @@ class InputTile extends StatefulWidget {
     this.big = false,
     this.error = false,
     this.autofocus = false,
+    this.inputFormatters,
   });
 
+  final List<TextInputFormatter>? inputFormatters;
   final IconData icon;
   final String label;
   final TextEditingController controller;
@@ -149,6 +152,7 @@ class _InputTileState extends State<InputTile> {
                   focusNode: _focus,
                   autofocus: widget.autofocus,
                   keyboardType: widget.keyboardType,
+                  inputFormatters: widget.inputFormatters,
                   style: widget.big ? AppText.numL : AppText.bodyMedium,
                   decoration: InputDecoration(
                     isDense: true,

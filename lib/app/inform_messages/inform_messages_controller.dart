@@ -26,6 +26,9 @@ class InformMessagesController extends BaseController {
   /// Incremented on every failed load/read; the screen shows an error.
   final RxInt failures = 0.obs;
 
+  /// Messages could not be loaded: not the same as "no messages".
+  final RxBool loadFailed = false.obs;
+
   bool _isLoadingMessages = false;
 
   int get unreadCount => messages.where((m) => !m.isRead).length;
@@ -49,10 +52,12 @@ class InformMessagesController extends BaseController {
 
     try {
       messages.assignAll(await _repository.fetchAll());
+      loadFailed.value = false;
       _onUnreadChanged(unreadCount);
     } catch (e, stackTrace) {
       log('InformMessagesController loadMessages error: $e',
           error: e, stackTrace: stackTrace, name: 'InformMessages');
+      if (messages.isEmpty) loadFailed.value = true;
       failures.value++;
     } finally {
       _isLoadingMessages = false;

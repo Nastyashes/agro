@@ -94,6 +94,21 @@ class _MyPriceScreenState extends State<MyPriceScreen> {
     final items = isReservations
         ? controller.overview.value.reservations
         : controller.overview.value.combinations;
+    if (items.isEmpty && controller.loadFailed.value) {
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.only(top: 80),
+        children: [
+          EmptyState(
+            icon: Icons.cloud_off_rounded,
+            title: l.loadFailedTitle,
+            text: l.checkInternet,
+            actionLabel: l.retry,
+            onAction: controller.loadOverview,
+          ),
+        ],
+      );
+    }
     if (items.isEmpty) {
       // Scrollable, so pull-to-refresh still works on an empty tab.
       return ListView(

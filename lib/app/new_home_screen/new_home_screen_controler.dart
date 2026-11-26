@@ -75,6 +75,11 @@ class NewHomeController extends BaseController {
   int? _freshTotal;
 
   bool _loadingFresh = false;
+  int _freshRequestId = 0;
+
+  /// The "All" list has loaded at least once, so an empty list means
+  /// "nothing found", not "still loading" (BUG-031).
+  final RxBool bidsLoaded = false.obs;
 
   bool get hasMoreFresh =>
       _freshTotal == null || bidsFresh.length < _freshTotal!;
@@ -219,6 +224,7 @@ class NewHomeController extends BaseController {
 
       _bidsTotal = page.total;
       offline.value = false;
+      bidsLoaded.value = true;
 
       _updateUserfield(page.userfield);
     } catch (e, stackTrace) {
@@ -249,25 +255,26 @@ class NewHomeController extends BaseController {
   }) async {
     if (!isFree) return;
 
-    if (_loadingFresh) return;
+    // Pagination waits; a refresh supersedes it like in "All" (BUG-016).
+    if (_loadingFresh && !reset) return;
 
     if (!reset && !hasMoreFresh) {
       freshRefreshController.loadNoData();
       return;
     }
 
+    final requestId = ++_freshRequestId;
     _loadingFresh = true;
 
     try {
-      if (reset) {
-        _freshOffset = 0;
-        _freshTotal = null;
-      }
+      final offset = reset ? 0 : _freshOffset;
 
       final page = await _bidsRepository.fresh(
         limit: AppConstants.bidsPageLimit,
-        offset: _freshOffset,
+        offset: offset,
       );
+
+      if (requestId != _freshRequestId) return;
 
       final newItems = page.items;
 
@@ -279,12 +286,13 @@ class NewHomeController extends BaseController {
         bidsFresh.addAll(newItems);
       }
 
-      _freshOffset += newItems.length;
+      _freshOffset = offset + newItems.length;
 
       _freshTotal = page.total;
 
       _updateUserfield(page.userfield);
     } catch (e, stackTrace) {
+      if (requestId != _freshRequestId) return;
       log(
         'NewHomeController loadFreshBids error: $e',
         error: e,
@@ -293,7 +301,7 @@ class NewHomeController extends BaseController {
 
       rethrow;
     } finally {
-      _loadingFresh = false;
+      if (requestId == _freshRequestId) _loadingFresh = false;
     }
   }
 
@@ -361,6 +369,8 @@ class NewHomeController extends BaseController {
       await Future.wait([
         loadAllBids(reset: true),
         loadUnreadInformMessages(),
+        // Balance and tariff can change outside the app (BUG-003).
+        mainController.refreshUserData(),
       ]);
       allRefreshController.refreshCompleted();
     } catch (_) {
@@ -387,6 +397,7 @@ class NewHomeController extends BaseController {
       await Future.wait([
         loadFreshBids(reset: true),
         loadUnreadInformMessages(),
+        mainController.refreshUserData(),
       ]);
       freshRefreshController.refreshCompleted();
     } catch (_) {
