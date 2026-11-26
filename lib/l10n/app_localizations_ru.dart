@@ -883,4 +883,48 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get securePayment => 'Безопасная оплата картой';
+
+  @override
+  String get statusActive => 'Активна';
+
+  @override
+  String get statusDeleted => 'Удалена';
+
+  @override
+  String get newCombination => 'Новая комбинация';
+
+  @override
+  String get combinationIntro => 'Покажем заявки, подходящие под вашу цену';
+
+  @override
+  String get havePromo => 'У меня есть промокод';
+
+  @override
+  String remainingFields(String fields) {
+    return 'Осталось: $fields';
+  }
+
+  @override
+  String get saveCombination => 'Сохранить комбинацию';
+
+  @override
+  String get pricePerTonLabel => 'Цена за тонну';
+
+  @override
+  String get emptyCombinationsTitle => 'Комбинаций пока нет';
+
+  @override
+  String get emptyCombinationsText =>
+      'Укажите культуру, регион и цену — мы покажем подходящие заявки.';
+
+  @override
+  String get emptyDealsText =>
+      'Здесь будут заявки, контакты которых вы открыли через «Мою цену».';
+
+  @override
+  String get emptyMessagesText =>
+      'Новости и важные изменения от UAGRO появятся здесь.';
+
+  @override
+  String get markRead => 'Отметить прочитанным';
 }

@@ -304,5 +304,22 @@
   "topUpTitle": "Top up",
   "balanceNow": "Current balance",
   "payAmount": "Pay {amount}",
-  "securePayment": "Secure card payment"
+  "securePayment": "Secure card payment",
+  "statusActive": "Active",
+  "statusDeleted": "Deleted",
+  "newCombination": "New combination",
+  "combinationIntro": "We'll show bids that match your price",
+  "havePromo": "I have a promo code",
+  "remainingFields": "Still needed: {fields}",
+  "saveCombination": "Save combination",
+  "pricePerTonLabel": "Price per ton",
+  "emptyCombinationsTitle": "No combinations yet",
+  "emptyCombinationsText": "Set a crop, region and price and we'll show the bids that match.",
+  "emptyDealsText": "Bids whose contacts you opened through My price will appear here.",
+  "emptyMessagesText": "News and important updates from UAGRO will appear here.",
+  "markRead": "Mark as read",
+  "@tariffUntil": { "placeholders": { "date": { "type": "String" } } },
+  "@harvestOf": { "placeholders": { "year": { "type": "String" } } },
+  "@payAmount": { "placeholders": { "amount": { "type": "String" } } },
+  "@remainingFields": { "placeholders": { "fields": { "type": "String" } } }
 }

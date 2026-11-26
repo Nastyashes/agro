@@ -1,8 +1,11 @@
-import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/ui/components/app_button.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 
+/// Confirm a paid My price action. With [confirmEnabled] false the confirm
+/// button is disabled (e.g. not enough balance), so it can only be closed.
 Future<bool> showMyPriceConfirmDialog({
   required BuildContext context,
   required String title,
@@ -12,54 +15,53 @@ Future<bool> showMyPriceConfirmDialog({
 }) async {
   final result = await showDialog<bool>(
     context: context,
-    builder: (dialogContext) {
-      return Dialog(
-        backgroundColor: AppColors.grey1,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    builder: (dialogContext) => Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 360),
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(title,
-                  style: AppFonts.body1bold.black, textAlign: TextAlign.center),
-              const SizedBox(height: 16),
-              Text(body,
-                  style: AppFonts.body3medium.black,
-                  textAlign: TextAlign.center),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(dialogContext, false),
-                      child: Text(context.l.cancel),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.mainGreen,
-                        disabledBackgroundColor:
-                            AppColors.mainGreen.withValues(alpha: 0.3),
-                      ),
-                      onPressed: confirmEnabled
-                          ? () => Navigator.pop(dialogContext, true)
-                          : null,
-                      child: Text(
-                        confirmText ?? context.l.confirm,
-                        style: AppFonts.body2bold.white,
-                      ),
-                    ),
-                  ),
-                ],
+              Container(
+                width: 52,
+                height: 52,
+                decoration: const BoxDecoration(
+                    color: Palette.greenSoft, shape: BoxShape.circle),
+                child: const Icon(Icons.handshake_outlined,
+                    size: 26, color: Palette.green),
               ),
+              const SizedBox(height: 14),
+              Text(title, style: AppText.title, textAlign: TextAlign.center),
+              const SizedBox(height: 8),
+              Text(body,
+                  style: AppText.body.copyWith(color: Palette.textSecondary),
+                  textAlign: TextAlign.center),
+              const SizedBox(height: 22),
+              Row(children: [
+                Expanded(
+                  child: AppButton(
+                    label: context.l.cancel,
+                    style: AppButtonStyle.secondary,
+                    onPressed: () => Navigator.pop(dialogContext, false),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: AppButton(
+                    label: confirmText ?? context.l.confirm,
+                    onPressed: confirmEnabled
+                        ? () => Navigator.pop(dialogContext, true)
+                        : null,
+                  ),
+                ),
+              ]),
             ],
           ),
         ),
-      );
-    },
+      ),
+    ),
   );
   return result == true;
 }
@@ -75,12 +77,7 @@ Future<T?> showMyPricePicker<T>({
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    backgroundColor: AppColors.backgroundGradient1,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(24),
-      ),
-    ),
+    showDragHandle: true,
     builder: (sheetContext) {
       var query = '';
 
@@ -124,26 +121,14 @@ Future<T?> showMyPricePicker<T>({
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const SizedBox(height: 6),
-                  Container(
-                    height: 4,
-                    width: 50,
-                    decoration: BoxDecoration(
-                      color: AppColors.grey2,
-                      borderRadius: BorderRadius.circular(60),
-                    ),
-                  ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(
                       16,
+                      0,
                       16,
-                      16,
-                      16,
+                      12,
                     ),
-                    child: Text(
-                      title,
-                      style: AppFonts.body1bold.white,
-                    ),
+                    child: Text(title, style: AppText.headline),
                   ),
                   if (enableSearch)
                     Padding(
@@ -155,20 +140,11 @@ Future<T?> showMyPricePicker<T>({
                       ),
                       child: TextField(
                         autofocus: true,
+                        style: AppText.bodyMedium,
                         decoration: InputDecoration(
                           hintText: context.l.search,
-                          prefixIcon: const Icon(Icons.search),
-                          filled: true,
-                          focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(28),
-                              borderSide: BorderSide(
-                                  color: AppColors.mainGreen, width: 1.5)),
-                          fillColor: AppColors.backgroundGradient1,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(28),
-                            borderSide: BorderSide(
-                                color: AppColors.backgroundOrderCard),
-                          ),
+                          prefixIcon: const Icon(Icons.search_rounded,
+                              color: Palette.textSecondary),
                         ),
                         onChanged: (value) {
                           setState(() => query = value);
@@ -179,21 +155,16 @@ Future<T?> showMyPricePicker<T>({
                     child: ListView.separated(
                       shrinkWrap: true,
                       itemCount: filtered.length,
-                      separatorBuilder: (_, __) => Divider(
-                        height: 1,
-                        color: AppColors.mainGreen.withValues(alpha: 0.1),
-                      ),
+                      separatorBuilder: (_, __) => const Divider(height: 1),
                       itemBuilder: (_, index) {
                         final item = filtered[index];
 
                         return ListTile(
-                          leading: const Icon(
-                            Icons.circle_outlined,
-                          ),
-                          title: Text(
-                            label(item),
-                            style: AppFonts.body2medium.white,
-                          ),
+                          contentPadding:
+                              const EdgeInsets.symmetric(horizontal: 20),
+                          title: Text(label(item), style: AppText.bodyMedium),
+                          trailing: const Icon(Icons.chevron_right_rounded,
+                              color: Palette.textTertiary),
                           onTap: () {
                             Navigator.pop(
                               sheetContext,

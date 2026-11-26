@@ -13,6 +13,7 @@ class EmptyState extends StatelessWidget {
     this.text,
     this.actionLabel,
     this.onAction,
+    this.primaryAction = false,
   });
 
   final String title;
@@ -20,6 +21,9 @@ class EmptyState extends StatelessWidget {
   final String? text;
   final String? actionLabel;
   final VoidCallback? onAction;
+
+  /// Green main button instead of the quiet secondary one.
+  final bool primaryAction;
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +57,9 @@ class EmptyState extends StatelessWidget {
               child: AppButton(
                 label: actionLabel!,
                 onPressed: onAction,
-                style: AppButtonStyle.secondary,
+                style: primaryAction
+                    ? AppButtonStyle.primary
+                    : AppButtonStyle.secondary,
                 size: AppButtonSize.small,
               ),
             ),

@@ -167,10 +167,8 @@ Future<MyPriceErrorAction> showMyPriceError(
         (Get.isRegistered<MainController>()
             ? Get.find<MainController>()
             : null);
-    showTopUpDialog(context, main?.balance, (amount) {
-      print('myPrice topUp selected amount=$amount');
-      payBalance(amount, context);
-    });
+    showTopUpDialog(
+        context, main?.balance, (amount) => payBalance(amount, context));
   }
 
   return outcome.action;

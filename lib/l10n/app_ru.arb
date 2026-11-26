@@ -305,5 +305,22 @@
   "topUpTitle": "Пополнение",
   "balanceNow": "Баланс сейчас",
   "payAmount": "Оплатить {amount}",
-  "securePayment": "Безопасная оплата картой"
+  "securePayment": "Безопасная оплата картой",
+  "statusActive": "Активна",
+  "statusDeleted": "Удалена",
+  "newCombination": "Новая комбинация",
+  "combinationIntro": "Покажем заявки, подходящие под вашу цену",
+  "havePromo": "У меня есть промокод",
+  "remainingFields": "Осталось: {fields}",
+  "saveCombination": "Сохранить комбинацию",
+  "pricePerTonLabel": "Цена за тонну",
+  "emptyCombinationsTitle": "Комбинаций пока нет",
+  "emptyCombinationsText": "Укажите культуру, регион и цену — мы покажем подходящие заявки.",
+  "emptyDealsText": "Здесь будут заявки, контакты которых вы открыли через «Мою цену».",
+  "emptyMessagesText": "Новости и важные изменения от UAGRO появятся здесь.",
+  "markRead": "Отметить прочитанным",
+  "@tariffUntil": { "placeholders": { "date": { "type": "String" } } },
+  "@harvestOf": { "placeholders": { "year": { "type": "String" } } },
+  "@payAmount": { "placeholders": { "amount": { "type": "String" } } },
+  "@remainingFields": { "placeholders": { "fields": { "type": "String" } } }
 }

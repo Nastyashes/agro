@@ -1,14 +1,14 @@
-import 'dart:developer';
-
 import 'package:agro/app/my_price/components/my_price_ui.dart';
 import 'package:agro/app/my_price/controller/my_price_controller.dart';
 import 'package:agro/model/my_price/my_price_models.dart';
-import 'package:agro/ui/app_components/app_background.dart';
-import 'package:agro/ui/app_components/appbar_with_back.dart';
+import 'package:agro/ui/components/app_button.dart';
+import 'package:agro/ui/components/app_icon_button.dart';
+import 'package:agro/ui/components/app_tag.dart';
+import 'package:agro/ui/components/app_top_bar.dart';
 import 'package:agro/ui/components/empty_state.dart';
-import 'package:agro/ui/buttons/button_styles.dart';
-import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/ui/components/segmented.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -40,203 +40,239 @@ class _MyPriceScreenState extends State<MyPriceScreen> {
   @override
   Widget build(BuildContext context) {
     final l = context.l;
-    return Obx(() => Scaffold(
-          body: Stack(
+    return Obx(() {
+      final overview = controller.overview.value;
+      return Scaffold(
+        backgroundColor: Palette.bg0,
+        body: SafeArea(
+          child: Column(
             children: [
-              const AppBackground(),
-              SafeArea(
-                child: Column(
-                  children: [
-                    appBarBack(
-                      controller.tabIndex.value == 0
-                          ? l.myCombinations
-                          : l.reservations,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: bStyle(
-                        colorButt: AppColors.yellow,
-                        vertical: 12,
-                        text: l.createCombination,
-                        colorText: AppColors.backgroundGradient1,
-                        c: context,
-                        onPressed: controller.onCreate,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Container(
-                          height: 50,
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: AppColors.mainGreen.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          child: Row(
-                            children: [
-                              _tab(l.myCombinations, 0),
-                              _tab(l.reservations, 1),
-                            ],
-                          ),
-                        )),
-                    const SizedBox(height: 12),
-                    Expanded(
-                      child: !controller.loadPage.value
-                          ? const Center(child: CircularProgressIndicator())
-                          : RefreshIndicator(
-                              onRefresh: controller.loadOverview,
-                              child: _list(),
-                            ),
-                    ),
-                  ],
+              AppTopBar(
+                title: l.myPrice,
+                trailing: AppIconButton(
+                  icon: Icons.add_rounded,
+                  tooltip: l.createCombinationTitle,
+                  style: AppIconButtonStyle.filled,
+                  onPressed: controller.onCreate,
                 ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                child: Segmented(
+                  items: [
+                    SegmentItem(l.myCombinations,
+                        count: controller.loadPage.value
+                            ? overview.combinations.length
+                            : null),
+                    SegmentItem(l.reservations,
+                        count: controller.loadPage.value
+                            ? overview.reservations.length
+                            : null),
+                  ],
+                  selected: controller.tabIndex.value,
+                  onChanged: controller.selectTab,
+                ),
+              ),
+              Expanded(
+                child: !controller.loadPage.value
+                    ? const Center(child: CircularProgressIndicator())
+                    : RefreshIndicator(
+                        onRefresh: controller.loadOverview,
+                        child: _list(),
+                      ),
               ),
             ],
           ),
-        ));
-  }
-
-  Widget _tab(String title, int index) {
-    final selected = controller.tabIndex.value == index;
-    return Expanded(
-        child: GestureDetector(
-      onTap: () => controller.selectTab(index),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: selected ? AppColors.mainGreen : Colors.transparent,
-          borderRadius: BorderRadius.circular(24),
         ),
-        child: Text(
-          title,
-          textAlign: TextAlign.center,
-          style: AppFonts.body1medium.copyWith(
-            color: selected ? AppColors.white : AppColors.mainGreen,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-          ),
-        ),
-      ),
-    ));
+      );
+    });
   }
 
   Widget _list() {
+    final l = context.l;
     final isReservations = controller.tabIndex.value == 1;
     final items = isReservations
         ? controller.overview.value.reservations
         : controller.overview.value.combinations;
-    log(
-      'MyPrice _list tab=${isReservations ? 'reservations' : 'combinations'} '
-      'shown=${items.length} '
-      'ids=${items.map((e) => '${e.id}:${e.status}').toList()}',
-    );
     if (items.isEmpty) {
-      return isReservations
-          ? EmptyState(
-              title: context.l.emptyReservations,
-              icon: Icons.bookmark_border_rounded)
-          : EmptyState(
-              title: context.l.myPriceEmpty, icon: Icons.bar_chart_rounded);
+      // Scrollable, so pull-to-refresh still works on an empty tab.
+      return ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.only(top: 80),
+        children: [
+          isReservations
+              ? EmptyState(
+                  title: l.emptyReservations,
+                  icon: Icons.bookmark_border_rounded)
+              : EmptyState(
+                  title: l.emptyCombinationsTitle,
+                  text: l.emptyCombinationsText,
+                  icon: Icons.bar_chart_rounded,
+                  actionLabel: l.createCombinationTitle,
+                  onAction: controller.onCreate,
+                  primaryAction: true,
+                ),
+        ],
+      );
     }
     return ListView.separated(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
       itemCount: items.length,
       separatorBuilder: (_, __) => const SizedBox(height: 12),
       itemBuilder: (_, index) {
-        return _card(items[index], reservation: isReservations);
+        final entry = items[index];
+        final overview = controller.overview.value;
+        return CombinationCard(
+          entry: entry,
+          productName: overview.productName(entry),
+          regionName: overview.regionName(entry),
+          paymentName: overview.paymentName(entry),
+          reservation: isReservations,
+          onEdit: () => controller.onEdit(entry, reservation: isReservations),
+          onDelete: () => controller.deleteEntry(entry),
+        );
       },
     );
   }
+}
 
-  Widget _card(MyPriceEntry entry, {required bool reservation}) {
-    final overview = controller.overview.value;
+/// One My price entry: status, term, product, price; Edit/Delete only for
+/// an active (not deleted) combination, never for a reservation.
+class CombinationCard extends StatelessWidget {
+  const CombinationCard({
+    super.key,
+    required this.entry,
+    required this.productName,
+    required this.regionName,
+    required this.paymentName,
+    required this.reservation,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  final MyPriceEntry entry;
+  final String productName, regionName, paymentName;
+  final bool reservation;
+  final VoidCallback onEdit, onDelete;
+
+  @override
+  Widget build(BuildContext context) {
     final l = context.l;
     final deleted = !reservation && entry.isDeleted;
-    final cardColor = reservation
-        ? AppColors.myPriceCardReserwBg
-        : deleted
-            ? AppColors.myPriceCardDelBg
-            : AppColors.myPriceCardBg;
+    final editable = !reservation && !deleted;
+    final progress = editable
+        ? combinationProgress(entry.startsAt, entry.endsAt,
+            DateTime.now().millisecondsSinceEpoch ~/ 1000)
+        : null;
+
     final card = Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.fromLTRB(16, 14, 16, editable ? 6 : 14),
       decoration: BoxDecoration(
-          color: cardColor,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            width: 1.5,
-            color: cardColor,
-          )),
+        color: Palette.bg1,
+        borderRadius: BorderRadius.circular(Radii.card),
+        border: Border.all(color: Palette.line),
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _row(l.productLabel, overview.productName(entry)),
-          _row(l.region, overview.regionName(entry)),
-          _row(l.paymentForm, overview.paymentName(entry)),
-          _row(
-            l.priceLabel,
-            '${entry.pricePerTon ?? '—'} ${l.perTon}',
-          ),
-          if (reservation)
-            _row(l.queuePosition, '${entry.queuePosition ?? '—'}'),
-          _row(
-            (reservation) ? l.willTakeEffect : l.validLabel,
-            '${l.validFrom} ${entry.formatDate(entry.startsAt)}   ${l.validTo} ${entry.formatDate(entry.endsAt)}',
-          ),
-          if (!reservation && !deleted)
-            Divider(
-              height: 1,
-              color: AppColors.myPriceCardBg,
-            ),
-          if (!reservation && !deleted) ...[
-            const SizedBox(height: 8),
-            Row(children: [
-              TextButton.icon(
-                onPressed: () =>
-                    controller.onEdit(entry, reservation: reservation),
-                icon: const Icon(
-                  Icons.edit_rounded,
-                  color: AppColors.mainGreen,
-                  size: 22,
-                ),
-                label: Text(l.edit,
-                    style: AppFonts.body1semibold
-                        .copyWith(color: AppColors.mainGreen)),
+          Row(children: [
+            if (reservation)
+              AppTag(l.reservations, color: Palette.blue)
+            else if (entry.isActive)
+              AppTag(l.statusActive, color: Palette.green)
+            else if (deleted)
+              AppTag(l.statusDeleted),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                '${entry.formatDate(entry.startsAt)} → '
+                '${entry.formatDate(entry.endsAt)}',
+                style: AppText.num.copyWith(color: Palette.textTertiary),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              const Spacer(),
-              TextButton.icon(
-                onPressed: () => controller.deleteEntry(entry),
-                icon: const Icon(
-                  Icons.delete_outline,
-                  color: AppColors.daysRed,
-                  size: 22,
+            ),
+          ]),
+          const SizedBox(height: 12),
+          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(productName, style: AppText.title),
+                  const SizedBox(height: 2),
+                  Text(
+                    '$regionName · $paymentName',
+                    style: AppText.label.copyWith(color: Palette.textSecondary),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text.rich(TextSpan(children: [
+              TextSpan(
+                text: _price(entry.pricePerTon),
+                style: AppText.numL.copyWith(
+                    color: editable ? Palette.green : Palette.textSecondary),
+              ),
+              TextSpan(
+                  text: ' ${l.uahShort}/${l.tonShort}',
+                  style: AppText.label.copyWith(color: Palette.textSecondary)),
+            ])),
+          ]),
+          if (reservation && entry.queuePosition != null) ...[
+            const SizedBox(height: 8),
+            Text('${l.queuePosition}: ${entry.queuePosition}',
+                style: AppText.label.copyWith(color: Palette.textSecondary)),
+          ],
+          if (progress != null) ...[
+            const SizedBox(height: 12),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(3),
+              child: LinearProgressIndicator(value: progress, minHeight: 3),
+            ),
+          ],
+          if (editable) ...[
+            const SizedBox(height: 6),
+            Row(children: [
+              Expanded(
+                child: AppButton(
+                  label: l.edit,
+                  style: AppButtonStyle.ghost,
+                  size: AppButtonSize.small,
+                  icon: Icons.edit_outlined,
+                  onPressed: onEdit,
                 ),
-                label: Text(l.delete,
-                    style: AppFonts.body1semibold
-                        .copyWith(color: AppColors.daysRed)),
+              ),
+              Expanded(
+                child: AppButton(
+                  label: l.delete,
+                  style: AppButtonStyle.danger,
+                  size: AppButtonSize.small,
+                  icon: Icons.delete_outline_rounded,
+                  onPressed: onDelete,
+                ),
               ),
             ]),
           ],
         ],
       ),
     );
-    if (!deleted) return card;
-    return Opacity(opacity: 0.7, child: card);
+    return deleted ? Opacity(opacity: 0.5, child: card) : card;
   }
 
-  Widget _row(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Expanded(child: Text(label, style: AppFonts.body2medium.grey2)),
-          Expanded(
-            child: Text(
-              value,
-              textAlign: TextAlign.end,
-              style: AppFonts.body2bold.white,
-            ),
-          ),
-        ],
-      ),
-    );
+  static String _price(double? value) {
+    if (value == null) return '—';
+    return value == value.roundToDouble()
+        ? value.toStringAsFixed(0)
+        : value.toStringAsFixed(2);
   }
+}
+
+/// Share of the combination's term already passed (0..1), or null when
+/// the dates are unknown or invalid.
+double? combinationProgress(int? startsAt, int? endsAt, int nowSeconds) {
+  if (startsAt == null || endsAt == null || endsAt <= startsAt) return null;
+  return ((nowSeconds - startsAt) / (endsAt - startsAt)).clamp(0.0, 1.0);
 }

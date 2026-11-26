@@ -2,12 +2,11 @@ import 'package:agro/app/my_price/components/my_price_dialogs.dart';
 import 'package:agro/app/my_price/components/my_price_ui.dart';
 import 'package:agro/app/my_price/controller/create_my_price_controller.dart';
 import 'package:agro/model/my_price/my_price_models.dart';
-import 'package:agro/ui/app_components/app_background.dart';
-import 'package:agro/ui/app_components/appbar_with_back.dart';
-import 'package:agro/ui/buttons/button_styles.dart';
-import 'package:agro/ui/text_field/text_field.dart';
-import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/ui/components/app_button.dart';
+import 'package:agro/ui/components/app_top_bar.dart';
+import 'package:agro/ui/components/form_tile.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,6 +20,7 @@ class CreateMyPriceScreen extends StatefulWidget {
 
 class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
   late final CreateMyPriceController controller;
+  bool _showPromo = false;
 
   @override
   void initState() {
@@ -39,221 +39,237 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final l = context.l;
+  String? _name(List<MyPriceNamedItem> items, int? id) {
+    if (id == null) return null;
+    final name = controller.overview.value.nameOf(items, id);
+    return name == '—' ? null : name;
+  }
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          const AppBackground(),
-          SafeArea(
-            child: Column(
-              children: [
-                appBarBack(l.createCombinationTitle),
-                Expanded(
-                  child: Obx(() => ListView(
-                        padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
-                        children: [
-                          _selectField(
-                            l.selectCrop,
-                            controller.overview.value.nameOf(
-                                      controller.overview.value.products,
-                                      controller.productId.value,
-                                    ) ==
-                                    '—'
-                                ? ''
-                                : controller.overview.value.nameOf(
-                                    controller.overview.value.products,
-                                    controller.productId.value,
-                                  ),
-                            () async {
-                              final selected = await showMyPricePicker(
-                                context: context,
-                                title: l.selectCrop,
-                                items: controller.overview.value.products,
-                                label: (item) => item.name,
-                                enableSearch: true,
-                              );
-                              if (selected != null) {
-                                controller.productId.value = selected.id;
-                              }
-                            },
-                            error: controller.fieldErrors['product_id'] != null,
-                          ),
-                          _selectField(
-                            l.selectRegion,
-                            controller.overview.value.nameOf(
-                                      controller.overview.value.regions,
-                                      controller.regionId.value,
-                                    ) ==
-                                    '—'
-                                ? ''
-                                : controller.overview.value.nameOf(
-                                    controller.overview.value.regions,
-                                    controller.regionId.value,
-                                  ),
-                            () async {
-                              final selected = await showMyPricePicker(
-                                context: context,
-                                title: l.selectRegion,
-                                items: controller.overview.value.regions,
-                                label: (item) => item.name,
-                              );
-                              if (selected != null) {
-                                controller.regionId.value = selected.id;
-                              }
-                            },
-                            error: controller.fieldErrors['region_id'] != null,
-                          ),
-                          _selectField(
-                            l.paymentForm,
-                            controller.paymentType.value == null
-                                ? ''
-                                : controller.overview.value.nameOf(
-                                    controller.overview.value.paymentTypes,
-                                    controller.paymentType.value,
-                                  ),
-                            () async {
-                              final selected = await showMyPricePicker(
-                                context: context,
-                                title: l.paymentForm,
-                                items: controller.overview.value.paymentTypes,
-                                label: (item) => item.name,
-                              );
-                              if (selected != null) {
-                                controller.paymentType.value = selected.id;
-                              }
-                            },
-                            error:
-                                controller.fieldErrors['payment_type'] != null,
-                          ),
-                          _selectField(
-                            l.enterPricePerTon,
-                            null,
-                            null,
-                            controller: controller.priceController,
-                            keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true,
-                            ),
-                            error:
-                                controller.fieldErrors['price_per_ton'] != null,
-                          ),
-                          _selectField(
-                            l.contactPerson,
-                            controller.teamUserId.value == null
-                                ? ''
-                                : controller.overview.value.team
-                                    .firstWhere(
-                                      (e) =>
-                                          e.id == controller.teamUserId.value,
-                                      orElse: () => const MyPriceTeamMember(),
-                                    )
-                                    .label,
-                            () async {
-                              final selected = await showMyPricePicker(
-                                context: context,
-                                title: l.teamNumber,
-                                items: controller.overview.value.team,
-                                label: (item) => item.label,
-                              );
-                              if (selected != null) {
-                                controller.teamUserId.value = selected.id;
-                              }
-                            },
-                            error:
-                                controller.fieldErrors['team_user_id'] != null,
-                          ),
-                          _selectField(
-                            l.promoCodeOptional,
-                            null,
-                            null,
-                            controller: controller.promoController,
-                          ),
-                          const SizedBox(height: 20),
-                          bStyle(
-                            text: l.confirm,
-                            c: context,
-                            vertical: 16,
-                            onPressed: controller.onSubmit,
-                          ),
-                        ],
-                      )),
-                ),
-              ],
-            ),
-          ),
-        ],
+  Future<void> _pick<T>(
+    String title,
+    List<T> items,
+    String Function(T) label,
+    void Function(T) onSelected, {
+    bool search = false,
+  }) async {
+    final selected = await showMyPricePicker<T>(
+      context: context,
+      title: title,
+      items: items,
+      label: label,
+      enableSearch: search,
+    );
+    if (selected != null) onSelected(selected);
+  }
+
+  List<String> _missing(BuildContext context) {
+    final l = context.l;
+    return missingComboFields(
+      product: controller.productId.value,
+      region: controller.regionId.value,
+      payment: controller.paymentType.value,
+      price: controller.priceController.text,
+      team: controller.teamUserId.value,
+      labels: (
+        product: l.crop,
+        region: l.region,
+        payment: l.paymentForm,
+        price: l.pricePerTonLabel,
+        team: l.contactPerson,
       ),
     );
   }
 
-  Widget _selectField(
-    String hint,
-    String? value,
-    VoidCallback? onTap, {
-    TextEditingController? controller,
-    TextInputType? keyboardType,
-    bool error = false,
-  }) {
-    final border = Border.all(
-      color: error ? AppColors.red : AppColors.myPriceCardBg,
-    );
-    if (controller != null) {
-      return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l;
+    return Scaffold(
+      backgroundColor: Palette.bg0,
+      bottomNavigationBar: _bottomBar(context),
+      body: SafeArea(
+        bottom: false,
+        child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(hint, style: AppFonts.body2medium.white),
+            AppTopBar(title: l.newCombination),
+            Expanded(
+              child: Obx(() {
+                final o = controller.overview.value;
+                final errors = controller.fieldErrors;
+                final team = controller.teamUserId.value == null
+                    ? null
+                    : o.team
+                        .firstWhere(
+                          (e) => e.id == controller.teamUserId.value,
+                          orElse: () => const MyPriceTeamMember(),
+                        )
+                        .label;
+                return ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                  children: [
+                    Text(l.combinationIntro, style: AppText.title),
+                    const SizedBox(height: 16),
+                    SelectTile(
+                      icon: Icons.grass_rounded,
+                      label: l.crop,
+                      value: _name(o.products, controller.productId.value),
+                      placeholder: l.selectCrop,
+                      error: errors['product_id'] != null,
+                      onTap: () => _pick(
+                          l.selectCrop,
+                          o.products,
+                          (MyPriceNamedItem e) => e.name,
+                          (e) => controller.productId.value = e.id,
+                          search: true),
+                    ),
+                    const SizedBox(height: 10),
+                    SelectTile(
+                      icon: Icons.location_on_outlined,
+                      label: l.region,
+                      value: _name(o.regions, controller.regionId.value),
+                      placeholder: l.selectRegion,
+                      error: errors['region_id'] != null,
+                      onTap: () => _pick(
+                          l.selectRegion,
+                          o.regions,
+                          (MyPriceNamedItem e) => e.name,
+                          (e) => controller.regionId.value = e.id),
+                    ),
+                    const SizedBox(height: 10),
+                    SelectTile(
+                      icon: Icons.payments_outlined,
+                      label: l.paymentForm,
+                      value:
+                          _name(o.paymentTypes, controller.paymentType.value),
+                      placeholder: l.paymentForm,
+                      error: errors['payment_type'] != null,
+                      onTap: () => _pick(
+                          l.paymentForm,
+                          o.paymentTypes,
+                          (MyPriceNamedItem e) => e.name,
+                          (e) => controller.paymentType.value = e.id),
+                    ),
+                    const SizedBox(height: 10),
+                    InputTile(
+                      icon: Icons.sell_outlined,
+                      label: l.pricePerTonLabel,
+                      hint: l.enterPricePerTon,
+                      controller: controller.priceController,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      suffix: '${l.uahShort} / ${l.tonShort}',
+                      big: true,
+                      error: errors['price_per_ton'] != null,
+                    ),
+                    const SizedBox(height: 10),
+                    SelectTile(
+                      icon: Icons.person_outline_rounded,
+                      label: l.contactPerson,
+                      value: team,
+                      placeholder: l.teamNumber,
+                      error: errors['team_user_id'] != null,
+                      onTap: () => _pick(
+                          l.teamNumber,
+                          o.team,
+                          (MyPriceTeamMember e) => e.label,
+                          (e) => controller.teamUserId.value = e.id),
+                    ),
+                    const SizedBox(height: 10),
+                    if (_showPromo ||
+                        controller.promoController.text.isNotEmpty)
+                      InputTile(
+                        icon: Icons.confirmation_number_outlined,
+                        label: l.promoCodeOptional,
+                        controller: controller.promoController,
+                        autofocus: _showPromo,
+                      )
+                    else
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton.icon(
+                          onPressed: () => setState(() => _showPromo = true),
+                          icon: const Icon(Icons.add_rounded, size: 20),
+                          label: Text(l.havePromo),
+                        ),
+                      ),
+                  ],
+                );
+              }),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: TextFieldWidget(
-                textStyle: AppFonts.body2medium.white,
-                controller: controller,
-                text: value ?? hint,
-                height: 56,
-                hintStyle: AppFonts.body2medium.grey4,
-                colorBg: AppColors.backgroundGradient1,
-                border: border,
-                borderRadius: BorderRadius.circular(28),
-                keyboardType: keyboardType,
-                padding: EdgeInsets.zero,
-              ),
-            )
-          ]);
-    }
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 4),
-          child: Text(hint, style: AppFonts.body2medium.white),
+          ],
         ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 16),
-          child: GestureDetector(
-            onTap: onTap,
-            child: Container(
-              height: 56,
-              alignment: Alignment.centerLeft,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: AppColors.backgroundGradient1,
-                borderRadius: BorderRadius.circular(28),
-                border: border,
-              ),
-              child: Text((value != null && value.isNotEmpty) ? value : hint,
-                  style: (value != null && value.isNotEmpty)
-                      ? AppFonts.body2medium.white
-                      : AppFonts.body2medium.grey4),
+      ),
+    );
+  }
+
+  Widget _bottomBar(BuildContext context) {
+    final l = context.l;
+    return Container(
+      decoration: const BoxDecoration(
+        color: Palette.bg0,
+        border: Border(top: BorderSide(color: Palette.line)),
+      ),
+      child: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            ValueListenableBuilder(
+              valueListenable: controller.priceController,
+              builder: (context, _, __) => Obx(() {
+                final missing = _missing(context);
+                if (missing.isEmpty) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.info_outline_rounded,
+                          size: 16, color: Palette.textTertiary),
+                      const SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          l.remainingFields(missing.join(', ').toLowerCase()),
+                          style: AppText.caption
+                              .copyWith(color: Palette.textTertiary),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
             ),
-          ),
+            AppButton(
+              label: l.saveCombination,
+              onPressed: controller.onSubmit,
+            ),
+          ]),
         ),
-      ],
+      ),
     );
   }
 }
+
+/// Labels of the required combination fields that are still empty, in form
+/// order; drives the "Залишилось: …" hint.
+List<String> missingComboFields({
+  required int? product,
+  required int? region,
+  required int? payment,
+  required String price,
+  required int? team,
+  required ({
+    String product,
+    String region,
+    String payment,
+    String price,
+    String team,
+  }) labels,
+}) =>
+    [
+      if (product == null) labels.product,
+      if (region == null) labels.region,
+      if (payment == null) labels.payment,
+      if (price.trim().isEmpty) labels.price,
+      if (team == null) labels.team,
+    ];

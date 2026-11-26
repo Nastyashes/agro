@@ -301,5 +301,22 @@
   "topUpTitle": "Толықтыру",
   "balanceNow": "Ағымдағы баланс",
   "payAmount": "{amount} төлеу",
-  "securePayment": "Картамен қауіпсіз төлем"
+  "securePayment": "Картамен қауіпсіз төлем",
+  "statusActive": "Белсенді",
+  "statusDeleted": "Жойылған",
+  "newCombination": "Жаңа комбинация",
+  "combinationIntro": "Бағаңызға сай өтінімдерді көрсетеміз",
+  "havePromo": "Менде промокод бар",
+  "remainingFields": "Қалды: {fields}",
+  "saveCombination": "Комбинацияны сақтау",
+  "pricePerTonLabel": "Тонна бағасы",
+  "emptyCombinationsTitle": "Әзірге комбинациялар жоқ",
+  "emptyCombinationsText": "Дақылды, өңірді және бағаны көрсетіңіз — сәйкес өтінімдерді көрсетеміз.",
+  "emptyDealsText": "«Менің бағам» арқылы байланысы ашылған өтінімдер осында болады.",
+  "emptyMessagesText": "UAGRO жаңалықтары мен маңызды өзгерістері осында шығады.",
+  "markRead": "Оқылды деп белгілеу",
+  "@tariffUntil": { "placeholders": { "date": { "type": "String" } } },
+  "@harvestOf": { "placeholders": { "year": { "type": "String" } } },
+  "@payAmount": { "placeholders": { "amount": { "type": "String" } } },
+  "@remainingFields": { "placeholders": { "fields": { "type": "String" } } }
 }
