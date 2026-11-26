@@ -131,12 +131,10 @@ class _BidListItemState extends State<BidListItem> {
                     style:
                         AppText.label.copyWith(color: Palette.textSecondary)),
               ],
-              const SizedBox(height: 12),
-              Text(_bidItem.productTitle ?? '—', style: AppText.title),
-              const SizedBox(height: 12),
+              const SizedBox(height: 10),
               _numbers(context),
               const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
+                padding: EdgeInsets.symmetric(vertical: 10),
                 child: Divider(height: 1),
               ),
               if (_bidItem.isOpened) _seller(context) else _actionsRow(context),
@@ -157,16 +155,22 @@ class _BidListItemState extends State<BidListItem> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(_type.label(context),
-                style: AppText.label.copyWith(color: _type.color),
+            Text(_bidItem.productTitle ?? '—',
+                style: AppText.headline,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis),
-            Text(
-              [
-                '№${_bidItem.orderId ?? ''}',
-                if (isSet(region)) region!,
-              ].join(' · '),
-              style: AppText.caption.copyWith(color: Palette.textTertiary),
+            Text.rich(
+              TextSpan(children: [
+                if (isSet(region))
+                  TextSpan(
+                      text: '${region!}  ',
+                      style: AppText.bodyMedium
+                          .copyWith(color: Palette.textSecondary)),
+                TextSpan(
+                    text: '№${_bidItem.orderId ?? ''}',
+                    style:
+                        AppText.caption.copyWith(color: Palette.textTertiary)),
+              ]),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -213,7 +217,7 @@ class _BidListItemState extends State<BidListItem> {
             fit: BoxFit.scaleDown,
             alignment: Alignment.bottomLeft,
             child: Text.rich(TextSpan(children: [
-              TextSpan(text: '${_bidItem.amount ?? '—'}', style: AppText.numXL),
+              TextSpan(text: '${_bidItem.amount ?? '—'}', style: AppText.numL),
               TextSpan(
                   text: ' ${context.l.amountTypeTon}',
                   style:
@@ -228,11 +232,11 @@ class _BidListItemState extends State<BidListItem> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(_paymentForm(context),
-                    textAlign: TextAlign.end,
-                    style:
-                        AppText.label.copyWith(color: Palette.textSecondary)),
+                    textAlign: TextAlign.end, style: AppText.bodyMedium),
+                // Always labelled: a bare «Будь-який» says nothing.
                 Text(
-                    localizeDeliveryType(_bidItem.deliveryType ?? '-', context),
+                    '${context.l.typeOfDelivery}: '
+                    '${localizeDeliveryType(_bidItem.deliveryType ?? '', context)}',
                     textAlign: TextAlign.end,
                     style:
                         AppText.label.copyWith(color: Palette.textSecondary)),

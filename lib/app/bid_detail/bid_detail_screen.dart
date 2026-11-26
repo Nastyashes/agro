@@ -129,20 +129,36 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
-          TypeBadge(type, size: 32),
-          const SizedBox(width: 10),
-          Text(type.label(context),
-              style: AppText.overline.copyWith(color: type.color)),
+        // Culture and where it is: the first things a trader looks for.
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          TypeBadge(type, size: 48),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(item.productTitle ?? '—',
+                    style: AppText.display.copyWith(fontSize: 26)),
+                const SizedBox(height: 2),
+                Text(
+                  [item.regionName, c?.district, c?.city]
+                      .where(isSet)
+                      .join(', '),
+                  style:
+                      AppText.bodyMedium.copyWith(color: Palette.textSecondary),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(width: 8),
-          if (isSet(item.dayLabel)) AppTag(item.dayLabel!),
-          if (matched && meta!.badge.isNotEmpty) ...[
-            const SizedBox(width: 6),
-            AppTag(meta.badge, color: Palette.green),
-          ],
+          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            if (isSet(item.dayLabel)) AppTag(item.dayLabel!),
+            if (matched && meta!.badge.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              AppTag(meta.badge, color: Palette.green),
+            ],
+          ]),
         ]),
-        const SizedBox(height: 12),
-        Text(item.productTitle ?? '—', style: AppText.display),
         if (matched && meta!.responseLabel.isNotEmpty)
           Container(
             margin: const EdgeInsets.only(top: 12),
@@ -155,31 +171,17 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
             child: Text(meta.responseLabel, style: AppText.bodyMedium),
           ),
         const SizedBox(height: 16),
-        Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          _keyFigure(
+        _FactsGrid(facts: [
+          (
             context.l.volume,
-            Text.rich(TextSpan(children: [
-              TextSpan(
-                  text: '${item.amount ?? AppConstants.emDash}',
-                  style: AppText.numXL),
-              TextSpan(
-                  text: ' ${context.l.tonShort}',
-                  style: AppText.title.copyWith(color: Palette.textSecondary)),
-            ])),
+            '${item.amount ?? AppConstants.emDash} ${context.l.tonShort}'
           ),
-          const SizedBox(width: 24),
-          if (item.year != null)
-            _keyFigure(
-                context.l.harvest, Text('${item.year}', style: AppText.numL)),
-        ]),
-        SectionLabel(context.l.conditions),
-        InfoGroup(children: [
-          InfoRow(context.l.region, item.regionName ?? '—'),
-          if (isSet(c?.district)) InfoRow(context.l.district, c!.district!),
-          InfoRow(
-              context.l.payment, _paymentForm(context, item.ordPaymentType)),
-          InfoRow(context.l.delivery,
-              localizeDeliveryType(item.deliveryType ?? '-', context)),
+          (context.l.harvest, '${item.year ?? AppConstants.emDash}'),
+          (context.l.payment, _paymentForm(context, item.ordPaymentType)),
+          (
+            context.l.typeOfDelivery,
+            localizeDeliveryType(item.deliveryType ?? '-', context)
+          ),
         ]),
         if (item.isOpened) ...[
           SectionLabel(context.l.seller),
@@ -188,7 +190,6 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
               InfoRow(context.l.fullName, item.fermerName!),
             if (isSet(item.fermerCompany))
               InfoRow(context.l.company, item.fermerCompany!),
-            if (isSet(c?.city)) InfoRow(context.l.town, c!.city!),
             if (isSet(c?.addr)) InfoRow(context.l.address, c!.addr!),
             if (phone != null)
               InfoRow(context.l.phoneNumber, phone,
@@ -215,15 +216,6 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
       ],
     );
   }
-
-  Widget _keyFigure(String label, Widget value) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label,
-              style: AppText.caption.copyWith(color: Palette.textTertiary)),
-          value,
-        ],
-      );
 
   Widget _carrierRow(BuildContext context) {
     final busy = controller.orderingCarrier.value;
@@ -434,4 +426,49 @@ class _DashedBorder extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/// Key facts of a bid in a 2-column grid of label/value tiles.
+class _FactsGrid extends StatelessWidget {
+  const _FactsGrid({required this.facts});
+
+  final List<(String, String)> facts;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget tile((String, String) f) => Padding(
+          padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(f.$1,
+                  style: AppText.caption.copyWith(color: Palette.textTertiary)),
+              const SizedBox(height: 2),
+              Text(f.$2, style: AppText.headline),
+            ],
+          ),
+        );
+    final rows = <Widget>[];
+    for (var i = 0; i < facts.length; i += 2) {
+      if (i > 0) rows.add(const Divider(height: 1));
+      rows.add(IntrinsicHeight(
+        child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Expanded(child: tile(facts[i])),
+          const VerticalDivider(width: 1),
+          Expanded(
+              child: i + 1 < facts.length
+                  ? tile(facts[i + 1])
+                  : const SizedBox.shrink()),
+        ]),
+      ));
+    }
+    return Container(
+      decoration: BoxDecoration(
+        color: Palette.bg1,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Palette.line),
+      ),
+      child: Column(children: rows),
+    );
+  }
 }
