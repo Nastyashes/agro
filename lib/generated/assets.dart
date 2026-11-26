@@ -8,7 +8,6 @@ class Assets {
   static const String accountQuestion = 'picture/app/account/question.svg';
   static const String accountSite = 'picture/app/account/site.svg';
   static const String accountTariffs = 'picture/app/account/tariffs.svg';
-  static const String authBg = 'picture/auth/bg.png';
   static const String authTelegram = 'picture/auth/telegram.svg';
   static const String authViber = 'picture/auth/viber.svg';
   static const String pictureLogo = 'picture/logo.png';

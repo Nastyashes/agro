@@ -24,7 +24,7 @@ import 'package:agro/vars/helper.dart';
 import 'package:agro/ui/pop_up/confirm_pop_up.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart' hide RefreshIndicator;
 
 class NewHomeScreen extends StatefulWidget {
   const NewHomeScreen({
@@ -53,9 +53,17 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
 
     controller.initPage();
     _failureWorker = ever(controller.failures, (_) {
-      if (mounted) {
-        notification(text: context.l.somethingWentWrong, type: SnackType.error);
-      }
+      if (!mounted) return;
+      // The empty no-connection state already offers a retry.
+      if (controller.offline.value && controller.bids.isEmpty) return;
+      showAppSnackbar(
+        controller.offline.value
+            ? context.l.noConnection
+            : context.l.bidsUpdateFailed,
+        type: SnackType.error,
+        actionLabel: context.l.retry,
+        onAction: controller.retry,
+      );
     });
   }
 
@@ -210,6 +218,24 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
   // ============================================================
 
   Widget _buildAllList() {
+    if (controller.offline.value && controller.bids.isEmpty) {
+      return RefreshIndicator(
+        onRefresh: controller.retry,
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(top: 60),
+          children: [
+            EmptyState(
+              icon: Icons.wifi_off_rounded,
+              title: context.l.noConnection,
+              text: context.l.checkInternet,
+              actionLabel: context.l.retry,
+              onAction: controller.retry,
+            ),
+          ],
+        ),
+      );
+    }
     return SmartRefresher(
       controller: controller.allRefreshController,
       scrollController: controller.allScrollController,

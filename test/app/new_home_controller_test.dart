@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'dart:io';
 
@@ -13,8 +14,18 @@ import 'package:get/get.dart';
 
 class FakeMain extends MainController {
   bool free = true;
+  Object? initError;
+  Completer<void>? initGate;
+  int initCalls = 0;
   @override
   bool get isFree => free;
+
+  @override
+  Future<void> initUserData({bool force = false}) async {
+    initCalls++;
+    if (initGate != null) await initGate!.future;
+    if (initError != null) throw initError!;
+  }
 }
 
 class FakeBids extends BidsRepository {
@@ -131,5 +142,69 @@ void main() {
 
   test('disableAds: network error returns null', () async {
     expect(await c.disableAds(), isNull);
+  });
+
+  group('offline', () {
+    test('a network error with no bids shows the offline state', () async {
+      bids.error = const ApiException(ApiErrorKind.network);
+
+      await expectLater(
+          c.loadAllBids(reset: true), throwsA(isA<ApiException>()));
+
+      expect(c.offline.value, isTrue);
+    });
+
+    test('a server error is not "offline"', () async {
+      bids.error = const ApiException(ApiErrorKind.badResponse);
+
+      await expectLater(c.loadAllBids(reset: true), throwsA(anything));
+
+      expect(c.offline.value, isFalse);
+    });
+
+    test('a successful load clears it', () async {
+      c.offline.value = true;
+
+      await c.loadAllBids(reset: true);
+
+      expect(c.offline.value, isFalse);
+    });
+
+    test('initPage never throws; a failure becomes an event', () async {
+      main.initError = const ApiException(ApiErrorKind.timeout);
+      final before = c.failures.value;
+
+      await c.initPage();
+
+      expect(c.failures.value, before + 1);
+    });
+
+    test('a connection error at start-up shows the offline state', () async {
+      main.initError = const ApiException(ApiErrorKind.network);
+
+      await c.initPage();
+
+      expect(c.offline.value, isTrue);
+    });
+
+    test('a later non-connection error clears a stale offline', () async {
+      c.offline.value = true;
+      bids.error = const ApiException(ApiErrorKind.badResponse);
+
+      await expectLater(c.loadAllBids(reset: true), throwsA(anything));
+
+      expect(c.offline.value, isFalse);
+    });
+
+    test('repeated retry taps run one reload', () async {
+      main.initGate = Completer<void>();
+
+      final first = c.retry();
+      final second = c.retry();
+      main.initGate!.complete();
+      await Future.wait([first, second]);
+
+      expect(main.initCalls, 1);
+    });
   });
 }

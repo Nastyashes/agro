@@ -930,4 +930,16 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get markRead => 'Оқылды деп белгілеу';
+
+  @override
+  String get noConnection => 'Байланыс жоқ';
+
+  @override
+  String get checkInternet => 'Интернетті тексеріп, қайталап көріңіз.';
+
+  @override
+  String get retry => 'Қайталау';
+
+  @override
+  String get bidsUpdateFailed => 'Өтінімдерді жаңарту мүмкін болмады';
 }

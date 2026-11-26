@@ -929,4 +929,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get markRead => 'Mark as read';
+
+  @override
+  String get noConnection => 'No connection';
+
+  @override
+  String get checkInternet => 'Check your internet and try again.';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get bidsUpdateFailed => 'Couldn\'t update the bids';
 }

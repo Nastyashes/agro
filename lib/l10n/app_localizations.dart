@@ -1847,6 +1847,30 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Позначити прочитаним'**
   String get markRead;
+
+  /// No description provided for @noConnection.
+  ///
+  /// In uk, this message translates to:
+  /// **'Немає з\'єднання'**
+  String get noConnection;
+
+  /// No description provided for @checkInternet.
+  ///
+  /// In uk, this message translates to:
+  /// **'Перевірте інтернет і спробуйте ще раз.'**
+  String get checkInternet;
+
+  /// No description provided for @retry.
+  ///
+  /// In uk, this message translates to:
+  /// **'Повторити'**
+  String get retry;
+
+  /// No description provided for @bidsUpdateFailed.
+  ///
+  /// In uk, this message translates to:
+  /// **'Не вдалося оновити заявки'**
+  String get bidsUpdateFailed;
 }
 
 class _AppLocalizationsDelegate

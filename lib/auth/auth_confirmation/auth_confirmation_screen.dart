@@ -1,17 +1,12 @@
-import 'package:agro/ui/app_components/app_background.dart';
-import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/auth/components/auth_layout.dart';
+import 'package:agro/ui/components/app_button.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:agro/ui/buttons/button_styles.dart';
-import 'package:agro/ui/text/read_text.dart';
 import 'package:pinput/pinput.dart';
 
-import '../../generated/assets.dart';
-import '../../ui/buttons/b_transparent_scalable_button.dart';
 import 'components/auth_confirmation_controller.dart';
 
 class AuthConfirmScreen extends StatefulWidget {
@@ -24,134 +19,74 @@ class AuthConfirmScreen extends StatefulWidget {
 class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
   final AuthConfirmationController controller = Get.find();
 
+  PinTheme _pin({required bool focused, required double size}) => PinTheme(
+        width: size,
+        height: size,
+        textStyle: AppText.numL,
+        decoration: BoxDecoration(
+          color: Palette.bg1,
+          borderRadius: BorderRadius.circular(Radii.button),
+          border: Border.all(
+            color: focused ? Palette.green : Palette.lineStrong,
+            width: focused ? 1.5 : 1,
+          ),
+        ),
+      );
+
   @override
-  Widget build(BuildContext c) {
-    final defaultPinTheme = PinTheme(
-        width: MediaQuery.of(c).size.width / 4,
-        height: 60,
-        padding: EdgeInsets.zero,
-        textStyle: const TextStyle(
-            fontSize: 24, color: AppColors.white, fontWeight: FontWeight.w600),
-        decoration: BoxDecoration(
-            border: Border.all(width: 1, color: AppColors.backgroundGradient3),
-            color: AppColors.backgroundGradient1,
-            borderRadius: BorderRadius.circular(10)));
-
-    final focusPinTheme = PinTheme(
-        width: MediaQuery.of(c).size.width / 4,
-        height: 60,
-        padding: EdgeInsets.zero,
-        textStyle: const TextStyle(
-            fontSize: 24, color: AppColors.white, fontWeight: FontWeight.w600),
-        decoration: BoxDecoration(
-            border: Border.all(width: 2, color: AppColors.mainGreen),
-            color: AppColors.backgroundGradient2,
-            borderRadius: BorderRadius.circular(10)));
-
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle.dark,
-        child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            backgroundColor: AppColors.backgroundGradient1,
-            body: Stack(children: [
-              const AppBackground(),
-              SafeArea(
-                bottom: false,
-                child: Stack(
-                  alignment: Alignment.topCenter,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 120, bottom: 120),
-                                child: Center(
-                                    child: Image.asset(Assets.pictureLogo,
-                                        width: MediaQuery.of(c).size.width /
-                                            1.2))),
-                            readText(
-                                text: context.l.enterCode,
-                                style: AppFonts.title2.white,
-                                padding:
-                                    const EdgeInsets.only(bottom: 10, left: 7)),
-                            readText(
-                                text: context.l.codeWasSent,
-                                style: AppFonts.body1semibold.grey3,
-                                padding:
-                                    const EdgeInsets.only(bottom: 10, left: 7)),
-                            Padding(
-                                padding: const EdgeInsets.only(top: 20),
-                                child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Pinput(
-                                        controller: controller.codeController,
-                                        scrollPadding: EdgeInsets.zero,
-                                        defaultPinTheme: defaultPinTheme,
-                                        focusedPinTheme: focusPinTheme,
-                                        submittedPinTheme: defaultPinTheme,
-                                        length: 4,
-                                        pinputAutovalidateMode:
-                                            PinputAutovalidateMode.onSubmit,
-                                        showCursor: true,
-                                        onChanged: controller.onCodeChanged))),
-                            Obx(() => controller.errorCode.value == null
-                                ? const SizedBox.shrink()
-                                : Center(
-                                    child: readText(
-                                        text: controller.errorCode.value!,
-                                        style: AppFonts.body2semibold.red,
-                                        align: TextAlign.center,
-                                        padding:
-                                            const EdgeInsets.only(top: 10)))),
-                            Obx(() => bStyle(
-                                key: UniqueKey(),
-                                padding: const EdgeInsets.only(top: 35),
-                                text: context.l.continue_,
-                                vertical: 18,
-                                c: c,
-                                active: controller.canSubmit,
-                                onPressed: controller.onLogin)),
-                            BTransparentScalableButton(
-                                onPressed: controller.onAuth,
-                                scale: ScaleFormat.small,
-                                child: Center(
-                                    child: readText(
-                                        text: context.l.changeNumber,
-                                        style: AppFonts.body1semibold.grey3,
-                                        padding:
-                                            const EdgeInsets.only(top: 20)))),
-                            const Spacer(),
-                            Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  BTransparentScalableButton(
-                                      onPressed: controller.onContactTelegram,
-                                      scale: ScaleFormat.small,
-                                      child: SvgPicture.asset(
-                                          Assets.authTelegram,
-                                          width: 50)),
-                                  const SizedBox(width: 20),
-                                  BTransparentScalableButton(
-                                      onPressed: controller.onContactViber,
-                                      scale: ScaleFormat.small,
-                                      child: SvgPicture.asset(Assets.authViber,
-                                          width: 55))
-                                ]),
-                            Center(
-                                child: readText(
-                                    text: context.l.needHelpSupport,
-                                    style: AppFonts.body2medium.grey3,
-                                    padding: const EdgeInsets.only(
-                                        bottom: 30, top: 15),
-                                    align: TextAlign.center))
-                          ]),
-                    )
-                  ],
-                ),
-              ),
-            ])));
+  Widget build(BuildContext context) {
+    final l = context.l;
+    return AuthLayout(
+      onTelegram: controller.onContactTelegram,
+      onViber: controller.onContactViber,
+      children: [
+        Text(l.enterCode, style: AppText.title),
+        const SizedBox(height: 6),
+        Text(l.codeWasSent,
+            style: AppText.body.copyWith(color: Palette.textSecondary)),
+        const SizedBox(height: 20),
+        LayoutBuilder(builder: (context, box) {
+          // Four cells and three 12 px gaps, at most 64 px each (fits 320 px).
+          final size = ((box.maxWidth - 36) / 4).clamp(44.0, 64.0);
+          return Center(
+            child: Pinput(
+              controller: controller.codeController,
+              length: 4,
+              autofocus: true,
+              showCursor: true,
+              defaultPinTheme: _pin(focused: false, size: size),
+              focusedPinTheme: _pin(focused: true, size: size),
+              submittedPinTheme: _pin(focused: false, size: size),
+              separator: const SizedBox(width: 12),
+              pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+              onChanged: controller.onCodeChanged,
+            ),
+          );
+        }),
+        Obx(() => controller.errorCode.value == null
+            ? const SizedBox.shrink()
+            : Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Text(controller.errorCode.value!,
+                    textAlign: TextAlign.center,
+                    style: AppText.label.copyWith(color: Palette.red)),
+              )),
+        const SizedBox(height: 28),
+        Obx(() => AppButton(
+              label: l.continue_,
+              pill: true,
+              onPressed: controller.canSubmit ? controller.onLogin : null,
+            )),
+        const SizedBox(height: 8),
+        Center(
+          child: TextButton(
+            onPressed: controller.onAuth,
+            child: Text(l.changeNumber,
+                style:
+                    AppText.bodyMedium.copyWith(color: Palette.textSecondary)),
+          ),
+        ),
+      ],
+    );
   }
 }
