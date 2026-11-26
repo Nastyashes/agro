@@ -193,7 +193,8 @@ class _BidListItemState extends State<BidListItem> {
           tooltip: context.l.copiedToClipboard,
           visualDensity: VisualDensity.compact,
           padding: EdgeInsets.zero,
-          constraints: const BoxConstraints.tightFor(width: 36, height: 40),
+          constraints: const BoxConstraints.tightFor(
+              width: minTouchTarget, height: minTouchTarget),
           icon: const Icon(Icons.copy_rounded,
               size: 20, color: Palette.textSecondary),
           onPressed: () {
@@ -211,29 +212,43 @@ class _BidListItemState extends State<BidListItem> {
   Widget _numbers(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text.rich(TextSpan(children: [
-          TextSpan(text: '${_bidItem.amount ?? '—'}', style: AppText.numXL),
-          TextSpan(
-              text: ' ${context.l.amountTypeTon}',
-              style: AppText.headline.copyWith(color: Palette.textSecondary)),
-        ])),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(_paymentForm(context),
-                  textAlign: TextAlign.end,
-                  style: AppText.label.copyWith(color: Palette.textSecondary)),
-              Text(localizeDeliveryType(_bidItem.deliveryType ?? '-', context),
-                  textAlign: TextAlign.end,
-                  style: AppText.label.copyWith(color: Palette.textSecondary)),
-              if (_bidItem.year != null)
-                Text(context.l.harvestOf('${_bidItem.year}'),
+        // A big volume shrinks to fit instead of pushing the details out.
+        Flexible(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.bottomLeft,
+            child: Text.rich(TextSpan(children: [
+              TextSpan(text: '${_bidItem.amount ?? '—'}', style: AppText.numXL),
+              TextSpan(
+                  text: ' ${context.l.amountTypeTon}',
+                  style:
+                      AppText.headline.copyWith(color: Palette.textSecondary)),
+            ])),
+          ),
+        ),
+        Flexible(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(_paymentForm(context),
+                    textAlign: TextAlign.end,
                     style:
-                        AppText.caption.copyWith(color: Palette.textTertiary)),
-            ],
+                        AppText.label.copyWith(color: Palette.textSecondary)),
+                Text(
+                    localizeDeliveryType(_bidItem.deliveryType ?? '-', context),
+                    textAlign: TextAlign.end,
+                    style:
+                        AppText.label.copyWith(color: Palette.textSecondary)),
+                if (_bidItem.year != null)
+                  Text(context.l.harvestOf('${_bidItem.year}'),
+                      style: AppText.caption
+                          .copyWith(color: Palette.textTertiary)),
+              ],
+            ),
           ),
         ),
       ],
@@ -298,7 +313,6 @@ class _BidListItemState extends State<BidListItem> {
       AppIconButton(
         icon: Icons.chevron_right_rounded,
         tooltip: context.l.additionally,
-        size: 40,
         onPressed: () => widget.onPressed(model: _bidItem),
       ),
     ]);

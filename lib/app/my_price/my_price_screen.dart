@@ -225,16 +225,25 @@ class CombinationCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Text.rich(TextSpan(children: [
-              TextSpan(
-                text: _price(entry.pricePerTon),
-                style: AppText.numL.copyWith(
-                    color: editable ? Palette.green : Palette.textSecondary),
+            // A long price shrinks to fit next to the product name.
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.bottomRight,
+                child: Text.rich(TextSpan(children: [
+                  TextSpan(
+                    text: _price(entry.pricePerTon),
+                    style: AppText.numL.copyWith(
+                        color:
+                            editable ? Palette.green : Palette.textSecondary),
+                  ),
+                  TextSpan(
+                      text: ' ${l.uahShort}/${l.tonShort}',
+                      style:
+                          AppText.label.copyWith(color: Palette.textSecondary)),
+                ])),
               ),
-              TextSpan(
-                  text: ' ${l.uahShort}/${l.tonShort}',
-                  style: AppText.label.copyWith(color: Palette.textSecondary)),
-            ])),
+            ),
           ]),
           if (reservation && entry.queuePosition != null) ...[
             const SizedBox(height: 8),

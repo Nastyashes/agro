@@ -45,7 +45,7 @@ class AppFilterChip extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(6, 6, 14, 6),
+            padding: const EdgeInsets.fromLTRB(6, 10, 14, 10),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
               Container(
                 width: 24,

@@ -86,8 +86,15 @@ class AppMenuDrawer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(children: [
-                Image.asset(Assets.pictureLogo, height: 40),
-                const Spacer(),
+                // The logo gives way to the tariff chip on narrow drawers.
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Image.asset(Assets.pictureLogo,
+                        height: 40, fit: BoxFit.contain),
+                  ),
+                ),
+                const SizedBox(width: 12),
                 if (tariffLabel != null && tariffLabel!.isNotEmpty)
                   _TariffChip(
                       label: tariffLabel!,
@@ -312,7 +319,9 @@ class _FooterAction extends StatelessWidget {
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             Icon(icon, size: 20, color: color),
             const SizedBox(width: 8),
-            Text(label, style: AppText.bodyMedium.copyWith(color: color)),
+            Flexible(
+                child: Text(label,
+                    style: AppText.bodyMedium.copyWith(color: color))),
           ]),
         ),
       );
