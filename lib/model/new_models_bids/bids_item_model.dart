@@ -3,7 +3,6 @@ import 'package:agro/model/my_price/my_price_order_meta.dart';
 import 'package:agro/model/my_price/my_price_parse.dart';
 import 'package:agro/model/new_models_bids/bids_contacts_model.dart';
 
-
 class BidItem extends Created {
   final int? id;
   final int? created;
@@ -157,14 +156,12 @@ class BidItem extends Created {
     Map<String, int>? regions,
   }) {
     // region_name тепер приходить напряму з API
-    final regionName = json['region_name'] as String?;
+    final regionName = parseMyPriceString(json['region_name']);
 
     // contacts — null або об'єкт
-    final contactsRaw = json['contacts'];
-    BidContacts? contacts;
-    if (contactsRaw != null && contactsRaw is Map<String, dynamic>) {
-      contacts = BidContacts.fromJson(contactsRaw);
-    }
+    final contactsRaw = parseMyPriceMap(json['contacts']);
+    final contacts =
+        contactsRaw == null ? null : BidContacts.fromJson(contactsRaw);
 
     final myPriceRaw = parseMyPriceMap(json['my_price']);
 
@@ -181,32 +178,32 @@ class BidItem extends Created {
       amountMin: _parseInt(json['amount_min']),
       sphereId: _parseInt(json['sphere_id']),
       paymentType: _parseInt(json['payment_type']),
-      deliveryType: json['delivery_type'] as String?,
+      deliveryType: parseMyPriceString(json['delivery_type']),
       regionId: _parseInt(json['region_id']),
       operatorId: _parseInt(json['operator_id']),
       opened: _parseInt(json['opened']),
-      companyName: json['company_name'] as String?,
+      companyName: parseMyPriceString(json['company_name']),
       asId: _parseInt(json['as_id']),
       processed: _parseInt(json['processed']),
-      productTitle: json['product_title'] as String?,
-      alias: json['alias'] as String?,
+      productTitle: parseMyPriceString(json['product_title']),
+      alias: parseMyPriceString(json['alias']),
       ordPaymentType: _parseInt(json['ord_payment_type']),
       amount: _parseInt(json['amount']),
       orderCreated: _parseInt(json['order_created']),
       regionOid: _parseInt(json['region_oid']),
-      openedDate: json['opened_date'] as String?,
-      openedPhon: json['opened_phon'] as String?,
+      openedDate: parseMyPriceString(json['opened_date']),
+      openedPhon: parseMyPriceString(json['opened_phon']),
       openedUsid: _parseInt(json['opened_usid']),
       year: _parseInt(json['year']),
-      orderCreatedHum: json['order_created_hum'] as String?,
+      orderCreatedHum: parseMyPriceString(json['order_created_hum']),
       dayNumber: _parseInt(json['day_number']),
-      dayLabel: json['day_label'] as String?,
-      dayColor: json['day_color'] as String?,
+      dayLabel: parseMyPriceString(json['day_label']),
+      dayColor: parseMyPriceString(json['day_color']),
       contactPrice: _parseInt(json['contact_price']),
-      fermerCompany: json['fermer_company'] as String?,
-      fermerName: json['fermer_name'] as String?,
-      fermerPhone: json['fermer_phone'] as String?,
-      fermerEmail: json['fermer_email'] as String?,
+      fermerCompany: parseMyPriceString(json['fermer_company']),
+      fermerName: parseMyPriceString(json['fermer_name']),
+      fermerPhone: parseMyPriceString(json['fermer_phone']),
+      fermerEmail: parseMyPriceString(json['fermer_email']),
       fermerRegionId: _parseInt(json['fermer_region_id']),
       contacts: contacts,
       myPrice: MyPriceOrderMeta.fromJson(myPriceRaw),
@@ -271,11 +268,9 @@ class BidsResponse {
 
   factory BidsResponse.fromJson(Map<String, dynamic> json) {
     return BidsResponse(
-      bids: (json['bids'] as List<dynamic>? ?? [])
-          .map((e) => BidItem.fromJson(e))
-          .toList(),
-      bidsFresh: (json['bids_fresh'] as List<dynamic>? ?? [])
-          .map((e) => BidItem.fromJson(e))
+      bids: parseMyPriceMapList(json['bids']).map(BidItem.fromJson).toList(),
+      bidsFresh: parseMyPriceMapList(json['bids_fresh'])
+          .map(BidItem.fromJson)
           .toList(),
     );
   }

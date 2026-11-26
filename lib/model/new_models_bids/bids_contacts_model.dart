@@ -1,3 +1,5 @@
+import 'package:agro/model/my_price/my_price_parse.dart';
+
 class BidContacts {
   final String? company;
   final String? name;
@@ -22,14 +24,14 @@ class BidContacts {
   });
 
   factory BidContacts.fromJson(Map<String, dynamic> json) => BidContacts(
-        company: json['company'] as String?,
-        name: json['name'] as String?,
-        phone: json['phone'] as String?,
-        email: json['email'] as String?,
-        addr: json['addr'] as String?,
-        region: json['region'] as String?,
-        district: json['district'] as String?,
-        city: json['city'] as String?,
-        maps: json['maps'] as String?,
+        company: parseMyPriceString(json['company']),
+        name: parseMyPriceString(json['name']),
+        phone: parseMyPriceString(json['phone']),
+        email: parseMyPriceString(json['email']),
+        addr: parseMyPriceString(json['addr']),
+        region: parseMyPriceString(json['region']),
+        district: parseMyPriceString(json['district']),
+        city: parseMyPriceString(json['city']),
+        maps: parseMyPriceString(json['maps']),
       );
 }
