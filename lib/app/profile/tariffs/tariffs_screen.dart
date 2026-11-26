@@ -24,7 +24,8 @@ class TariffsScreenState extends State<TariffsScreen>
   @override
   void initState() {
     super.initState();
-    _pageViewController = PageController();
+    // Neighbour cards peek in from the sides: the list is swipeable.
+    _pageViewController = PageController(viewportFraction: 0.9);
   }
 
   @override

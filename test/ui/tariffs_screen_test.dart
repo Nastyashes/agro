@@ -58,14 +58,20 @@ void main() {
             of: find.byType(Row).last,
             matching: find.byType(AnimatedContainer)),
         findsNWidgets(2));
-    expect(find.text('Мій тариф'), findsNothing); // Free card is first
+    // The badge belongs to the Premium card, never to Free.
+    expect(
+        find.descendant(
+            of: find.widgetWithText(TariffItem, 'FREE'),
+            matching: find.text('Мій тариф')),
+        findsNothing);
 
     await tester.fling(find.byType(PageView), const Offset(-600, 0), 1500);
     await tester.pumpAndSettle();
     expect(find.text('Premium'), findsOneWidget);
     expect(
         find.descendant(
-            of: find.byType(TariffItem), matching: find.text('Мій тариф')),
+            of: find.widgetWithText(TariffItem, 'Premium'),
+            matching: find.text('Мій тариф')),
         findsOneWidget);
     Get.reset();
   });

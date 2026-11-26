@@ -1,8 +1,8 @@
 import 'package:agro/ui/components/app_snackbar.dart';
 import 'package:agro/app/new_home_screen/widgets/home_tabs.dart';
 import 'package:agro/app/new_home_screen/home_actions.dart';
-import 'package:agro/ui/local_notification/local_notification.dart';
 import 'package:agro/data/session_storage.dart';
+import 'package:agro/ui/components/coming_soon_sheet.dart';
 import 'package:agro/ui/components/empty_state.dart';
 import 'package:agro/ui/pop_up/top_up_balance_popup.dart';
 import 'package:agro/app/new_home_screen/drawer/app_menu_drawer.dart';
@@ -105,7 +105,10 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
             phone: controller.modelUser.phone ?? '',
             tariffLabel: _tariffLabel(),
             balance: controller.balance,
-            onComingSoon: () => notification(text: context.l.comingSoonHint),
+            onComingSoon: (section) {
+              Navigator.pop(context);
+              showComingSoonSheet(context, section);
+            },
             adsPrice: AppConstants.adsPrice,
             showDisableAds: controller.shouldShowAds,
             showMyPrice: controller.modelUser.isTraider &&

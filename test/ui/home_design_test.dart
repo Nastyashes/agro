@@ -56,7 +56,7 @@ void main() {
         showDeals: myPrice,
         showTariffs: tariffs,
         showDisableAds: ads,
-        onComingSoon: () => calls.add('soon'),
+        onComingSoon: (s) => calls.add('soon:${s.description.isNotEmpty}'),
         onMyPrice: () => calls.add('myPrice'),
         onInfoMessages: () => calls.add('messages'),
         onTopUp: () => calls.add('topUp'),
@@ -71,7 +71,7 @@ void main() {
       for (final t in ['Прийомка', 'Мої заявки', 'Збережені']) {
         await tester.tap(find.text(t));
       }
-      expect(calls, ['soon', 'soon', 'soon']);
+      expect(calls, ['soon:true', 'soon:true', 'soon:true']);
       expect(find.text('Незабаром'), findsNWidgets(3));
     });
 

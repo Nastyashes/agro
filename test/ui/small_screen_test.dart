@@ -129,7 +129,7 @@ void main() {
                 showTariffs: true,
                 showDisableAds: true,
                 adsPrice: '150',
-                onComingSoon: () {},
+                onComingSoon: (_) {},
               ),
             ),
           ),

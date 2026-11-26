@@ -45,7 +45,9 @@ class BlockReview extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            RatingStarsView(rating: rating),
+            // The server may return 0 (no rating saved): show no stars
+            // rather than an empty "zero" row.
+            if (rating > 0) RatingStarsView(rating: rating),
             const Spacer(),
             if ((modelReview.date ?? '').isNotEmpty)
               Text(modelReview.date!,

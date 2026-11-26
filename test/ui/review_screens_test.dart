@@ -41,6 +41,7 @@ void main() {
     await pump(tester, [
       ModelReview(rating: 3, comment: 'Нормально', date: '01.11.2026'),
       ModelReview(rating: 5, comment: 'Чудово', date: '02.11.2026'),
+      ModelReview(rating: 0, comment: 'Без оцінки', date: '03.11.2026'),
     ]);
 
     expect(find.text('Нормально'), findsOneWidget);
@@ -48,7 +49,8 @@ void main() {
     final stars = tester
         .widgetList<RatingStarsView>(find.byType(RatingStarsView))
         .map((w) => w.rating);
-    expect(stars, [3, 5]);
+    expect(stars, [3, 5], reason: 'rating 0 shows no stars');
+    expect(find.text('Без оцінки'), findsOneWidget);
     expect(
         find.byWidgetPredicate((w) =>
             w is Container &&

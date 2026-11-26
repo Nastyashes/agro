@@ -1614,6 +1614,24 @@ abstract class AppLocalizations {
   /// **'Цей розділ скоро з\'явиться'**
   String get comingSoonHint;
 
+  /// No description provided for @comingSoonIntake.
+  ///
+  /// In uk, this message translates to:
+  /// **'Шукайте елеватори й пункти прийому поруч, порівнюйте ціни та умови приймання.'**
+  String get comingSoonIntake;
+
+  /// No description provided for @comingSoonMyBids.
+  ///
+  /// In uk, this message translates to:
+  /// **'Ваші власні заявки на купівлю чи продаж і відповіді на них — в одному місці.'**
+  String get comingSoonMyBids;
+
+  /// No description provided for @comingSoonSaved.
+  ///
+  /// In uk, this message translates to:
+  /// **'Зберігайте цікаві заявки, щоб швидко повернутися до них пізніше.'**
+  String get comingSoonSaved;
+
   /// No description provided for @newBadge.
   ///
   /// In uk, this message translates to:

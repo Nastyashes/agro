@@ -802,6 +802,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get comingSoonHint => 'This section is coming soon';
 
   @override
+  String get comingSoonIntake =>
+      'Find elevators and intake points nearby and compare prices and terms.';
+
+  @override
+  String get comingSoonMyBids =>
+      'Your own buy or sell requests and the replies to them, in one place.';
+
+  @override
+  String get comingSoonSaved =>
+      'Save interesting bids to come back to them quickly later.';
+
+  @override
   String get newBadge => 'New';
 
   @override

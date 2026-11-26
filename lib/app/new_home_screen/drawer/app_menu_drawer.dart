@@ -1,5 +1,6 @@
 import 'package:agro/app/new_home_screen/drawer/menu_item.dart';
 import 'package:agro/generated/assets.dart';
+import 'package:agro/ui/components/coming_soon_sheet.dart';
 import 'package:agro/ui/components/app_button.dart';
 import 'package:agro/ui/theme/app_text.dart';
 import 'package:agro/ui/theme/palette.dart';
@@ -35,7 +36,7 @@ class AppMenuDrawer extends StatelessWidget {
   final VoidCallback? onDeleteAccount;
 
   /// Tap on a «Незабаром» item.
-  final VoidCallback? onComingSoon;
+  final ValueChanged<ComingSoon>? onComingSoon;
 
   const AppMenuDrawer({
     super.key,
@@ -125,7 +126,10 @@ class AppMenuDrawer extends StatelessWidget {
                           icon: Icons.warehouse_outlined,
                           title: l.intake,
                           mark: MenuItemMark.soon,
-                          onPressed: onComingSoon,
+                          onPressed: () => onComingSoon?.call(ComingSoon(
+                              icon: Icons.warehouse_outlined,
+                              title: l.intake,
+                              description: l.comingSoonIntake)),
                         ),
                         if (showMyPrice)
                           MenuItem(
@@ -138,13 +142,19 @@ class AppMenuDrawer extends StatelessWidget {
                           icon: Icons.assignment_outlined,
                           title: l.myBids,
                           mark: MenuItemMark.soon,
-                          onPressed: onComingSoon,
+                          onPressed: () => onComingSoon?.call(ComingSoon(
+                              icon: Icons.assignment_outlined,
+                              title: l.myBids,
+                              description: l.comingSoonMyBids)),
                         ),
                         MenuItem(
                           icon: Icons.bookmark_border_rounded,
                           title: l.savedBids,
                           mark: MenuItemMark.soon,
-                          onPressed: onComingSoon,
+                          onPressed: () => onComingSoon?.call(ComingSoon(
+                              icon: Icons.bookmark_border_rounded,
+                              title: l.savedBids,
+                              description: l.comingSoonSaved)),
                         ),
                         if (showDeals)
                           MenuItem(

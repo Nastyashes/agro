@@ -801,6 +801,18 @@ class AppLocalizationsRu extends AppLocalizations {
   String get comingSoonHint => 'Этот раздел скоро появится';
 
   @override
+  String get comingSoonIntake =>
+      'Ищите элеваторы и пункты приёма рядом, сравнивайте цены и условия приёмки.';
+
+  @override
+  String get comingSoonMyBids =>
+      'Ваши собственные заявки на покупку или продажу и ответы на них — в одном месте.';
+
+  @override
+  String get comingSoonSaved =>
+      'Сохраняйте интересные заявки, чтобы быстро вернуться к ним позже.';
+
+  @override
   String get newBadge => 'Новое';
 
   @override
