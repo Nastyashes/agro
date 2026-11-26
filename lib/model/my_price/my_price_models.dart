@@ -131,8 +131,8 @@ class MyPriceEntry {
       id: parseMyPriceInt(source['id']),
       slotId: parseMyPriceInt(source['slot_id']),
       status: parseMyPriceString(source['status']) ?? '',
-      regionId: parseMyPriceInt(source['region_id']) ??
-          parseMyPriceNestedId(region),
+      regionId:
+          parseMyPriceInt(source['region_id']) ?? parseMyPriceNestedId(region),
       productId: parseMyPriceInt(source['product_id']) ??
           parseMyPriceNestedId(product),
       paymentType: parseMyPriceInt(source['payment_type']) ??
@@ -227,9 +227,8 @@ class MyPriceOverview {
     final combinations = parseMyPriceMapList(map['combinations'])
         .map(MyPriceEntry.fromJson)
         .toList();
-    final slots = parseMyPriceMapList(map['slots'])
-        .map(MyPriceEntry.fromJson)
-        .toList();
+    final slots =
+        parseMyPriceMapList(map['slots']).map(MyPriceEntry.fromJson).toList();
     final reservations = parseMyPriceMapList(map['reservations'])
         .map(MyPriceEntry.fromJson)
         .map(
@@ -529,6 +528,21 @@ class MyPriceDealsPage {
   }
 }
 
+/// Price per ton typed by the user: digits with an optional ',' or '.'
+/// and up to two decimals, more than 0 and at most [maxPricePerTon].
+/// Anything else (empty, 0, negative, NaN, Infinity, 1e9, letters) is
+/// null, so it is never sent (BUG-008/009).
+double? parsePricePerTon(String text) {
+  final t = text.replaceAll(RegExp(r'\s'), '').replaceAll(',', '.');
+  if (!RegExp(r'^\d+(\.\d{1,2})?$').hasMatch(t)) return null;
+  final value = double.parse(t);
+  if (value <= 0 || value > maxPricePerTon) return null;
+  return value;
+}
+
+/// Upper bound for a price per ton, UAH (sanity limit, not a business rule).
+const double maxPricePerTon = 10000000;
+
 class MyPriceActivateParams {
   final int regionId;
   final int productId;
@@ -545,6 +559,11 @@ class MyPriceActivateParams {
     required this.teamUserId,
     this.promoCode,
   });
+
+  /// Same values = same request; a change needs a new request id.
+  String get identity =>
+      '$regionId|$productId|$paymentType|$pricePerTon|$teamUserId|'
+      '${promoCode ?? ''}';
 
   Map<String, String> toFormData() {
     final data = <String, String>{

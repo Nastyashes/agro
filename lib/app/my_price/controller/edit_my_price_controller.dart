@@ -37,6 +37,9 @@ class EditMyPriceController extends BaseController {
   late TextEditingController priceController;
   final RxnInt teamUserId = RxnInt();
 
+  /// The typed price is not a valid price; nothing is sent (BUG-008).
+  final RxBool priceError = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -57,7 +60,9 @@ class EditMyPriceController extends BaseController {
 
   Future<void> onSave() async {
     if (entry.id == null) return;
-    final price = double.tryParse(priceController.text.replaceAll(',', '.'));
+    final price = parsePricePerTon(priceController.text);
+    priceError.value = price == null;
+    if (price == null) return;
     await (_withLoader ?? loadIfValid)(() async {
       final result = await _api.update(
         targetType: targetType,

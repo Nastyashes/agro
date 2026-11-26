@@ -59,10 +59,7 @@ List<Map<String, dynamic>> parseMyPriceMapList(dynamic value) {
         .toList();
   }
   if (value is! List) return const [];
-  return value
-      .map(parseMyPriceMap)
-      .whereType<Map<String, dynamic>>()
-      .toList();
+  return value.map(parseMyPriceMap).whereType<Map<String, dynamic>>().toList();
 }
 
 int? parseMyPriceNestedId(dynamic value) {

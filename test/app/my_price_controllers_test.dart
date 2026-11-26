@@ -175,6 +175,16 @@ void main() {
       expect(closed, [true]);
     });
 
+    test('an invalid price is flagged and nothing is sent (BUG-008)', () async {
+      c.priceController.text = '';
+
+      await c.onSave();
+
+      expect(c.priceError.value, isTrue);
+      expect(api.updated, isEmpty);
+      expect(closed, isEmpty);
+    });
+
     test('failed save shows the error and stays', () async {
       api.updateResult = const MyPriceResult(ok: false, errorCode: 'x');
 
