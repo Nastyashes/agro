@@ -939,4 +939,7 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get bidsUpdateFailed => 'Не удалось обновить заявки';
+
+  @override
+  String get loadFailedTitle => 'Не удалось загрузить';
 }

@@ -55,39 +55,47 @@ class MainController extends BaseController {
   }
 
   Future<void> _loadUserData() async {
-    await Future.wait([
+    final results = await Future.wait([
       loadTariff(),
       loadBalance(),
     ]);
 
-    _userDataLoaded = true;
+    // A failed part (e.g. offline start) is retried on the next refresh
+    // instead of leaving 0 UAH / no tariff until restart (BUG-027).
+    _userDataLoaded = results.every((ok) => ok);
   }
 
   Future<void> refreshUserData() {
     return initUserData(force: true);
   }
 
-  Future<void> loadTariff() async {
+  /// True if loaded; errors are logged, the old value is kept.
+  Future<bool> loadTariff() async {
     try {
       _tariff.value = await AccountRepository().currentTariff();
+      return true;
     } catch (e, stackTrace) {
       log(
         'MainController loadTariff error: $e',
         error: e,
         stackTrace: stackTrace,
       );
+      return false;
     }
   }
 
-  Future<void> loadBalance() async {
+  /// True if loaded; errors are logged, the old value is kept.
+  Future<bool> loadBalance() async {
     try {
       _balance.value = await AccountRepository().balance();
+      return true;
     } catch (e, stackTrace) {
       log(
         'MainController loadBalance error: $e',
         error: e,
         stackTrace: stackTrace,
       );
+      return false;
     }
   }
 
@@ -114,6 +122,16 @@ class MainController extends BaseController {
 
   void invalidateUserData() {
     _userDataLoaded = false;
+  }
+
+  /// Forgets everything about the signed-in user (logout, expired token),
+  /// so the next account never sees the previous one's balance or tariff.
+  void resetSession() {
+    _userDataLoaded = false;
+    _balance.value = 0;
+    _tariff.value = null;
+    _userfield.clear();
+    myPriceEnabled.value = true;
   }
 
   void disableMyPrice() {

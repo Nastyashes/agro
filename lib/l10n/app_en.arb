@@ -325,5 +325,6 @@
   "noConnection": "No connection",
   "checkInternet": "Check your internet and try again.",
   "retry": "Retry",
-  "bidsUpdateFailed": "Couldn't update the bids"
+  "bidsUpdateFailed": "Couldn't update the bids",
+  "loadFailedTitle": "Couldn't load"
 }

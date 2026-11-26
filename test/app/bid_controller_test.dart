@@ -78,6 +78,10 @@ class FakeMain extends MainController {
 
   @override
   bool get isAdsDisabled => adsOff;
+
+  int refreshes = 0;
+  @override
+  Future<void> refreshUserData() async => refreshes++;
 }
 
 class FakeUi implements BidDetailUi {
@@ -183,6 +187,8 @@ void main() {
       expect(c.contactOpened.value, isTrue);
       expect(c.bidItem.fermerPhone, '+380501112233');
       expect(updated, hasLength(1));
+      // Paid: the header balance is reloaded (BUG-003).
+      expect(main.refreshes, 1);
     });
 
     test('ads disabled: opens directly without an ad', () async {
@@ -260,6 +266,15 @@ void main() {
       expect(bids.analyses, 0);
       expect(c.analysisOrdered.value, isFalse);
       expect(c.orderingAnalysis.value, isFalse);
+    });
+
+    test('ordered analysis applies the balance after (BUG-003)', () async {
+      bids.analysis =
+          const AnalysisResult(AnalysisStatus.ordered, balanceAfter: '125');
+
+      await c.onOrderAnalysis();
+
+      expect(main.balance, 125);
     });
 
     test('insufficient can be retried', () async {

@@ -35,6 +35,7 @@ class AccountSessionActions {
       destructive: true,
       () async {
         await SessionStorage.instance.clear();
+        await LocalStorageRepository().clear();
 
         if (!context.mounted) return;
 
@@ -71,8 +72,7 @@ class AccountSessionActions {
       Get.delete<NewHomeController>(force: true);
     }
     if (Get.isRegistered<MainController>()) {
-      Get.find<MainController>().invalidateUserData();
-      Get.find<MainController>().updateUserfield(null);
+      Get.find<MainController>().resetSession();
     }
     if (!Get.isRegistered<AppController>()) {
       Get.put<AppController>(AppController(), permanent: true);

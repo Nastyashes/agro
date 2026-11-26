@@ -941,4 +941,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bidsUpdateFailed => 'Couldn\'t update the bids';
+
+  @override
+  String get loadFailedTitle => 'Couldn\'t load';
 }

@@ -148,7 +148,8 @@ class CreateMyPriceController extends BaseController {
     MyPriceResult<MyPriceActivateResult>? activateResult;
     await _loading(() async {
       activateResult = await _activate(activateParams, quote.action, amount);
-      if (activateResult?.errorCode == 'database_error') {
+      final code = activateResult?.errorCode;
+      if (code == 'database_error' || code == myPriceNetworkError) {
         activateResult = await _activate(activateParams, quote.action, amount);
       }
     });

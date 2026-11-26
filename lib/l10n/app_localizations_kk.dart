@@ -942,4 +942,7 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get bidsUpdateFailed => 'Өтінімдерді жаңарту мүмкін болмады';
+
+  @override
+  String get loadFailedTitle => 'Жүктеу мүмкін болмады';
 }

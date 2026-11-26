@@ -324,5 +324,6 @@
   "noConnection": "Немає з'єднання",
   "checkInternet": "Перевірте інтернет і спробуйте ще раз.",
   "retry": "Повторити",
-  "bidsUpdateFailed": "Не вдалося оновити заявки"
+  "bidsUpdateFailed": "Не вдалося оновити заявки",
+  "loadFailedTitle": "Не вдалося завантажити"
 }

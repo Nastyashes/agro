@@ -134,7 +134,6 @@ class ScreenBidDetailUi implements BidDetailUi {
             l.insufficientFunds(result.balance ?? '—', result.price ?? '—'));
       case AnalysisStatus.failed:
         showInformPoUp(context, l.error, result.message ?? l.error);
-        notification(text: l.failedOpenContact, type: SnackType.error);
     }
   }
 

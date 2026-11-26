@@ -1871,6 +1871,12 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Не вдалося оновити заявки'**
   String get bidsUpdateFailed;
+
+  /// No description provided for @loadFailedTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Не вдалося завантажити'**
+  String get loadFailedTitle;
 }
 
 class _AppLocalizationsDelegate

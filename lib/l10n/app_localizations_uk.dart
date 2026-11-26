@@ -940,4 +940,7 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get bidsUpdateFailed => 'Не вдалося оновити заявки';
+
+  @override
+  String get loadFailedTitle => 'Не вдалося завантажити';
 }

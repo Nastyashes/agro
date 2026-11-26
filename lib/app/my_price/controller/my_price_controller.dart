@@ -43,11 +43,18 @@ class MyPriceController extends BaseController {
     loadOverview();
   }
 
+  /// The last load failed: the screen shows an error with a retry
+  /// instead of "no combinations" (BUG-026).
+  final RxBool loadFailed = false.obs;
+
   Future<void> loadOverview() async {
     final result = await _api.overview();
     if (result.ok && result.data != null) {
       overview.value = result.data!;
+      loadFailed.value = false;
     } else {
+      loadFailed.value = true;
+      loadPage.value = true;
       await ui.showError(result);
     }
     loadPage.value = true;

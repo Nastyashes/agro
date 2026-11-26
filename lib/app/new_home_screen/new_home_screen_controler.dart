@@ -361,6 +361,8 @@ class NewHomeController extends BaseController {
       await Future.wait([
         loadAllBids(reset: true),
         loadUnreadInformMessages(),
+        // Balance and tariff can change outside the app (BUG-003).
+        mainController.refreshUserData(),
       ]);
       allRefreshController.refreshCompleted();
     } catch (_) {
@@ -387,6 +389,7 @@ class NewHomeController extends BaseController {
       await Future.wait([
         loadFreshBids(reset: true),
         loadUnreadInformMessages(),
+        mainController.refreshUserData(),
       ]);
       freshRefreshController.refreshCompleted();
     } catch (_) {

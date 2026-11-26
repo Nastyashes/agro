@@ -86,6 +86,19 @@ void main() {
 
       expect(c.loadPage.value, isTrue);
       expect(ui.errors.single.errorCode, 'x');
+      // Not "no combinations": an error state with a retry (BUG-026).
+      expect(c.loadFailed.value, isTrue);
+    });
+
+    test('a successful reload clears the error state', () async {
+      api.overviewResult = const MyPriceResult(ok: false, errorCode: 'x');
+      await c.loadOverview();
+      api.overviewResult =
+          const MyPriceResult(ok: true, data: MyPriceOverview());
+
+      await c.loadOverview();
+
+      expect(c.loadFailed.value, isFalse);
     });
 
     test('tab switches visible entries', () async {
@@ -205,6 +218,16 @@ void main() {
 
       expect(api.offsets, [0, 0]);
       expect(c.items, hasLength(1));
+    });
+
+    test('a failed first page is an error, not "no deals"', () async {
+      api.pages.add(const MyPriceResult(ok: false, errorCode: 'network_error'));
+
+      await c.loadDeals(reset: true);
+
+      expect(c.items, isEmpty);
+      expect(c.loadFailed.value, isTrue);
+      expect(c.initialLoading.value, isFalse);
     });
   });
 }

@@ -65,11 +65,19 @@ class _InformMessagesScreenState extends State<InformMessagesScreen> {
                       ? ListView(
                           padding: const EdgeInsets.only(top: 80),
                           children: [
-                            EmptyState(
-                              title: l.emptyInformMessages,
-                              text: l.emptyMessagesText,
-                              icon: Icons.notifications_none_rounded,
-                            ),
+                            controller.loadFailed.value
+                                ? EmptyState(
+                                    icon: Icons.cloud_off_rounded,
+                                    title: l.loadFailedTitle,
+                                    text: l.checkInternet,
+                                    actionLabel: l.retry,
+                                    onAction: controller.loadMessages,
+                                  )
+                                : EmptyState(
+                                    title: l.emptyInformMessages,
+                                    text: l.emptyMessagesText,
+                                    icon: Icons.notifications_none_rounded,
+                                  ),
                           ],
                         )
                       : ListView.separated(

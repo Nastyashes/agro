@@ -326,5 +326,6 @@
   "noConnection": "Нет соединения",
   "checkInternet": "Проверьте интернет и попробуйте ещё раз.",
   "retry": "Повторить",
-  "bidsUpdateFailed": "Не удалось обновить заявки"
+  "bidsUpdateFailed": "Не удалось обновить заявки",
+  "loadFailedTitle": "Не удалось загрузить"
 }
