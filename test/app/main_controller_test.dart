@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:agro/controllers/main_controler.dart';
+import 'package:agro/data/repositories/account_repository.dart';
 import 'package:agro/model/tariff/tariff.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get/get.dart';
@@ -34,6 +37,32 @@ void main() {
     await c.initUserData();
     expect(c.tariffCalls, 2, reason: 'loaded once it succeeded');
   });
+
+  test('a load for the previous user does not leak into the new session',
+      () async {
+    final account = _GatedAccount();
+    final c = MainController(account: account);
+    final stale = c.initUserData();
+
+    c.resetSession();
+    account.gate.complete();
+    await stale;
+
+    expect(c.balance, 0, reason: 'old balance must not be written');
+  });
+
+  test('refresh waits for a running load, then loads again', () async {
+    final account = _GatedAccount();
+    final c = MainController(account: account);
+    final first = c.initUserData();
+    final refresh = c.refreshUserData();
+
+    account.gate.complete();
+    await Future.wait([first, refresh]);
+
+    expect(account.balanceCalls, 2);
+    expect(c.balance, 42, reason: 'the later, post-charge balance wins');
+  });
 }
 
 class _FlakyMain extends MainController {
@@ -44,4 +73,22 @@ class _FlakyMain extends MainController {
 
   @override
   Future<bool> loadBalance() async => true;
+}
+
+class _GatedAccount extends AccountRepository {
+  final gate = Completer<void>();
+  int balanceCalls = 0;
+
+  @override
+  Future<Tariff> currentTariff() async => Tariff.fromJson(const {});
+
+  @override
+  Future<int> balance() async {
+    balanceCalls++;
+    if (balanceCalls == 1) {
+      await gate.future;
+      return 500; // the previous user's balance
+    }
+    return 42;
+  }
 }

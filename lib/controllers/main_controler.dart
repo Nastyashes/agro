@@ -6,6 +6,10 @@ import 'package:agro/model/tariff/tariff.dart';
 import 'package:get/get.dart';
 
 class MainController extends BaseController {
+  MainController({AccountRepository? account}) : _accountOverride = account;
+
+  final AccountRepository? _accountOverride;
+  AccountRepository get _account => _accountOverride ?? AccountRepository();
   final Rxn<Tariff> _tariff = Rxn<Tariff>();
   final RxInt _balance = 0.obs;
   final RxMap<String, dynamic> _userfield = <String, dynamic>{}.obs;
@@ -36,6 +40,10 @@ class MainController extends BaseController {
   bool _userDataLoaded = false;
   Future<void>? _userDataLoading;
 
+  /// Bumped on [resetSession]; a load started for the previous user does
+  /// not write its result into the new session.
+  int _generation = 0;
+
   Future<void> initUserData({
     bool force = false,
   }) {
@@ -65,14 +73,22 @@ class MainController extends BaseController {
     _userDataLoaded = results.every((ok) => ok);
   }
 
-  Future<void> refreshUserData() {
+  /// Fresh data after something changed (payment, pull-to-refresh): waits
+  /// for a load already running, then loads again, so it never returns
+  /// the older, pre-charge balance.
+  Future<void> refreshUserData() async {
+    final running = _userDataLoading;
+    if (running != null) await running;
     return initUserData(force: true);
   }
 
   /// True if loaded; errors are logged, the old value is kept.
   Future<bool> loadTariff() async {
+    final generation = _generation;
     try {
-      _tariff.value = await AccountRepository().currentTariff();
+      final tariff = await _account.currentTariff();
+      if (generation != _generation) return false;
+      _tariff.value = tariff;
       return true;
     } catch (e, stackTrace) {
       log(
@@ -86,8 +102,11 @@ class MainController extends BaseController {
 
   /// True if loaded; errors are logged, the old value is kept.
   Future<bool> loadBalance() async {
+    final generation = _generation;
     try {
-      _balance.value = await AccountRepository().balance();
+      final balance = await _account.balance();
+      if (generation != _generation) return false;
+      _balance.value = balance;
       return true;
     } catch (e, stackTrace) {
       log(
@@ -127,6 +146,8 @@ class MainController extends BaseController {
   /// Forgets everything about the signed-in user (logout, expired token),
   /// so the next account never sees the previous one's balance or tariff.
   void resetSession() {
+    _generation++;
+    _userDataLoading = null;
     _userDataLoaded = false;
     _balance.value = 0;
     _tariff.value = null;

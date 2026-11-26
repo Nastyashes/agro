@@ -1,10 +1,9 @@
-import 'package:agro/controllers/main_controler.dart';
+import 'package:agro/controllers/session_end.dart';
 import 'package:agro/data/session_storage.dart';
 import 'package:agro/auth/country/country_screen.dart';
 import 'package:agro/server/api/api_client.dart';
 import 'package:agro/server/api/controller/common.dart';
 import 'package:flutter/foundation.dart';
-import 'package:get/get.dart';
 
 import '../../routes/app_pages.dart';
 import 'controller/auth.dart';
@@ -41,11 +40,7 @@ class Api {
   /// Expired or revoked token: drop the session (not the country, which
   /// picks the backend) and the previous user's cached data.
   static void _onUnauthorized() {
-    SessionStorage.instance.signOut();
-    if (Get.isRegistered<MainController>()) {
-      Get.find<MainController>().resetSession();
-    }
-    Get.offAllNamed(Routes.auth);
+    endSession(keepCountry: true, route: Routes.auth);
   }
 
   /// Sends [method] and wraps the result in the legacy [ApiAnswer].
