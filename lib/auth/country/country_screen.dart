@@ -1,9 +1,7 @@
 import 'package:agro/data/session_storage.dart';
-import 'package:agro/generated/assets.dart';
-import 'package:agro/ui/app_components/app_background.dart';
-import 'package:agro/ui/buttons/button_styles.dart';
-import 'package:agro/ui/theme/colors.dart';
-import 'package:agro/ui/theme/fonts.dart';
+import 'package:agro/auth/components/auth_layout.dart';
+import 'package:agro/ui/components/app_button.dart';
+import 'package:agro/ui/theme/app_text.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -25,47 +23,22 @@ class CountryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: Stack(children: [
-          const AppBackground(),
-          Center(
-            child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Image.asset(Assets.pictureLogo,
-                        width: MediaQuery.of(context).size.width / 1.2),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Text(
-                      context.l.selectCountry,
-                      style: AppFonts.title1.white,
-                    ),
-                  ),
-                  for (final item in Country.values) ...[
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: bStyle(
-                        text: item.label(context),
-                        c: context,
-                        colorText: AppColors.mainGreen,
-                        vertical: 15,
-                        border:
-                            Border.all(color: AppColors.mainGreen, width: 1),
-                        colorButt: Colors.transparent,
-                        onPressed: () =>
-                            _saveCountryAndCheckToken(context, item),
-                      ),
-                    )
-                  ]
-                ]),
+    return AuthLayout(
+      children: [
+        Text(context.l.selectCountry,
+            style: AppText.title, textAlign: TextAlign.center),
+        const SizedBox(height: 20),
+        for (final item in Country.values) ...[
+          AppButton(
+            label: item.label(context),
+            style: AppButtonStyle.secondary,
+            pill: true,
+            onPressed: () => _saveCountryAndCheckToken(context, item),
           ),
-        ]));
+          const SizedBox(height: 12),
+        ],
+      ],
+    );
   }
 }
 

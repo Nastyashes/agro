@@ -321,5 +321,9 @@
   "@tariffUntil": { "placeholders": { "date": { "type": "String" } } },
   "@harvestOf": { "placeholders": { "year": { "type": "String" } } },
   "@payAmount": { "placeholders": { "amount": { "type": "String" } } },
-  "@remainingFields": { "placeholders": { "fields": { "type": "String" } } }
+  "@remainingFields": { "placeholders": { "fields": { "type": "String" } } },
+  "noConnection": "No connection",
+  "checkInternet": "Check your internet and try again.",
+  "retry": "Retry",
+  "bidsUpdateFailed": "Couldn't update the bids"
 }

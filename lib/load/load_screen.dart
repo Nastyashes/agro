@@ -1,6 +1,6 @@
 import 'package:agro/ui/app_components/app_background.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 
 import '../../generated/assets.dart';
@@ -11,7 +11,7 @@ class LoadScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color(0xffEFEFEF),
+        backgroundColor: Palette.bg0,
         body: Stack(
           alignment: Alignment.topCenter,
           children: [

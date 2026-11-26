@@ -318,5 +318,9 @@
   "@tariffUntil": { "placeholders": { "date": { "type": "String" } } },
   "@harvestOf": { "placeholders": { "year": { "type": "String" } } },
   "@payAmount": { "placeholders": { "amount": { "type": "String" } } },
-  "@remainingFields": { "placeholders": { "fields": { "type": "String" } } }
+  "@remainingFields": { "placeholders": { "fields": { "type": "String" } } },
+  "noConnection": "Байланыс жоқ",
+  "checkInternet": "Интернетті тексеріп, қайталап көріңіз.",
+  "retry": "Қайталау",
+  "bidsUpdateFailed": "Өтінімдерді жаңарту мүмкін болмады"
 }

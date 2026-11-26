@@ -18,6 +18,7 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.loading = false,
     this.expand = true,
+    this.pill = false,
   });
 
   final String label;
@@ -29,6 +30,9 @@ class AppButton extends StatelessWidget {
 
   /// Takes the full width available (the default for large buttons).
   final bool expand;
+
+  /// Fully rounded ends (the login screens keep the original pill shape).
+  final bool pill;
 
   bool get enabled => onPressed != null && !loading;
 
@@ -71,8 +75,8 @@ class AppButton extends StatelessWidget {
             ],
           );
 
-    final radius =
-        BorderRadius.circular(large ? Radii.button : Radii.buttonSmall);
+    final radius = BorderRadius.circular(
+        pill ? Radii.pill : (large ? Radii.button : Radii.buttonSmall));
     final button = Semantics(
       button: true,
       enabled: enabled,

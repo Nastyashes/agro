@@ -927,4 +927,16 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get markRead => 'Отметить прочитанным';
+
+  @override
+  String get noConnection => 'Нет соединения';
+
+  @override
+  String get checkInternet => 'Проверьте интернет и попробуйте ещё раз.';
+
+  @override
+  String get retry => 'Повторить';
+
+  @override
+  String get bidsUpdateFailed => 'Не удалось обновить заявки';
 }

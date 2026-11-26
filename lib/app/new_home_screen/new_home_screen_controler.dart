@@ -12,6 +12,7 @@ import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/new_models_bids/add_banner/add_banner_model.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/routes/app_pages.dart';
+import 'package:agro/server/api/api_client.dart';
 import 'package:agro/vars/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -87,6 +88,10 @@ class NewHomeController extends BaseController {
   /// Incremented when a search fails; the screen shows an error.
   final RxInt failures = 0.obs;
 
+  /// True while the bid list could not load for lack of a connection; the
+  /// screen then shows "no connection" with a retry instead of an empty list.
+  final RxBool offline = false.obs;
+
   Timer? _searchDebounce;
 
   bool get isFree => mainController.isFree;
@@ -119,18 +124,44 @@ class NewHomeController extends BaseController {
     super.onInit();
   }
 
+  /// First load. Never throws: the screen calls it without awaiting, so a
+  /// failure becomes a [failures] event (and [offline] for network errors).
   Future<void> initPage() async {
     modelUser = SessionStorage.instance.user ?? ModelUser();
 
-    await mainController.initUserData();
-
-    await Future.wait([
-      loadAdBanner(),
-      loadAllBids(reset: true),
-      loadUnreadInformMessages(),
-      if (isFree) loadFreshBids(reset: true),
-    ]);
+    try {
+      await mainController.initUserData();
+      await Future.wait([
+        loadAdBanner(),
+        loadAllBids(reset: true),
+        loadUnreadInformMessages(),
+        if (isFree) loadFreshBids(reset: true),
+      ]);
+    } catch (e, stackTrace) {
+      log('NewHomeController initPage error: $e',
+          error: e, stackTrace: stackTrace);
+      offline.value = _isConnectionError(e) && bids.isEmpty;
+      failures.value++;
+    }
   }
+
+  bool _retrying = false;
+
+  /// "Retry" from the no-connection state or the error snackbar. Repeated
+  /// taps while it runs are ignored.
+  Future<void> retry() async {
+    if (_retrying) return;
+    _retrying = true;
+    try {
+      await initPage();
+    } finally {
+      _retrying = false;
+    }
+  }
+
+  static bool _isConnectionError(Object e) =>
+      e is ApiException &&
+      (e.kind == ApiErrorKind.network || e.kind == ApiErrorKind.timeout);
 
   // =========================
   // TAB
@@ -187,10 +218,13 @@ class NewHomeController extends BaseController {
       _bidsOffset = offset + newItems.length;
 
       _bidsTotal = page.total;
+      offline.value = false;
 
       _updateUserfield(page.userfield);
     } catch (e, stackTrace) {
       if (requestId != _allRequestId) return;
+
+      offline.value = _isConnectionError(e) && bids.isEmpty;
 
       log(
         'NewHomeController loadAllBids error: $e',

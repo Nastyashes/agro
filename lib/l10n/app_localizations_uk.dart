@@ -928,4 +928,16 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get markRead => 'Позначити прочитаним';
+
+  @override
+  String get noConnection => 'Немає з\'єднання';
+
+  @override
+  String get checkInternet => 'Перевірте інтернет і спробуйте ще раз.';
+
+  @override
+  String get retry => 'Повторити';
+
+  @override
+  String get bidsUpdateFailed => 'Не вдалося оновити заявки';
 }
