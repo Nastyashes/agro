@@ -328,8 +328,23 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
     required bool isFresh,
   }) {
     if (bids.isEmpty) {
-      return const [
-        SizedBox(height: 40),
+      if (isFresh || !controller.bidsLoaded.value) {
+        return const [SizedBox(height: 40)];
+      }
+      final searching = controller.searchController.text.trim().isNotEmpty;
+      return [
+        const SizedBox(height: 40),
+        searching
+            ? EmptyState(
+                icon: Icons.search_off_rounded,
+                title: context.l.nothingFound,
+                text: context.l.nothingFoundHint,
+              )
+            : EmptyState(
+                icon: Icons.inbox_rounded,
+                title: context.l.noBidsYet,
+                text: context.l.noBidsYetHint,
+              ),
       ];
     }
 

@@ -943,4 +943,18 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get loadFailedTitle => 'Не вдалося завантажити';
+
+  @override
+  String get nothingFound => 'Нічого не знайдено';
+
+  @override
+  String get nothingFoundHint =>
+      'Спробуйте іншу назву культури, область чи номер заявки.';
+
+  @override
+  String get noBidsYet => 'Заявок поки немає';
+
+  @override
+  String get noBidsYetHint =>
+      'Нові заявки з\'являться тут. Потягніть вниз, щоб оновити.';
 }

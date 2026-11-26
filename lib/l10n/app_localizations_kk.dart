@@ -945,4 +945,18 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get loadFailedTitle => 'Жүктеу мүмкін болмады';
+
+  @override
+  String get nothingFound => 'Ештеңе табылмады';
+
+  @override
+  String get nothingFoundHint =>
+      'Басқа дақылды, өңірді немесе өтінім нөмірін көріңіз.';
+
+  @override
+  String get noBidsYet => 'Әзірге өтінімдер жоқ';
+
+  @override
+  String get noBidsYetHint =>
+      'Жаңа өтінімдер осында шығады. Жаңарту үшін төмен тартыңыз.';
 }

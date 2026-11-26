@@ -1877,6 +1877,30 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Не вдалося завантажити'**
   String get loadFailedTitle;
+
+  /// No description provided for @nothingFound.
+  ///
+  /// In uk, this message translates to:
+  /// **'Нічого не знайдено'**
+  String get nothingFound;
+
+  /// No description provided for @nothingFoundHint.
+  ///
+  /// In uk, this message translates to:
+  /// **'Спробуйте іншу назву культури, область чи номер заявки.'**
+  String get nothingFoundHint;
+
+  /// No description provided for @noBidsYet.
+  ///
+  /// In uk, this message translates to:
+  /// **'Заявок поки немає'**
+  String get noBidsYet;
+
+  /// No description provided for @noBidsYetHint.
+  ///
+  /// In uk, this message translates to:
+  /// **'Нові заявки з\'являться тут. Потягніть вниз, щоб оновити.'**
+  String get noBidsYetHint;
 }
 
 class _AppLocalizationsDelegate

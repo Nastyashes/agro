@@ -944,4 +944,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loadFailedTitle => 'Couldn\'t load';
+
+  @override
+  String get nothingFound => 'Nothing found';
+
+  @override
+  String get nothingFoundHint => 'Try another crop, region or bid number.';
+
+  @override
+  String get noBidsYet => 'No bids yet';
+
+  @override
+  String get noBidsYetHint =>
+      'New bids will appear here. Pull down to refresh.';
 }

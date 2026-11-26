@@ -326,5 +326,9 @@
   "checkInternet": "Check your internet and try again.",
   "retry": "Retry",
   "bidsUpdateFailed": "Couldn't update the bids",
-  "loadFailedTitle": "Couldn't load"
+  "loadFailedTitle": "Couldn't load",
+  "nothingFound": "Nothing found",
+  "nothingFoundHint": "Try another crop, region or bid number.",
+  "noBidsYet": "No bids yet",
+  "noBidsYetHint": "New bids will appear here. Pull down to refresh."
 }

@@ -942,4 +942,18 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get loadFailedTitle => 'Не удалось загрузить';
+
+  @override
+  String get nothingFound => 'Ничего не найдено';
+
+  @override
+  String get nothingFoundHint =>
+      'Попробуйте другое название культуры, область или номер заявки.';
+
+  @override
+  String get noBidsYet => 'Заявок пока нет';
+
+  @override
+  String get noBidsYetHint =>
+      'Новые заявки появятся здесь. Потяните вниз, чтобы обновить.';
 }

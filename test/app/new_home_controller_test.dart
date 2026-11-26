@@ -39,9 +39,18 @@ class FakeBids extends BidsRepository {
     return const BidsPage(items: []);
   }
 
+  final List<int> freshOffsets = [];
+  Completer<void>? freshGate;
+  List<BidItem> freshNext = const [];
+
   @override
-  Future<BidsPage> fresh({required int limit, required int offset}) async =>
-      const BidsPage(items: []);
+  Future<BidsPage> fresh({required int limit, required int offset}) async {
+    freshOffsets.add(offset);
+    final gate = freshGate;
+    final items = freshNext;
+    if (gate != null) await gate.future;
+    return BidsPage(items: items, total: 100);
+  }
 }
 
 class FakeAccount extends AccountRepository {
@@ -206,5 +215,30 @@ void main() {
 
       expect(main.initCalls, 1);
     });
+  });
+
+  test('refreshing Fresh while a page loads is not dropped (BUG-016)',
+      () async {
+    final firstPage = Completer<void>();
+    bids.freshGate = firstPage;
+    bids.freshNext = [BidItem(orderId: 1)];
+    final paging = c.loadFreshBids();
+
+    bids.freshGate = null;
+    bids.freshNext = [BidItem(orderId: 2)];
+    await c.loadFreshBids(reset: true);
+    expect(c.bidsFresh.map((b) => b.orderId), [2]);
+
+    // The stale page arrives later and is ignored.
+    firstPage.complete();
+    await paging;
+    expect(bids.freshOffsets, [0, 0]);
+    expect(c.bidsFresh.map((b) => b.orderId), [2]);
+  });
+
+  test('bidsLoaded turns on after the first successful load', () async {
+    expect(c.bidsLoaded.value, isFalse);
+    await c.loadAllBids(reset: true);
+    expect(c.bidsLoaded.value, isTrue);
   });
 }
