@@ -66,6 +66,12 @@ void main() {
       )));
     }
 
+    testWidgets('no delete-profile action unless it is wired', (tester) async {
+      await pump(tester);
+      expect(find.text('Видалити профіль'), findsNothing);
+      expect(find.text('Вийти'), findsOneWidget);
+    });
+
     testWidgets('coming-soon items only call onComingSoon', (tester) async {
       await pump(tester);
       for (final t in ['Прийомка', 'Мої заявки', 'Збережені']) {

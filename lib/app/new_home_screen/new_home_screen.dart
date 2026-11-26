@@ -2,6 +2,7 @@ import 'package:agro/ui/components/app_snackbar.dart';
 import 'package:agro/app/new_home_screen/widgets/home_tabs.dart';
 import 'package:agro/app/new_home_screen/home_actions.dart';
 import 'package:agro/data/session_storage.dart';
+import 'package:agro/ui/components/bid_card_skeleton.dart';
 import 'package:agro/ui/components/coming_soon_sheet.dart';
 import 'package:agro/ui/components/empty_state.dart';
 import 'package:agro/ui/pop_up/top_up_balance_popup.dart';
@@ -141,10 +142,8 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
               Navigator.pop(context);
               AccountSessionActions.confirmLogout(context);
             },
-            onDeleteAccount: () {
-              Navigator.pop(context);
-              AccountSessionActions.confirmDeleteAccount(context);
-            },
+            // "Delete profile" is hidden until the server deletes accounts;
+            // pass onDeleteAccount (confirmDeleteAccount) to bring it back.
             onDisableAds: () {
               Navigator.pop(context);
               showDisableAdsConfirm(
@@ -331,9 +330,20 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
     required bool isFresh,
   }) {
     if (bids.isEmpty) {
-      if (isFresh || !controller.bidsLoaded.value) {
-        return const [SizedBox(height: 40)];
+      if (controller.loadFailed.value) {
+        return [
+          const SizedBox(height: 40),
+          EmptyState(
+            icon: Icons.cloud_off_rounded,
+            title: context.l.loadFailedTitle,
+            actionLabel: context.l.retry,
+            onAction: controller.retry,
+          ),
+        ];
       }
+      // First load: placeholder cards instead of a blank screen.
+      if (!controller.bidsLoaded.value) return const [BidListSkeleton()];
+      if (isFresh) return const [SizedBox(height: 40)];
       final searching = controller.searchController.text.trim().isNotEmpty;
       return [
         const SizedBox(height: 40),

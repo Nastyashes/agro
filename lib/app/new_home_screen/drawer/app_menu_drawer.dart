@@ -221,12 +221,14 @@ class AppMenuDrawer extends StatelessWidget {
                         color: Palette.textSecondary,
                         onTap: onLogout,
                       ),
-                      _FooterAction(
-                        icon: Icons.delete_outline_rounded,
-                        label: l.deleteProfile,
-                        color: Palette.red,
-                        onTap: onDeleteAccount,
-                      ),
+                      // Hidden until account deletion works on the server.
+                      if (onDeleteAccount != null)
+                        _FooterAction(
+                          icon: Icons.delete_outline_rounded,
+                          label: l.deleteProfile,
+                          color: Palette.red,
+                          onTap: onDeleteAccount,
+                        ),
                     ],
                   ),
                 ],
