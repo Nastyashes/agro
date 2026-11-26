@@ -34,23 +34,28 @@ class AuthLayout extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: box.maxHeight),
-                child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: height * 0.1, bottom: height * 0.08),
-                        child: Center(
-                          child: Image.asset(Assets.pictureLogo, width: 300),
+                // No IntrinsicHeight: children may hold a LayoutBuilder
+                // (code screen), which cannot report intrinsics (BUG-042).
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: height * 0.1, bottom: height * 0.08),
+                          child: Center(
+                            child: Image.asset(Assets.pictureLogo, width: 300),
+                          ),
                         ),
-                      ),
-                      ...children,
-                      const Spacer(),
-                      if (onTelegram != null || onViber != null)
-                        _Support(onTelegram: onTelegram, onViber: onViber),
-                    ],
-                  ),
+                        ...children,
+                      ],
+                    ),
+                    if (onTelegram != null || onViber != null)
+                      _Support(onTelegram: onTelegram, onViber: onViber),
+                  ],
                 ),
               ),
             ),
