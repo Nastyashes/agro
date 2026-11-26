@@ -1,5 +1,6 @@
 import 'package:agro/app/my_price/components/my_price_dialogs.dart';
 import 'package:agro/app/my_price/components/my_price_ui.dart';
+import 'package:agro/app/my_price/components/price_input_formatter.dart';
 import 'package:agro/app/my_price/controller/create_my_price_controller.dart';
 import 'package:agro/model/my_price/my_price_models.dart';
 import 'package:agro/ui/components/app_button.dart';
@@ -9,7 +10,6 @@ import 'package:agro/ui/theme/app_text.dart';
 import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class CreateMyPriceScreen extends StatefulWidget {
@@ -158,10 +158,7 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
                       keyboardType:
                           const TextInputType.numberWithOptions(decimal: true),
                       suffix: '${l.uahShort} / ${l.tonShort}',
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
-                        LengthLimitingTextInputFormatter(12),
-                      ],
+                      inputFormatters: [pricePerTonInputFormatter],
                       big: true,
                       error: errors['price_per_ton'] != null,
                     ),
