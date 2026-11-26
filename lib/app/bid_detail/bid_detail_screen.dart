@@ -5,6 +5,7 @@ import 'package:agro/app/my_price/components/my_price_match_style.dart';
 import 'package:agro/data/session_storage.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
+import 'package:agro/ui/components/facts_grid.dart';
 import 'package:agro/ui/components/app_button.dart';
 import 'package:agro/ui/components/app_icon_button.dart';
 import 'package:agro/ui/components/app_snackbar.dart';
@@ -141,9 +142,7 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
                     style: AppText.display.copyWith(fontSize: 26)),
                 const SizedBox(height: 2),
                 Text(
-                  [item.regionName, c?.district, c?.city]
-                      .where(isSet)
-                      .join(', '),
+                  item.regionName ?? '',
                   style:
                       AppText.bodyMedium.copyWith(color: Palette.textSecondary),
                 ),
@@ -171,7 +170,7 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
             child: Text(meta.responseLabel, style: AppText.bodyMedium),
           ),
         const SizedBox(height: 16),
-        _FactsGrid(facts: [
+        FactsGrid(facts: [
           (
             context.l.volume,
             '${item.amount ?? AppConstants.emDash} ${context.l.tonShort}'
@@ -186,10 +185,12 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
         if (item.isOpened) ...[
           SectionLabel(context.l.seller),
           InfoGroup(children: [
-            if (isSet(item.fermerName))
-              InfoRow(context.l.fullName, item.fermerName!),
-            if (isSet(item.fermerCompany))
-              InfoRow(context.l.company, item.fermerCompany!),
+            if (isSet(item.sellerName))
+              InfoRow(context.l.fullName, item.sellerName!),
+            if (isSet(item.sellerCompany))
+              InfoRow(context.l.company, item.sellerCompany!),
+            if (isSet(c?.district)) InfoRow(context.l.district, c!.district!),
+            if (isSet(c?.city)) InfoRow(context.l.town, c!.city!),
             if (isSet(c?.addr)) InfoRow(context.l.address, c!.addr!),
             if (phone != null)
               InfoRow(context.l.phoneNumber, phone,
@@ -426,49 +427,4 @@ class _DashedBorder extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-/// Key facts of a bid in a 2-column grid of label/value tiles.
-class _FactsGrid extends StatelessWidget {
-  const _FactsGrid({required this.facts});
-
-  final List<(String, String)> facts;
-
-  @override
-  Widget build(BuildContext context) {
-    Widget tile((String, String) f) => Padding(
-          padding: const EdgeInsets.fromLTRB(14, 10, 14, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(f.$1,
-                  style: AppText.caption.copyWith(color: Palette.textTertiary)),
-              const SizedBox(height: 2),
-              Text(f.$2, style: AppText.headline),
-            ],
-          ),
-        );
-    final rows = <Widget>[];
-    for (var i = 0; i < facts.length; i += 2) {
-      if (i > 0) rows.add(const Divider(height: 1));
-      rows.add(IntrinsicHeight(
-        child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Expanded(child: tile(facts[i])),
-          const VerticalDivider(width: 1),
-          Expanded(
-              child: i + 1 < facts.length
-                  ? tile(facts[i + 1])
-                  : const SizedBox.shrink()),
-        ]),
-      ));
-    }
-    return Container(
-      decoration: BoxDecoration(
-        color: Palette.bg1,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Palette.line),
-      ),
-      child: Column(children: rows),
-    );
-  }
 }

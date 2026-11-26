@@ -690,6 +690,18 @@ abstract class AppLocalizations {
   /// **'Додати відгук'**
   String get addReview;
 
+  /// No description provided for @noReviews.
+  ///
+  /// In uk, this message translates to:
+  /// **'Відгуків поки немає'**
+  String get noReviews;
+
+  /// No description provided for @noReviewsHint.
+  ///
+  /// In uk, this message translates to:
+  /// **'Будьте першим, хто залишить відгук.'**
+  String get noReviewsHint;
+
   /// No description provided for @startWriting.
   ///
   /// In uk, this message translates to:

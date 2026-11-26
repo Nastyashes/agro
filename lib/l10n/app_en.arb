@@ -96,6 +96,8 @@
   "feedbackAdded": "Feedback added",
   "errorAddingReview": "There was an error when adding a review, check your details",
   "addReview": "Add a review",
+  "noReviews": "No reviews yet",
+  "noReviewsHint": "Be the first to leave a review.",
   "startWriting": "Start writing...",
   "add": "Add",
   "yourApplications": "Your orders",

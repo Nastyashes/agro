@@ -316,6 +316,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get addReview => 'Додати відгук';
 
   @override
+  String get noReviews => 'Відгуків поки немає';
+
+  @override
+  String get noReviewsHint => 'Будьте першим, хто залишить відгук.';
+
+  @override
   String get startWriting => 'Почніть писати...';
 
   @override

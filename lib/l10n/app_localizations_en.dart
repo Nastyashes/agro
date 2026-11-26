@@ -316,6 +316,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addReview => 'Add a review';
 
   @override
+  String get noReviews => 'No reviews yet';
+
+  @override
+  String get noReviewsHint => 'Be the first to leave a review.';
+
+  @override
   String get startWriting => 'Start writing...';
 
   @override

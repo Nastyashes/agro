@@ -5,6 +5,7 @@ import 'package:agro/app/my_price/components/my_price_match_style.dart';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
 import 'package:agro/ui/buttons/b_transparent_scalable_button.dart';
+import 'package:agro/ui/components/facts_grid.dart';
 import 'package:agro/ui/components/app_button.dart';
 import 'package:agro/ui/components/app_icon_button.dart';
 import 'package:agro/ui/components/app_snackbar.dart';
@@ -106,12 +107,12 @@ class _BidListItemState extends State<BidListItem> {
     final matched = meta?.matched == true;
 
     return Padding(
-      padding: const EdgeInsets.only(top: 12),
+      padding: const EdgeInsets.only(top: 10),
       child: BTransparentScalableButton(
         onPressed: () => widget.onPressed(model: _bidItem),
         scale: ScaleFormat.small,
         child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
           decoration: BoxDecoration(
             color: matchCardColor(meta, Palette.bg1),
             borderRadius: BorderRadius.circular(Radii.card),
@@ -131,12 +132,21 @@ class _BidListItemState extends State<BidListItem> {
                     style:
                         AppText.label.copyWith(color: Palette.textSecondary)),
               ],
-              const SizedBox(height: 10),
-              _numbers(context),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Divider(height: 1),
-              ),
+              const SizedBox(height: 8),
+              // Every value labelled, two per row: readable at a glance.
+              FactsGrid(dense: true, facts: [
+                (
+                  context.l.volume,
+                  '${_bidItem.amount ?? '—'} ${context.l.tonShort}'
+                ),
+                (context.l.payment, _paymentForm(context)),
+                (
+                  context.l.typeOfDelivery,
+                  localizeDeliveryType(_bidItem.deliveryType ?? '', context)
+                ),
+                (context.l.harvest, '${_bidItem.year ?? '—'}'),
+              ]),
+              const SizedBox(height: 8),
               if (_bidItem.isOpened) _seller(context) else _actionsRow(context),
             ],
           ),
@@ -206,52 +216,6 @@ class _BidListItemState extends State<BidListItem> {
     ]);
   }
 
-  Widget _numbers(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // A big volume shrinks to fit instead of pushing the details out.
-        Flexible(
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            alignment: Alignment.bottomLeft,
-            child: Text.rich(TextSpan(children: [
-              TextSpan(text: '${_bidItem.amount ?? '—'}', style: AppText.numL),
-              TextSpan(
-                  text: ' ${context.l.amountTypeTon}',
-                  style:
-                      AppText.headline.copyWith(color: Palette.textSecondary)),
-            ])),
-          ),
-        ),
-        Flexible(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(_paymentForm(context),
-                    textAlign: TextAlign.end, style: AppText.bodyMedium),
-                // Always labelled: a bare «Будь-який» says nothing.
-                Text(
-                    '${context.l.typeOfDelivery}: '
-                    '${localizeDeliveryType(_bidItem.deliveryType ?? '', context)}',
-                    textAlign: TextAlign.end,
-                    style:
-                        AppText.label.copyWith(color: Palette.textSecondary)),
-                if (_bidItem.year != null)
-                  Text(context.l.harvestOf('${_bidItem.year}'),
-                      style: AppText.caption
-                          .copyWith(color: Palette.textTertiary)),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   String? get _phone => [
         _bidItem.contacts?.phone,
         _bidItem.fermerPhone,
@@ -259,8 +223,13 @@ class _BidListItemState extends State<BidListItem> {
       ].firstWhere(isSet, orElse: () => null);
 
   Widget _seller(BuildContext context) {
-    final who =
-        [_bidItem.fermerName, _bidItem.fermerCompany].where(isSet).join(' · ');
+    final who = [
+      _bidItem.sellerName,
+      // The name often already ends with "(company)".
+      if (!(_bidItem.sellerName ?? '')
+          .contains(_bidItem.sellerCompany ?? '\u0000'))
+        _bidItem.sellerCompany,
+    ].where(isSet).join(' · ');
     final phone = _phone;
     if (who.isEmpty && phone == null) {
       // Opened but nothing to show here: the details screen has it all.

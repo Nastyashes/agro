@@ -317,6 +317,12 @@ class AppLocalizationsKk extends AppLocalizations {
   String get addReview => 'Шолу қосу';
 
   @override
+  String get noReviews => 'Әзірге пікірлер жоқ';
+
+  @override
+  String get noReviewsHint => 'Бірінші болып пікір қалдырыңыз.';
+
+  @override
   String get startWriting => 'Жазуды бастау...';
 
   @override

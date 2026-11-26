@@ -256,6 +256,13 @@ class BidItem extends Created {
   bool get isOpened => contacts != null || opened == 1;
   bool get isProcessed => processed == 1;
 
+  /// Seller name/company: the order fields, else the opened contacts.
+  String? get sellerName => _firstSet(fermerName, contacts?.name);
+  String? get sellerCompany => _firstSet(fermerCompany, contacts?.company);
+
+  static String? _firstSet(String? a, String? b) =>
+      (a != null && a.trim().isNotEmpty) ? a : b;
+
   // Зручний геттер для телефону з будь-якого джерела
   String? get phone => contacts?.phone ?? openedPhon ?? fermerPhone;
 }

@@ -315,6 +315,12 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addReview => 'Добавить отзыв';
 
   @override
+  String get noReviews => 'Отзывов пока нет';
+
+  @override
+  String get noReviewsHint => 'Будьте первым, кто оставит отзыв.';
+
+  @override
   String get startWriting => 'Начните писать...';
 
   @override
