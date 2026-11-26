@@ -96,14 +96,6 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
               child: Obx(() {
                 final o = controller.overview.value;
                 final errors = controller.fieldErrors;
-                final team = controller.teamUserId.value == null
-                    ? null
-                    : o.team
-                        .firstWhere(
-                          (e) => e.id == controller.teamUserId.value,
-                          orElse: () => const MyPriceTeamMember(),
-                        )
-                        .label;
                 return ListView(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                   children: [
@@ -161,19 +153,6 @@ class _CreateMyPriceScreenState extends State<CreateMyPriceScreen> {
                       inputFormatters: [pricePerTonInputFormatter],
                       big: true,
                       error: errors['price_per_ton'] != null,
-                    ),
-                    const SizedBox(height: 10),
-                    SelectTile(
-                      icon: Icons.person_outline_rounded,
-                      label: l.contactPerson,
-                      value: team,
-                      placeholder: l.teamNumber,
-                      error: errors['team_user_id'] != null,
-                      onTap: () => _pick(
-                          l.teamNumber,
-                          o.team,
-                          (MyPriceTeamMember e) => e.label,
-                          (e) => controller.teamUserId.value = e.id),
                     ),
                     const SizedBox(height: 10),
                     if (_showPromo ||

@@ -24,7 +24,8 @@ class FactsGrid extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppText.caption.copyWith(
-                      color: Palette.textTertiary, fontSize: dense ? 11 : 12)),
+                      color: Palette.textTertiary,
+                      fontSize: dense ? 12 : null)),
               if (!dense) const SizedBox(height: 1),
               Text(f.$2,
                   maxLines: 2,
