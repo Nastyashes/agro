@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:agro/model/message/created.dart';
+import 'package:agro/model/my_price/my_price_parse.dart';
 import 'package:intl/intl.dart';
 
 class Message extends Created {
@@ -12,9 +13,9 @@ class Message extends Created {
     readed = int.tryParse(json['readed'].toString());
     tenderId = int.tryParse(json['tender_id'].toString());
 
-    type = json['type'].toString();
-    title = json['title'].toString();
-    message = json['message'].toString();
+    type = parseMyPriceString(json['type']);
+    title = parseMyPriceString(json['title']);
+    message = parseMyPriceString(json['message']);
 
     DateFormat format = DateFormat('dd.MM.yyyy HH:mm');
     createdAt = format.parse(json['created_human']);
