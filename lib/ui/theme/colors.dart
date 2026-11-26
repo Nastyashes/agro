@@ -24,9 +24,6 @@ class AppColors {
   static const matchCardBgAgreed = Color(0xFFB8E8C8);
   static const matchCardBgDeclined = Color(0xFFFFD0C8);
 
-  static const myPriceCardBg = Color.fromARGB(61, 25, 141, 118);
-  static const myPriceCardReserwBg = Color.fromARGB(103, 69, 66, 174);
-  static const myPriceCardDelBg = Color.fromARGB(103, 140, 140, 140);
 
   static const matchCardBorderAgreed = Color(0xFF029843);
   static const matchCardBorderDeclined = Color(0xFFF92C08);

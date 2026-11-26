@@ -1,11 +1,11 @@
 import 'package:agro/ui/components/app_snackbar.dart';
 import 'package:agro/app/inform_messages/inform_message_card.dart';
 import 'package:agro/app/inform_messages/inform_messages_controller.dart';
-import 'package:agro/ui/app_components/app_background.dart';
-import 'package:agro/ui/app_components/appbar_with_back.dart';
+import 'package:agro/ui/components/app_top_bar.dart';
 import 'package:agro/ui/components/empty_state.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
-import 'package:agro/ui/theme/colors.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -42,53 +42,56 @@ class _InformMessagesScreenState extends State<InformMessagesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l;
     return Scaffold(
-      body: Stack(
-        children: [
-          const AppBackground(),
-          SafeArea(
-            child: Column(
-              children: [
-                appBarBack(context.l.infoMessages),
-                Expanded(
-                  child: SmartRefresher(
-                    controller: controller.refreshController,
-                    enablePullDown: true,
-                    enablePullUp: false,
-                    onRefresh: controller.onRefresh,
-                    header: const WaterDropHeader(
-                      complete: _RefreshComplete(),
-                      waterDropColor: AppColors.mainGreen,
-                    ),
-                    child: Obx(() {
-                      final messages = controller.sortedMessages;
-                      return messages.isEmpty
-                          ? EmptyState(
-                              title: context.l.emptyInformMessages,
-                              icon: Icons.notifications_none_rounded)
-                          : ListView.separated(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                              itemCount: messages.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 10),
-                              itemBuilder: (context, index) {
-                                final message = messages[index];
-                                return InformMessageCard(
-                                  key: ValueKey('msg_${message.id}'),
-                                  message: message,
-                                  onRead: () =>
-                                      controller.onReadMessage(message),
-                                );
-                              },
-                            );
-                    }),
-                  ),
+      backgroundColor: Palette.bg0,
+      body: SafeArea(
+        child: Column(
+          children: [
+            AppTopBar(title: l.messages),
+            Expanded(
+              child: SmartRefresher(
+                controller: controller.refreshController,
+                enablePullDown: true,
+                enablePullUp: false,
+                onRefresh: controller.onRefresh,
+                header: const WaterDropHeader(
+                  complete: _RefreshComplete(),
+                  waterDropColor: Palette.green,
                 ),
-              ],
+                child: Obx(() {
+                  final messages = controller.sortedMessages;
+                  return messages.isEmpty
+                      ? ListView(
+                          padding: const EdgeInsets.only(top: 80),
+                          children: [
+                            EmptyState(
+                              title: l.emptyInformMessages,
+                              text: l.emptyMessagesText,
+                              icon: Icons.notifications_none_rounded,
+                            ),
+                          ],
+                        )
+                      : ListView.separated(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                          itemCount: messages.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 10),
+                          itemBuilder: (context, index) {
+                            final message = messages[index];
+                            return InformMessageCard(
+                              key: ValueKey('msg_${message.id}'),
+                              message: message,
+                              onRead: () => controller.onReadMessage(message),
+                            );
+                          },
+                        );
+                }),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -98,17 +101,13 @@ class _RefreshComplete extends StatelessWidget {
   const _RefreshComplete();
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(Icons.done, color: Colors.grey),
-        const SizedBox(width: 15),
-        Text(
-          context.l.updateComplete,
-          style: const TextStyle(color: Colors.grey),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.done_rounded, color: Palette.textTertiary),
+          const SizedBox(width: 12),
+          Text(context.l.updateComplete,
+              style: AppText.label.copyWith(color: Palette.textTertiary)),
+        ],
+      );
 }

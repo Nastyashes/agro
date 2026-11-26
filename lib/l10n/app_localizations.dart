@@ -1769,6 +1769,84 @@ abstract class AppLocalizations {
   /// In uk, this message translates to:
   /// **'Безпечна оплата карткою'**
   String get securePayment;
+
+  /// No description provided for @statusActive.
+  ///
+  /// In uk, this message translates to:
+  /// **'Активна'**
+  String get statusActive;
+
+  /// No description provided for @statusDeleted.
+  ///
+  /// In uk, this message translates to:
+  /// **'Видалена'**
+  String get statusDeleted;
+
+  /// No description provided for @newCombination.
+  ///
+  /// In uk, this message translates to:
+  /// **'Нова комбінація'**
+  String get newCombination;
+
+  /// No description provided for @combinationIntro.
+  ///
+  /// In uk, this message translates to:
+  /// **'Покажемо заявки, що підходять під вашу ціну'**
+  String get combinationIntro;
+
+  /// No description provided for @havePromo.
+  ///
+  /// In uk, this message translates to:
+  /// **'Маю промокод'**
+  String get havePromo;
+
+  /// No description provided for @remainingFields.
+  ///
+  /// In uk, this message translates to:
+  /// **'Залишилось: {fields}'**
+  String remainingFields(String fields);
+
+  /// No description provided for @saveCombination.
+  ///
+  /// In uk, this message translates to:
+  /// **'Зберегти комбінацію'**
+  String get saveCombination;
+
+  /// No description provided for @pricePerTonLabel.
+  ///
+  /// In uk, this message translates to:
+  /// **'Ціна за тонну'**
+  String get pricePerTonLabel;
+
+  /// No description provided for @emptyCombinationsTitle.
+  ///
+  /// In uk, this message translates to:
+  /// **'Ще немає комбінацій'**
+  String get emptyCombinationsTitle;
+
+  /// No description provided for @emptyCombinationsText.
+  ///
+  /// In uk, this message translates to:
+  /// **'Вкажіть культуру, регіон і ціну — ми покажемо заявки, що їм відповідають.'**
+  String get emptyCombinationsText;
+
+  /// No description provided for @emptyDealsText.
+  ///
+  /// In uk, this message translates to:
+  /// **'Тут будуть заявки, контакти яких ви відкрили через «Мою ціну».'**
+  String get emptyDealsText;
+
+  /// No description provided for @emptyMessagesText.
+  ///
+  /// In uk, this message translates to:
+  /// **'Новини та важливі зміни від UAGRO з\'являться тут.'**
+  String get emptyMessagesText;
+
+  /// No description provided for @markRead.
+  ///
+  /// In uk, this message translates to:
+  /// **'Позначити прочитаним'**
+  String get markRead;
 }
 
 class _AppLocalizationsDelegate

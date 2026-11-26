@@ -886,4 +886,48 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get securePayment => 'Картамен қауіпсіз төлем';
+
+  @override
+  String get statusActive => 'Белсенді';
+
+  @override
+  String get statusDeleted => 'Жойылған';
+
+  @override
+  String get newCombination => 'Жаңа комбинация';
+
+  @override
+  String get combinationIntro => 'Бағаңызға сай өтінімдерді көрсетеміз';
+
+  @override
+  String get havePromo => 'Менде промокод бар';
+
+  @override
+  String remainingFields(String fields) {
+    return 'Қалды: $fields';
+  }
+
+  @override
+  String get saveCombination => 'Комбинацияны сақтау';
+
+  @override
+  String get pricePerTonLabel => 'Тонна бағасы';
+
+  @override
+  String get emptyCombinationsTitle => 'Әзірге комбинациялар жоқ';
+
+  @override
+  String get emptyCombinationsText =>
+      'Дақылды, өңірді және бағаны көрсетіңіз — сәйкес өтінімдерді көрсетеміз.';
+
+  @override
+  String get emptyDealsText =>
+      '«Менің бағам» арқылы байланысы ашылған өтінімдер осында болады.';
+
+  @override
+  String get emptyMessagesText =>
+      'UAGRO жаңалықтары мен маңызды өзгерістері осында шығады.';
+
+  @override
+  String get markRead => 'Оқылды деп белгілеу';
 }

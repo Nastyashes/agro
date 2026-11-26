@@ -885,4 +885,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get securePayment => 'Secure card payment';
+
+  @override
+  String get statusActive => 'Active';
+
+  @override
+  String get statusDeleted => 'Deleted';
+
+  @override
+  String get newCombination => 'New combination';
+
+  @override
+  String get combinationIntro => 'We\'ll show bids that match your price';
+
+  @override
+  String get havePromo => 'I have a promo code';
+
+  @override
+  String remainingFields(String fields) {
+    return 'Still needed: $fields';
+  }
+
+  @override
+  String get saveCombination => 'Save combination';
+
+  @override
+  String get pricePerTonLabel => 'Price per ton';
+
+  @override
+  String get emptyCombinationsTitle => 'No combinations yet';
+
+  @override
+  String get emptyCombinationsText =>
+      'Set a crop, region and price and we\'ll show the bids that match.';
+
+  @override
+  String get emptyDealsText =>
+      'Bids whose contacts you opened through My price will appear here.';
+
+  @override
+  String get emptyMessagesText =>
+      'News and important updates from UAGRO will appear here.';
+
+  @override
+  String get markRead => 'Mark as read';
 }

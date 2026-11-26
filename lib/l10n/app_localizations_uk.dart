@@ -884,4 +884,48 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get securePayment => 'Безпечна оплата карткою';
+
+  @override
+  String get statusActive => 'Активна';
+
+  @override
+  String get statusDeleted => 'Видалена';
+
+  @override
+  String get newCombination => 'Нова комбінація';
+
+  @override
+  String get combinationIntro => 'Покажемо заявки, що підходять під вашу ціну';
+
+  @override
+  String get havePromo => 'Маю промокод';
+
+  @override
+  String remainingFields(String fields) {
+    return 'Залишилось: $fields';
+  }
+
+  @override
+  String get saveCombination => 'Зберегти комбінацію';
+
+  @override
+  String get pricePerTonLabel => 'Ціна за тонну';
+
+  @override
+  String get emptyCombinationsTitle => 'Ще немає комбінацій';
+
+  @override
+  String get emptyCombinationsText =>
+      'Вкажіть культуру, регіон і ціну — ми покажемо заявки, що їм відповідають.';
+
+  @override
+  String get emptyDealsText =>
+      'Тут будуть заявки, контакти яких ви відкрили через «Мою ціну».';
+
+  @override
+  String get emptyMessagesText =>
+      'Новини та важливі зміни від UAGRO з\'являться тут.';
+
+  @override
+  String get markRead => 'Позначити прочитаним';
 }

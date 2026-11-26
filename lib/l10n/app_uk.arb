@@ -306,5 +306,19 @@
   "balanceNow": "Баланс зараз",
   "payAmount": "Оплатити {amount}",
   "@payAmount": { "placeholders": { "amount": { "type": "String" } } },
-  "securePayment": "Безпечна оплата карткою"
+  "securePayment": "Безпечна оплата карткою",
+  "statusActive": "Активна",
+  "statusDeleted": "Видалена",
+  "newCombination": "Нова комбінація",
+  "combinationIntro": "Покажемо заявки, що підходять під вашу ціну",
+  "havePromo": "Маю промокод",
+  "remainingFields": "Залишилось: {fields}",
+  "@remainingFields": { "placeholders": { "fields": { "type": "String" } } },
+  "saveCombination": "Зберегти комбінацію",
+  "pricePerTonLabel": "Ціна за тонну",
+  "emptyCombinationsTitle": "Ще немає комбінацій",
+  "emptyCombinationsText": "Вкажіть культуру, регіон і ціну — ми покажемо заявки, що їм відповідають.",
+  "emptyDealsText": "Тут будуть заявки, контакти яких ви відкрили через «Мою ціну».",
+  "emptyMessagesText": "Новини та важливі зміни від UAGRO з'являться тут.",
+  "markRead": "Позначити прочитаним"
 }
