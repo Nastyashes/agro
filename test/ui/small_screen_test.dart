@@ -6,6 +6,8 @@ import 'package:agro/app/new_home_screen/drawer/bid_list_item.dart';
 import 'package:agro/app/new_home_screen/new_home_screen_controler.dart';
 import 'package:agro/app/new_home_screen/widgets/home_header.dart';
 import 'package:agro/app/new_home_screen/widgets/home_tabs.dart';
+import 'package:agro/auth/auth_confirmation/auth_confirmation_screen.dart';
+import 'package:agro/auth/auth_confirmation/components/auth_confirmation_controller.dart';
 import 'package:agro/auth/auth_screen.dart';
 import 'package:agro/auth/components/auth_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
@@ -150,6 +152,10 @@ void main() {
       Get.put(AuthController());
       return const AuthScreen();
     },
+    'code': (_) {
+      Get.put(AuthConfirmationController());
+      return const AuthConfirmScreen();
+    },
   };
 
   for (final size in const [Size(320, 640), Size(360, 780)]) {
@@ -158,6 +164,11 @@ void main() {
         testWidgets('${entry.key} fits ${size.width.toInt()} wide at $scale',
             (tester) async {
           await pump(tester, size, scale, entry.value);
+          expect(tester.takeException(), isNull);
+          // Keyboard up (BUG-042).
+          tester.view.viewInsets = const FakeViewPadding(bottom: 900);
+          addTearDown(tester.view.resetViewInsets);
+          await tester.pump();
           expect(tester.takeException(), isNull);
         });
       }
