@@ -21,7 +21,6 @@ import 'package:agro/vars/trade_localizers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class BidDetailScreen extends StatefulWidget {
   const BidDetailScreen({super.key, this.controller, this.item});
@@ -312,11 +311,7 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
       ].firstWhere(isSet, orElse: () => null);
 
   void _launchPhone(BuildContext context, String phone) {
-    showCupertinoModalBottomSheet(
-      topRadius: const Radius.circular(30),
-      context: context,
-      builder: (c) => LaunchPhone(contact: phone),
-    );
+    showCallSheet(context, phone);
   }
 
   String _paymentForm(BuildContext context, int? type) {

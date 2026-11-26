@@ -19,7 +19,6 @@ import 'package:agro/vars/trade_localizers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class BidListItem extends StatefulWidget {
   final BidItem bidItem;
@@ -89,13 +88,7 @@ class _BidListItemState extends State<BidListItem> {
     BuildContext context,
     String phone,
   ) {
-    showCupertinoModalBottomSheet(
-      topRadius: const Radius.circular(30),
-      context: context,
-      builder: (c) => LaunchPhone(
-        contact: phone,
-      ),
-    );
+    showCallSheet(context, phone);
   }
 
   // =========================
