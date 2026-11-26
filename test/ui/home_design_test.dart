@@ -56,7 +56,7 @@ void main() {
         showDeals: myPrice,
         showTariffs: tariffs,
         showDisableAds: ads,
-        onComingSoon: () => calls.add('soon'),
+        onComingSoon: (s) => calls.add('soon:${s.description.isNotEmpty}'),
         onMyPrice: () => calls.add('myPrice'),
         onInfoMessages: () => calls.add('messages'),
         onTopUp: () => calls.add('topUp'),
@@ -66,12 +66,18 @@ void main() {
       )));
     }
 
+    testWidgets('no delete-profile action unless it is wired', (tester) async {
+      await pump(tester);
+      expect(find.text('Видалити профіль'), findsNothing);
+      expect(find.text('Вийти'), findsOneWidget);
+    });
+
     testWidgets('coming-soon items only call onComingSoon', (tester) async {
       await pump(tester);
       for (final t in ['Прийомка', 'Мої заявки', 'Збережені']) {
         await tester.tap(find.text(t));
       }
-      expect(calls, ['soon', 'soon', 'soon']);
+      expect(calls, ['soon:true', 'soon:true', 'soon:true']);
       expect(find.text('Незабаром'), findsNWidgets(3));
     });
 

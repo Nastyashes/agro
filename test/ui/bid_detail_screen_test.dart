@@ -157,6 +157,36 @@ void main() {
     expect(find.text('Замовити перевізника'), findsOneWidget);
   });
 
+  testWidgets('opened: seller from contacts with district and town',
+      (tester) async {
+    await pump(
+      tester,
+      bid.copyWith(
+        opened: 1,
+        contacts: BidContacts(
+          name: 'Іван Петренко',
+          company: 'ФГ Колос',
+          district: 'Обухівський',
+          city: 'Обухів',
+          addr: 'вул. Польова, 1',
+          phone: '+380671234567',
+        ),
+      ),
+      role: 'distrib',
+    );
+
+    for (final t in [
+      'Іван Петренко',
+      'ФГ Колос',
+      'Обухівський',
+      'Обухів',
+      'вул. Польова, 1',
+      '+380671234567',
+    ]) {
+      expect(find.text(t), findsOneWidget, reason: t);
+    }
+  });
+
   testWidgets('not a trader: no paid actions or services', (tester) async {
     await pump(tester, bid, role: 'farmer');
 

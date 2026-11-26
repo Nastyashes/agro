@@ -316,6 +316,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addReview => 'Add a review';
 
   @override
+  String get noReviews => 'No reviews yet';
+
+  @override
+  String get noReviewsHint => 'Be the first to leave a review.';
+
+  @override
   String get startWriting => 'Start writing...';
 
   @override
@@ -794,6 +800,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get comingSoonHint => 'This section is coming soon';
+
+  @override
+  String get comingSoonIntake =>
+      'Find elevators and intake points nearby and compare prices and terms.';
+
+  @override
+  String get comingSoonMyBids =>
+      'Your own buy or sell requests and the replies to them, in one place.';
+
+  @override
+  String get comingSoonSaved =>
+      'Save interesting bids to come back to them quickly later.';
 
   @override
   String get newBadge => 'New';

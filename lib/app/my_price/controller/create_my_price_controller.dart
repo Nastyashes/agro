@@ -2,6 +2,7 @@ import 'package:agro/app/my_price/components/my_price_error.dart';
 import 'package:agro/app/my_price/components/my_price_ui.dart';
 import 'package:agro/controllers/abstract/base_controller.dart';
 import 'package:agro/controllers/main_controler.dart';
+import 'package:agro/data/session_storage.dart';
 import 'package:agro/model/my_price/my_price_models.dart';
 import 'package:agro/model/my_price/my_price_result.dart';
 import 'package:agro/server/api/controller/my_price.dart';
@@ -18,7 +19,9 @@ class CreateMyPriceController extends BaseController {
     Future<void> Function(Future<void> Function() action)? withLoader,
     void Function(dynamic result)? close,
     MyPriceOverview? overview,
+    int? currentUserId,
   })  : _api = api ?? MyPriceApi(),
+        _injectedUserId = currentUserId,
         _mainController = mainController,
         _withLoader = withLoader,
         _close = close ?? ((result) => Get.back(result: result)),
@@ -29,6 +32,23 @@ class CreateMyPriceController extends BaseController {
   final Future<void> Function(Future<void> Function() action)? _withLoader;
   final void Function(dynamic result) _close;
   final MyPriceOverview? _initialOverview;
+  final int? _injectedUserId;
+
+  int? get _currentUserId =>
+      _injectedUserId ?? int.tryParse(SessionStorage.instance.user?.id ?? '');
+
+  /// The contact person is the signed-in user (the field is not shown);
+  /// else the account owner, else the first team member.
+  int? _defaultTeamUser(List<MyPriceTeamMember> team) {
+    if (team.isEmpty) return null;
+    for (final m in team) {
+      if (m.id != null && m.id == _currentUserId) return m.id;
+    }
+    for (final m in team) {
+      if (m.parent == '0') return m.id;
+    }
+    return team.first.id;
+  }
 
   late MyPriceUi ui;
 
@@ -53,9 +73,21 @@ class CreateMyPriceController extends BaseController {
     super.onInit();
     final args = _initialOverview ?? Get.arguments;
     overview.value = args is MyPriceOverview ? args : const MyPriceOverview();
-    if (overview.value.team.isNotEmpty) {
-      teamUserId.value = overview.value.team.first.id;
+    teamUserId.value = _defaultTeamUser(overview.value.team);
+    // A filled field drops its error right away, not on the next submit.
+    for (final (field, rx) in [
+      ('product_id', productId),
+      ('region_id', regionId),
+      ('payment_type', paymentType),
+      ('team_user_id', teamUserId),
+    ]) {
+      ever<int?>(rx, (v) {
+        if (v != null) fieldErrors.remove(field);
+      });
     }
+    priceController.addListener(() {
+      if (_price != null) fieldErrors.remove('price_per_ton');
+    });
   }
 
   @override
@@ -73,8 +105,7 @@ class CreateMyPriceController extends BaseController {
     final result = await _api.overview();
     if (result.ok && result.data != null) {
       overview.value = result.data!;
-      teamUserId.value ??=
-          overview.value.team.isNotEmpty ? overview.value.team.first.id : null;
+      teamUserId.value ??= _defaultTeamUser(overview.value.team);
     } else {
       await ui.showError(result);
     }

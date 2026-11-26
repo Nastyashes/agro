@@ -89,6 +89,7 @@ void main() {
       mainController: main,
       withLoader: (action) => action(),
       close: closed.add,
+      currentUserId: 0,
       overview: const MyPriceOverview(
         team: [MyPriceTeamMember(id: 7)],
       ),
@@ -105,6 +106,34 @@ void main() {
 
   test('first team member is preselected', () {
     expect(c.teamUserId.value, 7);
+  });
+
+  test('contact person is the current user, not just the first member', () {
+    final own = CreateMyPriceController(
+      api: api,
+      mainController: main,
+      withLoader: (action) => action(),
+      close: closed.add,
+      currentUserId: 42,
+      overview: const MyPriceOverview(team: [
+        MyPriceTeamMember(id: 7, parent: '42'),
+        MyPriceTeamMember(id: 42),
+      ]),
+    )..onInit();
+    expect(own.teamUserId.value, 42);
+  });
+
+  test('a picked value clears that field error at once', () async {
+    await c.onSubmit();
+    expect(c.fieldErrors.keys,
+        containsAll(['product_id', 'region_id', 'payment_type']));
+
+    c.productId.value = 1;
+    expect(c.fieldErrors.containsKey('product_id'), isFalse);
+    expect(c.fieldErrors.containsKey('region_id'), isTrue);
+
+    c.priceController.text = '4000';
+    expect(c.fieldErrors.containsKey('price_per_ton'), isFalse);
   });
 
   test('missing fields are flagged and nothing is sent', () async {

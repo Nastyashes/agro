@@ -316,6 +316,12 @@ class AppLocalizationsUk extends AppLocalizations {
   String get addReview => 'Додати відгук';
 
   @override
+  String get noReviews => 'Відгуків поки немає';
+
+  @override
+  String get noReviewsHint => 'Будьте першим, хто залишить відгук.';
+
+  @override
   String get startWriting => 'Почніть писати...';
 
   @override
@@ -794,6 +800,18 @@ class AppLocalizationsUk extends AppLocalizations {
 
   @override
   String get comingSoonHint => 'Цей розділ скоро з\'явиться';
+
+  @override
+  String get comingSoonIntake =>
+      'Шукайте елеватори й пункти прийому поруч, порівнюйте ціни та умови приймання.';
+
+  @override
+  String get comingSoonMyBids =>
+      'Ваші власні заявки на купівлю чи продаж і відповіді на них — в одному місці.';
+
+  @override
+  String get comingSoonSaved =>
+      'Зберігайте цікаві заявки, щоб швидко повернутися до них пізніше.';
 
   @override
   String get newBadge => 'Нове';

@@ -15,7 +15,7 @@ import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:agro/ui/theme/app_theme.dart';
-import 'package:responsive_framework/responsive_framework.dart';
+import 'package:agro/ui/theme/text_scale.dart';
 import 'package:agro/load/start_screen.dart';
 import 'package:agro/routes/app_pages.dart';
 
@@ -23,7 +23,7 @@ import 'config/config.dart';
 import 'model/model_user/model_user.dart';
 
 Future<void> main() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
 
   unawaited(
     MobileAds.instance.initialize(),
@@ -51,7 +51,6 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
 
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -88,24 +87,15 @@ class MyApp extends StatelessWidget {
             return GestureDetector(
               onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
               child: MediaQuery(
-                  // Fixed until the old screens move to the new design; they
-                  // overflow at large system text (e.g. the drawer at 1.3).
-                  data: MediaQuery.of(context)
-                      .copyWith(textScaler: const TextScaler.linear(1.0)),
+                  // Drawn 1:1 so sizes match the design and touch-target
+                  // norms; system text size is followed up to 1.3 (BUG-033,
+                  // BUG-043).
+                  data: MediaQuery.of(context).copyWith(
+                      textScaler:
+                          appTextScaler(MediaQuery.textScalerOf(context))),
                   child: ScrollConfiguration(
                     behavior: const ScrollBehavior(),
-                    child: ResponsiveWrapper.builder(child,
-                        minWidth: 500,
-                        defaultScale: true,
-                        breakpoints: [
-                          const ResponsiveBreakpoint.autoScale(600,
-                              name: MOBILE),
-                          const ResponsiveBreakpoint.resize(480, name: MOBILE),
-                          const ResponsiveBreakpoint.autoScale(800,
-                              name: TABLET),
-                          const ResponsiveBreakpoint.resize(1000,
-                              name: DESKTOP),
-                        ]),
+                    child: child!,
                   )),
             );
           },

@@ -1,5 +1,6 @@
 import 'package:agro/app/new_home_screen/drawer/menu_item.dart';
 import 'package:agro/generated/assets.dart';
+import 'package:agro/ui/components/coming_soon_sheet.dart';
 import 'package:agro/ui/components/app_button.dart';
 import 'package:agro/ui/theme/app_text.dart';
 import 'package:agro/ui/theme/palette.dart';
@@ -35,7 +36,7 @@ class AppMenuDrawer extends StatelessWidget {
   final VoidCallback? onDeleteAccount;
 
   /// Tap on a «Незабаром» item.
-  final VoidCallback? onComingSoon;
+  final ValueChanged<ComingSoon>? onComingSoon;
 
   const AppMenuDrawer({
     super.key,
@@ -80,127 +81,161 @@ class AppMenuDrawer extends StatelessWidget {
         ),
       ),
       child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 16, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(children: [
-                Image.asset(Assets.pictureLogo, height: 40),
-                const Spacer(),
-                if (tariffLabel != null && tariffLabel!.isNotEmpty)
-                  _TariffChip(
-                      label: tariffLabel!,
-                      onTap: showTariffs ? onTariffs : null),
-              ]),
-              const SizedBox(height: 18),
-              Text(userName, style: AppText.title),
-              const SizedBox(height: 2),
-              Text(phone,
-                  style: AppText.body.copyWith(color: Palette.textSecondary)),
-              if (showTopUp) ...[
-                const SizedBox(height: 16),
-                _BalanceStrip(balance: balance, onTopUp: onTopUp),
-              ],
-              const SizedBox(height: 12),
-              MenuItem(
-                icon: Icons.warehouse_outlined,
-                title: l.intake,
-                mark: MenuItemMark.soon,
-                onPressed: onComingSoon,
-              ),
-              if (showMyPrice)
-                MenuItem(
-                  icon: Icons.bar_chart_rounded,
-                  title: l.myPrice,
-                  mark: MenuItemMark.isNew,
-                  onPressed: onMyPrice,
-                ),
-              MenuItem(
-                icon: Icons.assignment_outlined,
-                title: l.myBids,
-                mark: MenuItemMark.soon,
-                onPressed: onComingSoon,
-              ),
-              MenuItem(
-                icon: Icons.bookmark_border_rounded,
-                title: l.savedBids,
-                mark: MenuItemMark.soon,
-                onPressed: onComingSoon,
-              ),
-              if (showDeals)
-                MenuItem(
-                  icon: Icons.handshake_outlined,
-                  title: l.deals,
-                  onPressed: onDeals,
-                ),
-              MenuItem(
-                icon: Icons.notifications_none_rounded,
-                title: l.messages,
-                badge: unreadNotifications,
-                onPressed: onInfoMessages,
-              ),
-              if (showTariffs)
-                MenuItem(
-                  icon: Icons.workspace_premium_outlined,
-                  title: l.tariffs,
-                  onPressed: onTariffs,
-                ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 6),
-                child: Divider(height: 1),
-              ),
-              MenuItem(
-                icon: Icons.qr_code_scanner_rounded,
-                title: l.scanQrCode,
-                onPressed: onQrScan,
-              ),
-              MenuItem(
-                icon: Icons.language_rounded,
-                title: l.ourSite,
-                onPressed: onSite,
-              ),
-              MenuItem(
-                icon: Icons.support_agent_rounded,
-                title: l.support,
-                onPressed: onSupport,
-              ),
-              MenuItem(
-                icon: Icons.policy_outlined,
-                title: l.privacyPolicy,
-                onPressed: onPrivacy,
-              ),
-              if (showDisableAds) ...[
-                const SizedBox(height: 14),
-                _OutlineGreenButton(
-                  label: '${l.disableBanner.trim()} · '
-                      '${context.uahAmount(adsPrice)}',
-                  onPressed: onDisableAds,
-                ),
-              ],
-              const SizedBox(height: 18),
-              // Wraps to two lines when the labels do not fit.
-              Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                spacing: 16,
+        // Fills the screen height when it fits (items spread evenly) and
+        // scrolls on short screens.
+        child: CustomScrollView(slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(20, 4, 16, 8),
+            sliver: SliverFillRemaining(
+              hasScrollBody: false,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _FooterAction(
-                    icon: Icons.logout_rounded,
-                    label: l.logOut,
-                    color: Palette.textSecondary,
-                    onTap: onLogout,
+                  Row(children: [
+                    // The logo gives way to the tariff chip on narrow drawers.
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Image.asset(Assets.pictureLogo,
+                            height: 32, fit: BoxFit.contain),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    if (tariffLabel != null && tariffLabel!.isNotEmpty)
+                      _TariffChip(
+                          label: tariffLabel!,
+                          onTap: showTariffs ? onTariffs : null),
+                  ]),
+                  const SizedBox(height: 8),
+                  Text(userName, style: AppText.headline),
+                  const SizedBox(height: 2),
+                  Text(phone,
+                      style:
+                          AppText.body.copyWith(color: Palette.textSecondary)),
+                  if (showTopUp) ...[
+                    const SizedBox(height: 8),
+                    _BalanceStrip(balance: balance, onTopUp: onTopUp),
+                  ],
+                  const SizedBox(height: 4),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        MenuItem(
+                          icon: Icons.warehouse_outlined,
+                          title: l.intake,
+                          mark: MenuItemMark.soon,
+                          onPressed: () => onComingSoon?.call(ComingSoon(
+                              icon: Icons.warehouse_outlined,
+                              title: l.intake,
+                              description: l.comingSoonIntake)),
+                        ),
+                        if (showMyPrice)
+                          MenuItem(
+                            icon: Icons.bar_chart_rounded,
+                            title: l.myPrice,
+                            mark: MenuItemMark.isNew,
+                            onPressed: onMyPrice,
+                          ),
+                        MenuItem(
+                          icon: Icons.assignment_outlined,
+                          title: l.myBids,
+                          mark: MenuItemMark.soon,
+                          onPressed: () => onComingSoon?.call(ComingSoon(
+                              icon: Icons.assignment_outlined,
+                              title: l.myBids,
+                              description: l.comingSoonMyBids)),
+                        ),
+                        MenuItem(
+                          icon: Icons.bookmark_border_rounded,
+                          title: l.savedBids,
+                          mark: MenuItemMark.soon,
+                          onPressed: () => onComingSoon?.call(ComingSoon(
+                              icon: Icons.bookmark_border_rounded,
+                              title: l.savedBids,
+                              description: l.comingSoonSaved)),
+                        ),
+                        if (showDeals)
+                          MenuItem(
+                            icon: Icons.handshake_outlined,
+                            title: l.deals,
+                            onPressed: onDeals,
+                          ),
+                        MenuItem(
+                          icon: Icons.notifications_none_rounded,
+                          title: l.messages,
+                          badge: unreadNotifications,
+                          onPressed: onInfoMessages,
+                        ),
+                        if (showTariffs)
+                          MenuItem(
+                            icon: Icons.workspace_premium_outlined,
+                            title: l.tariffs,
+                            onPressed: onTariffs,
+                          ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 4),
+                          child: Divider(height: 1),
+                        ),
+                        MenuItem(
+                          icon: Icons.qr_code_scanner_rounded,
+                          title: l.scanQrCode,
+                          onPressed: onQrScan,
+                        ),
+                        MenuItem(
+                          icon: Icons.language_rounded,
+                          title: l.ourSite,
+                          onPressed: onSite,
+                        ),
+                        MenuItem(
+                          icon: Icons.support_agent_rounded,
+                          title: l.support,
+                          onPressed: onSupport,
+                        ),
+                        MenuItem(
+                          icon: Icons.policy_outlined,
+                          title: l.privacyPolicy,
+                          onPressed: onPrivacy,
+                        ),
+                      ],
+                    ),
                   ),
-                  _FooterAction(
-                    icon: Icons.delete_outline_rounded,
-                    label: l.deleteProfile,
-                    color: Palette.red,
-                    onTap: onDeleteAccount,
+                  if (showDisableAds) ...[
+                    const SizedBox(height: 8),
+                    _OutlineGreenButton(
+                      label: '${l.disableBanner.trim()} · '
+                          '${context.uahAmount(adsPrice)}',
+                      onPressed: onDisableAds,
+                    ),
+                  ],
+                  const SizedBox(height: 4),
+                  // Wraps to two lines when the labels do not fit.
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    spacing: 16,
+                    children: [
+                      _FooterAction(
+                        icon: Icons.logout_rounded,
+                        label: l.logOut,
+                        color: Palette.textSecondary,
+                        onTap: onLogout,
+                      ),
+                      // Hidden until account deletion works on the server.
+                      if (onDeleteAccount != null)
+                        _FooterAction(
+                          icon: Icons.delete_outline_rounded,
+                          label: l.deleteProfile,
+                          color: Palette.red,
+                          onTap: onDeleteAccount,
+                        ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+        ]),
       ),
     );
   }
@@ -242,7 +277,7 @@ class _BalanceStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
+        padding: const EdgeInsets.fromLTRB(14, 4, 4, 4),
         decoration: BoxDecoration(
           color: Palette.bg2,
           borderRadius: BorderRadius.circular(Radii.button),
@@ -281,6 +316,9 @@ class _OutlineGreenButton extends StatelessWidget {
   Widget build(BuildContext context) => OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
+          minimumSize: const Size.fromHeight(minTouchTarget),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           foregroundColor: Palette.green,
           side: const BorderSide(color: Palette.green),
         ),
@@ -308,11 +346,13 @@ class _FooterAction extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(10),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 48),
+          constraints: const BoxConstraints(minHeight: minTouchTarget),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             Icon(icon, size: 20, color: color),
             const SizedBox(width: 8),
-            Text(label, style: AppText.bodyMedium.copyWith(color: color)),
+            Flexible(
+                child: Text(label,
+                    style: AppText.bodyMedium.copyWith(color: color))),
           ]),
         ),
       );

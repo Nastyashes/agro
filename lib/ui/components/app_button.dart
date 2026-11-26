@@ -91,7 +91,7 @@ class AppButton extends StatelessWidget {
         child: InkWell(
           onTap: enabled ? onPressed : null,
           child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: large ? 54 : 40),
+            constraints: BoxConstraints(minHeight: large ? 54 : minTouchTarget),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: large ? 20 : 14),
               child: Center(widthFactor: 1, heightFactor: 1, child: child),

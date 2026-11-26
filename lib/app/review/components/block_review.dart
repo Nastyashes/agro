@@ -1,8 +1,30 @@
 import 'package:agro/model/model_review/model_review.dart';
-import 'package:agro/ui/text/read_text.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 
+/// Read-only row of five stars for a 1–5 rating.
+class RatingStarsView extends StatelessWidget {
+  const RatingStarsView({super.key, required this.rating, this.size = 18});
+
+  final int rating;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (var i = 1; i <= 5; i++)
+            Icon(
+              i <= rating ? Icons.star_rounded : Icons.star_outline_rounded,
+              size: size,
+              color: i <= rating ? Palette.wheat : Palette.textTertiary,
+            ),
+        ],
+      );
+}
+
+/// One review: its own rating (not always five), date and text.
 class BlockReview extends StatelessWidget {
   final ModelReview modelReview;
 
@@ -10,65 +32,32 @@ class BlockReview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                  color: const Color(0xff000000).withOpacity(0.02),
-                  spreadRadius: 0,
-                  blurRadius: 10,
-                  offset: const Offset(0, 0))
-            ]),
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              readText(
-                  text: modelReview.comment.toString(),
-                  color: Colors.black,
-                  size: 20),
-              const SizedBox(height: 15),
-              Row(
-                children: [
-                  RatingStars(
-                      value: 5,
-                      starBuilder: (index, color) =>
-                          Icon(Icons.star, color: color, size: 25),
-                      starCount: 5,
-                      starSize: 25,
-                      valueLabelColor: const Color(0xff9b9b9b),
-                      valueLabelTextStyle: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w400,
-                          fontStyle: FontStyle.normal,
-                          fontSize: 12.0),
-                      valueLabelRadius: 10,
-                      maxValue: 5,
-                      starSpacing: 0,
-                      maxValueVisibility: false,
-                      valueLabelVisibility: false,
-                      animationDuration: const Duration(seconds: 2),
-                      valueLabelPadding: const EdgeInsets.symmetric(
-                          vertical: 1, horizontal: 8),
-                      valueLabelMargin: const EdgeInsets.only(right: 8),
-                      starOffColor: const Color(0xffe7e8ea),
-                      starColor: const Color(0xffFEBF2F)),
-                  const Spacer(),
-                  readText(
-                      text: modelReview.date.toString(),
-                      color: const Color(0xffA9A9A9),
-                      fontWeight: FontWeight.w500,
-                      size: 18),
-                ],
-              )
-            ],
-          ),
-        ),
+    final rating = (modelReview.rating ?? 0).clamp(0, 5);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+      decoration: BoxDecoration(
+        color: Palette.bg1,
+        borderRadius: BorderRadius.circular(Radii.card),
+        border: Border.all(color: Palette.line),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(children: [
+            // The server may return 0 (no rating saved): show no stars
+            // rather than an empty "zero" row.
+            if (rating > 0) RatingStarsView(rating: rating),
+            const Spacer(),
+            if ((modelReview.date ?? '').isNotEmpty)
+              Text(modelReview.date!,
+                  style: AppText.caption.copyWith(color: Palette.textTertiary)),
+          ]),
+          if ((modelReview.comment ?? '').trim().isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(modelReview.comment!.trim(), style: AppText.body),
+          ],
+        ],
       ),
     );
   }

@@ -73,7 +73,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 ),
               ),
             )),
-        const SizedBox(height: 28),
+        const SizedBox(height: 20),
         Obx(() => AppButton(
               label: l.getCode,
               pill: true,

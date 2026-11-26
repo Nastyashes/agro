@@ -317,6 +317,12 @@ class AppLocalizationsKk extends AppLocalizations {
   String get addReview => 'Шолу қосу';
 
   @override
+  String get noReviews => 'Әзірге пікірлер жоқ';
+
+  @override
+  String get noReviewsHint => 'Бірінші болып пікір қалдырыңыз.';
+
+  @override
   String get startWriting => 'Жазуды бастау...';
 
   @override
@@ -795,6 +801,18 @@ class AppLocalizationsKk extends AppLocalizations {
 
   @override
   String get comingSoonHint => 'Бұл бөлім жақында қосылады';
+
+  @override
+  String get comingSoonIntake =>
+      'Жақын маңдағы элеваторлар мен қабылдау пункттерін тауып, бағалар мен шарттарды салыстырыңыз.';
+
+  @override
+  String get comingSoonMyBids =>
+      'Сатып алуға немесе сатуға арналған өз өтінімдеріңіз бен оларға жауаптар бір жерде.';
+
+  @override
+  String get comingSoonSaved =>
+      'Қызық өтінімдерді кейін тез оралу үшін сақтаңыз.';
 
   @override
   String get newBadge => 'Жаңа';

@@ -44,10 +44,10 @@ class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
         const SizedBox(height: 6),
         Text(l.codeWasSent,
             style: AppText.body.copyWith(color: Palette.textSecondary)),
-        const SizedBox(height: 20),
+        const SizedBox(height: 16),
         LayoutBuilder(builder: (context, box) {
-          // Four cells and three 12 px gaps, at most 64 px each (fits 320 px).
-          final size = ((box.maxWidth - 36) / 4).clamp(44.0, 64.0);
+          // Four cells and three 10 px gaps, 44…56 px each (fits 320 px).
+          final size = ((box.maxWidth - 30) / 4).clamp(44.0, 56.0);
           return Center(
             child: Pinput(
               controller: controller.codeController,
@@ -57,7 +57,7 @@ class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
               defaultPinTheme: _pin(focused: false, size: size),
               focusedPinTheme: _pin(focused: true, size: size),
               submittedPinTheme: _pin(focused: false, size: size),
-              separator: const SizedBox(width: 12),
+              separator: const SizedBox(width: 10),
               pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
               onChanged: controller.onCodeChanged,
             ),
@@ -71,7 +71,7 @@ class _AuthConfirmScreenState extends State<AuthConfirmScreen> {
                     textAlign: TextAlign.center,
                     style: AppText.label.copyWith(color: Palette.red)),
               )),
-        const SizedBox(height: 28),
+        const SizedBox(height: 20),
         Obx(() => AppButton(
               label: l.continue_,
               pill: true,

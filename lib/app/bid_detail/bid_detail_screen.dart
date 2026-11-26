@@ -5,6 +5,7 @@ import 'package:agro/app/my_price/components/my_price_match_style.dart';
 import 'package:agro/data/session_storage.dart';
 import 'package:agro/model/model_user/model_user.dart';
 import 'package:agro/model/new_models_bids/bids_item_model.dart';
+import 'package:agro/ui/components/facts_grid.dart';
 import 'package:agro/ui/components/app_button.dart';
 import 'package:agro/ui/components/app_icon_button.dart';
 import 'package:agro/ui/components/app_snackbar.dart';
@@ -21,7 +22,6 @@ import 'package:agro/vars/trade_localizers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class BidDetailScreen extends StatefulWidget {
   const BidDetailScreen({super.key, this.controller, this.item});
@@ -130,20 +130,34 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
-          TypeBadge(type, size: 32),
-          const SizedBox(width: 10),
-          Text(type.label(context),
-              style: AppText.overline.copyWith(color: type.color)),
+        // Culture and where it is: the first things a trader looks for.
+        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          TypeBadge(type, size: 48),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(item.productTitle ?? '—',
+                    style: AppText.display.copyWith(fontSize: 26)),
+                const SizedBox(height: 2),
+                Text(
+                  item.regionName ?? '',
+                  style:
+                      AppText.bodyMedium.copyWith(color: Palette.textSecondary),
+                ),
+              ],
+            ),
+          ),
           const SizedBox(width: 8),
-          if (isSet(item.dayLabel)) AppTag(item.dayLabel!),
-          if (matched && meta!.badge.isNotEmpty) ...[
-            const SizedBox(width: 6),
-            AppTag(meta.badge, color: Palette.green),
-          ],
+          Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            if (isSet(item.dayLabel)) AppTag(item.dayLabel!),
+            if (matched && meta!.badge.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              AppTag(meta.badge, color: Palette.green),
+            ],
+          ]),
         ]),
-        const SizedBox(height: 12),
-        Text(item.productTitle ?? '—', style: AppText.display),
         if (matched && meta!.responseLabel.isNotEmpty)
           Container(
             margin: const EdgeInsets.only(top: 12),
@@ -156,39 +170,26 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
             child: Text(meta.responseLabel, style: AppText.bodyMedium),
           ),
         const SizedBox(height: 16),
-        Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          _keyFigure(
+        FactsGrid(facts: [
+          (
             context.l.volume,
-            Text.rich(TextSpan(children: [
-              TextSpan(
-                  text: '${item.amount ?? AppConstants.emDash}',
-                  style: AppText.numXL),
-              TextSpan(
-                  text: ' ${context.l.tonShort}',
-                  style: AppText.title.copyWith(color: Palette.textSecondary)),
-            ])),
+            '${item.amount ?? AppConstants.emDash} ${context.l.tonShort}'
           ),
-          const SizedBox(width: 24),
-          if (item.year != null)
-            _keyFigure(
-                context.l.harvest, Text('${item.year}', style: AppText.numL)),
-        ]),
-        SectionLabel(context.l.conditions),
-        InfoGroup(children: [
-          InfoRow(context.l.region, item.regionName ?? '—'),
-          if (isSet(c?.district)) InfoRow(context.l.district, c!.district!),
-          InfoRow(
-              context.l.payment, _paymentForm(context, item.ordPaymentType)),
-          InfoRow(context.l.delivery,
-              localizeDeliveryType(item.deliveryType ?? '-', context)),
+          (context.l.harvest, '${item.year ?? AppConstants.emDash}'),
+          (context.l.payment, _paymentForm(context, item.ordPaymentType)),
+          (
+            context.l.typeOfDelivery,
+            localizeDeliveryType(item.deliveryType ?? '-', context)
+          ),
         ]),
         if (item.isOpened) ...[
           SectionLabel(context.l.seller),
           InfoGroup(children: [
-            if (isSet(item.fermerName))
-              InfoRow(context.l.fullName, item.fermerName!),
-            if (isSet(item.fermerCompany))
-              InfoRow(context.l.company, item.fermerCompany!),
+            if (isSet(item.sellerName))
+              InfoRow(context.l.fullName, item.sellerName!),
+            if (isSet(item.sellerCompany))
+              InfoRow(context.l.company, item.sellerCompany!),
+            if (isSet(c?.district)) InfoRow(context.l.district, c!.district!),
             if (isSet(c?.city)) InfoRow(context.l.town, c!.city!),
             if (isSet(c?.addr)) InfoRow(context.l.address, c!.addr!),
             if (phone != null)
@@ -216,15 +217,6 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
       ],
     );
   }
-
-  Widget _keyFigure(String label, Widget value) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label,
-              style: AppText.caption.copyWith(color: Palette.textTertiary)),
-          value,
-        ],
-      );
 
   Widget _carrierRow(BuildContext context) {
     final busy = controller.orderingCarrier.value;
@@ -312,11 +304,7 @@ class _BidDetailScreenState extends State<BidDetailScreen> {
       ].firstWhere(isSet, orElse: () => null);
 
   void _launchPhone(BuildContext context, String phone) {
-    showCupertinoModalBottomSheet(
-      topRadius: const Radius.circular(30),
-      context: context,
-      builder: (c) => LaunchPhone(contact: phone),
-    );
+    showCallSheet(context, phone);
   }
 
   String _paymentForm(BuildContext context, int? type) {

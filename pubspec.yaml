@@ -31,7 +31,6 @@ dependencies:
   flutter_svg: ^2.0.7
 
   # SERVICE
-  responsive_framework: ^0.1.7
   flutter_localizations:
     sdk: flutter
   pull_to_refresh: ^2.0.0

@@ -34,23 +34,28 @@ class AuthLayout extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: box.maxHeight),
-                child: IntrinsicHeight(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: height * 0.1, bottom: height * 0.08),
-                        child: Center(
-                          child: Image.asset(Assets.pictureLogo, width: 300),
+                // No IntrinsicHeight: children may hold a LayoutBuilder
+                // (code screen), which cannot report intrinsics (BUG-042).
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: height * 0.06, bottom: height * 0.05),
+                          child: Center(
+                            child: Image.asset(Assets.pictureLogo, width: 220),
+                          ),
                         ),
-                      ),
-                      ...children,
-                      const Spacer(),
-                      if (onTelegram != null || onViber != null)
-                        _Support(onTelegram: onTelegram, onViber: onViber),
-                    ],
-                  ),
+                        ...children,
+                      ],
+                    ),
+                    if (onTelegram != null || onViber != null)
+                      _Support(onTelegram: onTelegram, onViber: onViber),
+                  ],
                 ),
               ),
             ),
@@ -69,14 +74,14 @@ class _Support extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(top: 24, bottom: 24),
+        padding: const EdgeInsets.only(top: 16, bottom: 12),
         child: Column(children: [
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             if (onTelegram != null)
               BTransparentScalableButton(
                 onPressed: onTelegram!,
                 scale: ScaleFormat.small,
-                child: SvgPicture.asset(Assets.authTelegram, width: 48),
+                child: SvgPicture.asset(Assets.authTelegram, width: 44),
               ),
             if (onTelegram != null && onViber != null)
               const SizedBox(width: 20),
@@ -84,10 +89,10 @@ class _Support extends StatelessWidget {
               BTransparentScalableButton(
                 onPressed: onViber!,
                 scale: ScaleFormat.small,
-                child: SvgPicture.asset(Assets.authViber, width: 48),
+                child: SvgPicture.asset(Assets.authViber, width: 44),
               ),
           ]),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           Text(context.l.needHelpSupport,
               textAlign: TextAlign.center,
               style: AppText.body.copyWith(color: Palette.textSecondary)),

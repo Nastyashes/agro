@@ -169,6 +169,19 @@ void main() {
       await expectLater(c.loadAllBids(reset: true), throwsA(anything));
 
       expect(c.offline.value, isFalse);
+      expect(c.loadFailed.value, isTrue, reason: 'skeleton must stop');
+      expect(c.bidsLoaded.value, isFalse);
+
+      bids.error = null;
+      await c.loadAllBids(reset: true);
+      expect(c.loadFailed.value, isFalse);
+      expect(c.bidsLoaded.value, isTrue);
+    });
+
+    test('a network error is offline, not "load failed"', () async {
+      bids.error = const ApiException(ApiErrorKind.network);
+      await expectLater(c.loadAllBids(reset: true), throwsA(anything));
+      expect(c.loadFailed.value, isFalse);
     });
 
     test('a successful load clears it', () async {

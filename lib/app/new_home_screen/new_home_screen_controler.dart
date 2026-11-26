@@ -81,6 +81,9 @@ class NewHomeController extends BaseController {
   /// "nothing found", not "still loading" (BUG-031).
   final RxBool bidsLoaded = false.obs;
 
+  /// The first page failed for a reason other than no connection.
+  final RxBool loadFailed = false.obs;
+
   bool get hasMoreFresh =>
       _freshTotal == null || bidsFresh.length < _freshTotal!;
 
@@ -146,6 +149,8 @@ class NewHomeController extends BaseController {
       log('NewHomeController initPage error: $e',
           error: e, stackTrace: stackTrace);
       offline.value = _isConnectionError(e) && bids.isEmpty;
+      // Stop the skeleton: say it failed and offer a retry.
+      loadFailed.value = !offline.value && bids.isEmpty;
       failures.value++;
     }
   }
@@ -157,6 +162,7 @@ class NewHomeController extends BaseController {
   Future<void> retry() async {
     if (_retrying) return;
     _retrying = true;
+    loadFailed.value = false; // back to the skeleton while retrying
     try {
       await initPage();
     } finally {
@@ -224,6 +230,7 @@ class NewHomeController extends BaseController {
 
       _bidsTotal = page.total;
       offline.value = false;
+      loadFailed.value = false;
       bidsLoaded.value = true;
 
       _updateUserfield(page.userfield);
@@ -231,6 +238,8 @@ class NewHomeController extends BaseController {
       if (requestId != _allRequestId) return;
 
       offline.value = _isConnectionError(e) && bids.isEmpty;
+      // Stop the skeleton: say it failed and offer a retry.
+      loadFailed.value = !offline.value && bids.isEmpty;
 
       log(
         'NewHomeController loadAllBids error: $e',

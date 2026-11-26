@@ -29,7 +29,12 @@ class HomeTabs extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.baseline,
           textBaseline: TextBaseline.alphabetic,
           children: [
-            Text(context.l.applications, style: AppText.display),
+            Flexible(
+              child: Text(context.l.applications,
+                  style: AppText.display.copyWith(fontSize: 24),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis),
+            ),
             if (allCount != null) ...[
               const SizedBox(width: 10),
               Text('$allCount',
@@ -38,8 +43,8 @@ class HomeTabs extends StatelessWidget {
           ],
         ),
         if (showFresh) ...[
-          const SizedBox(height: 12),
-          Row(children: [
+          const SizedBox(height: 8),
+          Wrap(spacing: 8, runSpacing: 8, children: [
             AppFilterChip(
               label: context.l.all,
               icon: Icons.apps_rounded,
@@ -47,7 +52,6 @@ class HomeTabs extends StatelessWidget {
               selected: selectedTab == NewHomeTab.all,
               onTap: () => onChanged(NewHomeTab.all),
             ),
-            const SizedBox(width: 8),
             AppFilterChip(
               label: context.l.freshShort,
               icon: Icons.bolt_rounded,

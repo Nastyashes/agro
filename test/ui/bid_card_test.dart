@@ -106,10 +106,22 @@ void main() {
     await pump(tester, closed);
 
     expect(find.byType(TypeBadge), findsOneWidget);
-    expect(find.text('Зерно'), findsOneWidget);
-    expect(find.text('№191114 · Житомирська'), findsOneWidget);
+    // Culture is the title; the generic type word is not repeated.
+    expect(find.text('Зерно'), findsNothing);
+    expect(find.textContaining('Житомирська', findRichText: true),
+        findsOneWidget);
+    expect(find.textContaining('№191114', findRichText: true), findsOneWidget);
+    // Every fact sits under its own caption.
+    for (final (label, value) in const [
+      ("Об'єм", '100 т'),
+      ('Оплата', '1ф/2ф'),
+      ('Тип доставки', 'Будь-який'),
+      ('Урожай', '2026'),
+    ]) {
+      expect(find.text(label), findsOneWidget, reason: label);
+      expect(find.text(value), findsOneWidget, reason: value);
+    }
     expect(find.text('Соя'), findsOneWidget);
-    expect(find.text('урожай 2026'), findsOneWidget);
     expect(find.text('6 днів'), findsOneWidget);
     expect(find.text('Відкрити контакт · 25 ₴'), findsOneWidget);
     expect(find.byIcon(Icons.call_rounded), findsNothing);

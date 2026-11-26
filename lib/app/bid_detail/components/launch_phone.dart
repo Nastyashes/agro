@@ -1,14 +1,24 @@
-import 'package:agro/ui/components/app_snackbar.dart';
 import 'package:agro/generated/assets.dart';
-import 'package:agro/ui/buttons/button_styles.dart';
+import 'package:agro/ui/components/app_button.dart';
+import 'package:agro/ui/components/app_snackbar.dart';
 import 'package:agro/ui/local_notification/local_notification.dart';
-import 'package:agro/ui/text/read_text.dart';
+import 'package:agro/ui/theme/app_text.dart';
+import 'package:agro/ui/theme/palette.dart';
 import 'package:agro/vars/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../ui/buttons/b_transparent_scalable_button.dart';
+/// "Call" sheet for an opened contact: phone, call, Telegram, Viber.
+void showCallSheet(BuildContext context, String phone) {
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    useSafeArea: true,
+    showDragHandle: true,
+    builder: (_) => SingleChildScrollView(child: LaunchPhone(contact: phone)),
+  );
+}
 
 class LaunchPhone extends StatelessWidget {
   final String? contact;
@@ -17,64 +27,64 @@ class LaunchPhone extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      height: 200,
+    final phone = contact ?? '';
+    final l = context.l;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-              padding: const EdgeInsets.only(top: 15),
-              child: Container(
-                  decoration: BoxDecoration(
-                      color: const Color(0xffEDEDED),
-                      borderRadius: BorderRadius.circular(3)),
-                  height: 10,
-                  width: 100)),
-          const SizedBox(height: 32),
-          Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            BTransparentScalableButton(
-                onPressed: () => onCall(contact.toString()),
-                scale: ScaleFormat.small,
-                child: const Icon(
-                  Icons.call_rounded,
-                  size: 50,
-                  color: Colors.green,
-                )),
-            const SizedBox(width: 30),
-            BTransparentScalableButton(
-                onPressed: () {
-                  openTelegram(phone: contact.toString(), context: context);
-                },
-                scale: ScaleFormat.small,
-                child: SvgPicture.asset(Assets.authTelegram, width: 50)),
-            const SizedBox(width: 30),
-            BTransparentScalableButton(
-                onPressed: () {
-                  openViber(phone: contact.toString(), context: context);
-                },
-                scale: ScaleFormat.small,
-                child: SvgPicture.asset(Assets.authViber, width: 50))
-          ]),
-          bStyle(
-              padding: const EdgeInsets.only(left: 15, right: 15, top: 20),
-              text: context.l.close,
-              c: context,
-              colorText: Colors.black,
-              vertical: 15,
-              colorButt: const Color(0xffF2F2F2),
-              onPressed: () => Navigator.pop(context))
+          Text(l.phone,
+              textAlign: TextAlign.center,
+              style: AppText.caption.copyWith(color: Palette.textTertiary)),
+          const SizedBox(height: 2),
+          Text(phone, textAlign: TextAlign.center, style: AppText.numL),
+          const SizedBox(height: 16),
+          Container(
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              color: Palette.bg1,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Palette.line),
+            ),
+            child: Material(
+              type: MaterialType.transparency,
+              child: Column(children: [
+                _ContactRow(
+                  leading: const Icon(Icons.call_rounded,
+                      size: 24, color: Palette.green),
+                  label: l.call,
+                  onTap: () => onCall(phone),
+                ),
+                const Divider(height: 1),
+                _ContactRow(
+                  leading: SvgPicture.asset(Assets.authTelegram, width: 28),
+                  label: 'Telegram',
+                  onTap: () => openTelegram(phone: phone, context: context),
+                ),
+                const Divider(height: 1),
+                _ContactRow(
+                  leading: SvgPicture.asset(Assets.authViber, width: 28),
+                  label: 'Viber',
+                  onTap: () => openViber(phone: phone, context: context),
+                ),
+              ]),
+            ),
+          ),
+          const SizedBox(height: 12),
+          AppButton(
+            label: l.close,
+            style: AppButtonStyle.secondary,
+            onPressed: () => Navigator.pop(context),
+          ),
         ],
       ),
     );
   }
 
-  void onContactViber(String phone) =>
-      launchUrl(Uri.parse('viber://add?number=%2B${phone.substring(1)}'),
-          mode: LaunchMode.externalApplication);
-
-  void onContactTelegram(String phone) =>
-      launchUrl(Uri.parse('https://t.me/$phone'),
-          mode: LaunchMode.externalApplication);
+  void onCall(String phone) => launchUrl(Uri(scheme: 'tel', path: phone),
+      mode: LaunchMode.externalApplication);
 
   Future<void> openTelegram({
     required BuildContext context,
@@ -85,15 +95,9 @@ class LaunchPhone extends StatelessWidget {
     final String errorTelegram = context.l.errorTelegram;
 
     if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(
-        Uri.parse('$url?to=$phone'),
-        mode: mode,
-      );
+      await launchUrl(Uri.parse('$url?to=$phone'), mode: mode);
     } else {
-      notification(
-        text: errorTelegram,
-        type: SnackType.error,
-      );
+      notification(text: errorTelegram, type: SnackType.error);
     }
   }
 
@@ -106,39 +110,36 @@ class LaunchPhone extends StatelessWidget {
     final String errorViber = context.l.errorViber;
 
     if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(
-        Uri.parse(url),
-        mode: mode,
-      );
+      await launchUrl(Uri.parse(url), mode: mode);
     } else {
-      notification(
-        text: errorViber,
-        type: SnackType.error,
-      );
+      notification(text: errorViber, type: SnackType.error);
     }
   }
+}
 
-  void onCall(String phone) => launchUrl(Uri(scheme: 'tel', path: phone),
-      mode: LaunchMode.externalApplication);
+class _ContactRow extends StatelessWidget {
+  const _ContactRow(
+      {required this.leading, required this.label, required this.onTap});
 
-  Widget orderInfo(
-          {required String header,
-          required String text,
-          Function()? onPressed}) =>
-      Padding(
-          padding: const EdgeInsets.only(bottom: 10, left: 15, right: 15),
-          child: BTransparentScalableButton(
-              onPressed: onPressed ?? () {},
-              scale: onPressed == null ? ScaleFormat.none : ScaleFormat.small,
-              child: Row(children: [
-                readText(
-                    text: header, color: const Color(0xffA9A9A9), size: 20),
-                Expanded(
-                    child: readText(
-                        text: text,
-                        color: Colors.black,
-                        size: 20,
-                        fontWeight: FontWeight.w500,
-                        align: TextAlign.end))
-              ])));
+  final Widget leading;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+        onTap: onTap,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 52),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(children: [
+              SizedBox(width: 28, child: Center(child: leading)),
+              const SizedBox(width: 14),
+              Expanded(child: Text(label, style: AppText.bodyMedium)),
+              const Icon(Icons.chevron_right_rounded,
+                  size: 20, color: Palette.textTertiary),
+            ]),
+          ),
+        ),
+      );
 }

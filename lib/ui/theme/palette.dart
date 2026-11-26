@@ -57,3 +57,7 @@ abstract final class Radii {
   static const sheet = 24.0;
   static const pill = 100.0;
 }
+
+/// Smallest tappable size (iOS HIG 44 pt; Android asks 48 dp, 44 is the
+/// floor used across the design).
+const double minTouchTarget = 44;

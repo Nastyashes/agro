@@ -45,11 +45,11 @@ class AppFilterChip extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(6, 6, 14, 6),
+            padding: const EdgeInsets.fromLTRB(5, 5, 12, 5),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
               Container(
-                width: 24,
-                height: 24,
+                width: 22,
+                height: 22,
                 decoration: BoxDecoration(
                   color: solidOn ? Colors.transparent : Palette.greenSoft,
                   shape: BoxShape.circle,
