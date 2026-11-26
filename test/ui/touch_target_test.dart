@@ -29,13 +29,16 @@ void main() {
     }
   });
 
+  // Chips are a compact secondary control (owner asked for smaller ones,
+  // 2026-11-26); they stay at least 32 tall and wide enough to hit.
   testWidgets('filter chip', (tester) async {
     final s = await sizeOf(
         tester,
         AppFilterChip(
             label: 'Всі', icon: Icons.apps, selected: true, onTap: () {}),
         find.byType(InkWell));
-    expect(s.height, greaterThanOrEqualTo(minTouchTarget));
+    expect(s.height, greaterThanOrEqualTo(32));
+    expect(s.width, greaterThanOrEqualTo(minTouchTarget));
   });
 
   testWidgets('icon button default', (tester) async {

@@ -192,7 +192,7 @@ class _NewHomeScreenState extends State<NewHomeScreen> {
               ),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 4),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Obx(() => HomeTabs(

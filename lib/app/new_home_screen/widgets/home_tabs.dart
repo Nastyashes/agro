@@ -31,7 +31,7 @@ class HomeTabs extends StatelessWidget {
           children: [
             Flexible(
               child: Text(context.l.applications,
-                  style: AppText.display,
+                  style: AppText.display.copyWith(fontSize: 24),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis),
             ),
@@ -43,7 +43,7 @@ class HomeTabs extends StatelessWidget {
           ],
         ),
         if (showFresh) ...[
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Wrap(spacing: 8, runSpacing: 8, children: [
             AppFilterChip(
               label: context.l.all,

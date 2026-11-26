@@ -81,7 +81,7 @@ class AppMenuDrawer extends StatelessWidget {
       ),
       child: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 16, 24),
+          padding: const EdgeInsets.fromLTRB(20, 4, 16, 4),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -91,7 +91,7 @@ class AppMenuDrawer extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: Image.asset(Assets.pictureLogo,
-                        height: 40, fit: BoxFit.contain),
+                        height: 32, fit: BoxFit.contain),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -100,16 +100,16 @@ class AppMenuDrawer extends StatelessWidget {
                       label: tariffLabel!,
                       onTap: showTariffs ? onTariffs : null),
               ]),
-              const SizedBox(height: 18),
-              Text(userName, style: AppText.title),
+              const SizedBox(height: 8),
+              Text(userName, style: AppText.headline),
               const SizedBox(height: 2),
               Text(phone,
                   style: AppText.body.copyWith(color: Palette.textSecondary)),
               if (showTopUp) ...[
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 _BalanceStrip(balance: balance, onTopUp: onTopUp),
               ],
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
               MenuItem(
                 icon: Icons.warehouse_outlined,
                 title: l.intake,
@@ -154,7 +154,7 @@ class AppMenuDrawer extends StatelessWidget {
                   onPressed: onTariffs,
                 ),
               const Padding(
-                padding: EdgeInsets.symmetric(vertical: 6),
+                padding: EdgeInsets.symmetric(vertical: 4),
                 child: Divider(height: 1),
               ),
               MenuItem(
@@ -178,14 +178,14 @@ class AppMenuDrawer extends StatelessWidget {
                 onPressed: onPrivacy,
               ),
               if (showDisableAds) ...[
-                const SizedBox(height: 14),
+                const SizedBox(height: 8),
                 _OutlineGreenButton(
                   label: '${l.disableBanner.trim()} · '
                       '${context.uahAmount(adsPrice)}',
                   onPressed: onDisableAds,
                 ),
               ],
-              const SizedBox(height: 18),
+              const SizedBox(height: 4),
               // Wraps to two lines when the labels do not fit.
               Wrap(
                 alignment: WrapAlignment.spaceBetween,
@@ -249,7 +249,7 @@ class _BalanceStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
+        padding: const EdgeInsets.fromLTRB(14, 4, 4, 4),
         decoration: BoxDecoration(
           color: Palette.bg2,
           borderRadius: BorderRadius.circular(Radii.button),
@@ -288,6 +288,9 @@ class _OutlineGreenButton extends StatelessWidget {
   Widget build(BuildContext context) => OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
+          minimumSize: const Size.fromHeight(minTouchTarget),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           foregroundColor: Palette.green,
           side: const BorderSide(color: Palette.green),
         ),
@@ -315,7 +318,7 @@ class _FooterAction extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(10),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 48),
+          constraints: const BoxConstraints(minHeight: minTouchTarget),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
             Icon(icon, size: 20, color: color),
             const SizedBox(width: 8),

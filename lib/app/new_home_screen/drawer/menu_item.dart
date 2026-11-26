@@ -30,7 +30,7 @@ class MenuItem extends StatelessWidget {
       onTap: onPressed,
       borderRadius: BorderRadius.circular(12),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 48),
+        constraints: const BoxConstraints(minHeight: 40),
         child: Row(children: [
           Icon(icon,
               size: 24, color: soon ? Palette.textTertiary : Palette.green),
