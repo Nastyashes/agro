@@ -59,4 +59,31 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
     expect(telegram, 1);
   });
+
+  // BUG-042: the code screen has a LayoutBuilder; the frame must lay it out
+  // on any screen height and with the keyboard up, without intrinsics.
+  for (final size in const [Size(400, 900), Size(320, 480)]) {
+    testWidgets('frame lays out a LayoutBuilder child at $size',
+        (tester) async {
+      await tester.binding.setSurfaceSize(size);
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(app(AuthLayout(
+        onTelegram: () {},
+        children: [
+          LayoutBuilder(
+              builder: (_, box) => SizedBox(height: 56, width: box.maxWidth)),
+          const SizedBox(height: 300),
+        ],
+      )));
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+
+      // Keyboard up: the visible area shrinks.
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      addTearDown(tester.view.resetViewInsets);
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      expect(find.textContaining('Потрібна допомога'), findsOneWidget);
+    });
+  }
 }
